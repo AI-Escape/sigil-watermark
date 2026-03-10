@@ -130,7 +130,7 @@ uv run mkdocs serve        # http://127.0.0.1:8000
 
 ## Origin
 
-Sigil Watermark was originally developed as part of the [Signarture](https://signarture.com) artist protection platform.
+Sigil Watermark was originally developed as part of the [Signarture](https://signarture.ai) artist protection platform.
 
 ## License
 
