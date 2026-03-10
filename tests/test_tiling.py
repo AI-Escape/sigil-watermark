@@ -152,11 +152,7 @@ class TestCropRobustnessIntegration:
         cropped = crop_image(watermarked, 0.10)
         result = detector.detect(cropped, author_keys.public_key)
         # After crop, tile alignment may shift — accept ring or payload signal
-        assert (
-            result.detected
-            or result.payload_confidence > 0.4
-            or result.ring_confidence > 0.5
-        ), (
+        assert result.detected or result.payload_confidence > 0.4 or result.ring_confidence > 0.5, (
             f"10% crop failed: conf={result.payload_confidence:.2f}, "
             f"ring={result.ring_confidence:.2f}"
         )
