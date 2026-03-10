@@ -17,7 +17,6 @@ jobs:
 
   typecheck:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
@@ -25,6 +24,7 @@ jobs:
       - run: uvx ty check src/
 
   test:
+    needs: [lint, typecheck]
     runs-on: ubuntu-latest
     strategy:
       matrix:
