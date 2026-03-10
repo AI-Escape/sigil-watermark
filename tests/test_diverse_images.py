@@ -12,11 +12,10 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.config import SigilConfig
-from sigil_watermark.color import extract_y_channel
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.keygen import generate_author_keys
 
 
 @pytest.fixture
@@ -395,10 +394,13 @@ class TestDiverseRoundTrip:
         result = detector.detect(watermarked, author_keys.public_key)
         # Noise-only and extreme textures may have reduced confidence
         if name in ("noise_only", "high_texture"):
-            assert result.detected or result.payload_confidence > 0.4, \
+            assert result.detected or result.payload_confidence > 0.4, (
                 f"{name}: conf={result.payload_confidence:.2f}"
+            )
         else:
-            assert result.detected, f"{name}: detection failed, conf={result.payload_confidence:.2f}"
+            assert result.detected, (
+                f"{name}: detection failed, conf={result.payload_confidence:.2f}"
+            )
 
     def test_no_false_positive(self, detector, author_keys, diverse_image):
         name, img = diverse_image
@@ -425,16 +427,18 @@ class TestDiverseJPEG:
         watermarked = embedder.embed(img, author_keys)
         compressed = _jpeg_compress(watermarked, quality)
         result = detector.detect(compressed, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.35, \
+        assert result.detected or result.payload_confidence > 0.35, (
             f"{name} JPEG Q{quality}: conf={result.payload_confidence:.2f}"
+        )
 
     def test_rgb_jpeg(self, embedder, detector, author_keys, rgb_diverse_image):
         name, img = rgb_diverse_image
         watermarked = embedder.embed(img, author_keys)
         compressed = _jpeg_compress(watermarked, 75)
         result = detector.detect(compressed, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.35, \
+        assert result.detected or result.payload_confidence > 0.35, (
             f"{name} RGB JPEG Q75: conf={result.payload_confidence:.2f}"
+        )
 
 
 class TestDiverseNoise:
@@ -446,8 +450,9 @@ class TestDiverseNoise:
         watermarked = embedder.embed(img, author_keys)
         noisy = np.clip(watermarked + rng.normal(0, 10, watermarked.shape), 0, 255)
         result = detector.detect(noisy, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.35, \
+        assert result.detected or result.payload_confidence > 0.35, (
             f"{name} noise sigma=10: conf={result.payload_confidence:.2f}"
+        )
 
 
 class TestDiverseRotation:
@@ -459,15 +464,18 @@ class TestDiverseRotation:
         h, w = watermarked.shape
         M = cv2.getRotationMatrix2D((w / 2, h / 2), 90, 1.0)
         rotated = cv2.warpAffine(
-            watermarked.astype(np.float32), M, (w, h),
+            watermarked.astype(np.float32),
+            M,
+            (w, h),
             borderMode=cv2.BORDER_REFLECT_101,
         ).astype(np.float64)
         result = detector.detect(rotated, author_keys.public_key)
         if name in ("noise_only",):
             assert result.payload_confidence > 0.2 or result.ring_confidence > 0.3
         else:
-            assert result.detected or result.payload_confidence > 0.4, \
+            assert result.detected or result.payload_confidence > 0.4, (
                 f"{name} rot90: conf={result.payload_confidence:.2f}"
+            )
 
 
 class TestDiverseCrop:
@@ -485,8 +493,10 @@ class TestDiverseCrop:
             (w - nw) // 2 : (w - nw) // 2 + nw,
         ].copy()
         result = detector.detect(cropped, author_keys.public_key)
-        assert result.ring_confidence > 0.3 or result.payload_confidence > 0.3, \
-            f"{name} crop10%: ring={result.ring_confidence:.2f}, payload={result.payload_confidence:.2f}"
+        assert result.ring_confidence > 0.3 or result.payload_confidence > 0.3, (
+            f"{name} crop10%: ring={result.ring_confidence:.2f}, "
+            f"payload={result.payload_confidence:.2f}"
+        )
 
 
 class TestDiverseCombined:
@@ -499,8 +509,9 @@ class TestDiverseCombined:
         attacked = _jpeg_compress(watermarked, 75)
         attacked = np.clip(attacked + rng.normal(0, 5, attacked.shape), 0, 255)
         result = detector.detect(attacked, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"{name} JPEG+noise: conf={result.payload_confidence:.2f}"
+        )
 
 
 class TestDiverseReport:
@@ -528,14 +539,10 @@ class TestDiverseReport:
             r_clean = detector.detect(watermarked, author_keys.public_key)
 
             # JPEG Q75
-            r_j75 = detector.detect(
-                _jpeg_compress(watermarked, 75), author_keys.public_key
-            )
+            r_j75 = detector.detect(_jpeg_compress(watermarked, 75), author_keys.public_key)
 
             # JPEG Q50
-            r_j50 = detector.detect(
-                _jpeg_compress(watermarked, 50), author_keys.public_key
-            )
+            r_j50 = detector.detect(_jpeg_compress(watermarked, 50), author_keys.public_key)
 
             # Noise sigma=10
             noisy = np.clip(watermarked + rng.normal(0, 10, watermarked.shape), 0, 255)
@@ -547,14 +554,18 @@ class TestDiverseReport:
                 h, w = watermarked.shape
                 M = cv2.getRotationMatrix2D((w / 2, h / 2), 90, 1.0)
                 rotated = cv2.warpAffine(
-                    watermarked.astype(np.float32), M, (w, h),
+                    watermarked.astype(np.float32),
+                    M,
+                    (w, h),
                     borderMode=cv2.BORDER_REFLECT_101,
                 ).astype(np.float64)
             else:
                 h, w = watermarked.shape[:2]
                 M = cv2.getRotationMatrix2D((w / 2, h / 2), 90, 1.0)
                 rotated = cv2.warpAffine(
-                    watermarked.astype(np.float32), M, (w, h),
+                    watermarked.astype(np.float32),
+                    M,
+                    (w, h),
                     borderMode=cv2.BORDER_REFLECT_101,
                 ).astype(np.float64)
             r_rot = detector.detect(rotated, author_keys.public_key)

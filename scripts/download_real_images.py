@@ -12,7 +12,6 @@ Usage:
     uv run python scripts/download_real_images.py
 """
 
-import hashlib
 import sys
 import urllib.request
 from pathlib import Path
@@ -58,8 +57,7 @@ IMAGES = [
     ),
     (
         "persistence_of_memory.jpg",
-        "https://upload.wikimedia.org/wikipedia/en/d/dd/"
-        "The_Persistence_of_Memory.jpg",
+        "https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg",
         "Dali - Persistence of Memory (1931). Surreal, smooth + detailed.",
     ),
     # === Photographs ===

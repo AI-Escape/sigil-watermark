@@ -11,12 +11,11 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.config import SigilConfig
-from sigil_watermark.tiling import majority_vote, best_tile_size, tile_embed, tile_extract
-from sigil_watermark.transforms import dwt_decompose, dwt_reconstruct
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.keygen import generate_author_keys
+from sigil_watermark.tiling import best_tile_size, majority_vote
 
 
 @pytest.fixture
@@ -73,8 +72,7 @@ class TestAsymmetricCrop:
         cropped = watermarked[:, int(w * 0.2) :].copy()
         result = detector.detect(cropped, author_keys.public_key)
         assert result.ring_confidence > 0.3 or result.payload_confidence > 0.3, (
-            f"Left crop: ring={result.ring_confidence:.2f}, "
-            f"payload={result.payload_confidence:.2f}"
+            f"Left crop: ring={result.ring_confidence:.2f}, payload={result.payload_confidence:.2f}"
         )
 
     def test_crop_top_only(self, embedder, detector, author_keys):
@@ -248,7 +246,7 @@ class TestMajorityVote:
     def test_many_voters_noise(self):
         """9 correct + 3 flipped should still recover."""
         correct = [1, 0, 1, 1, 0, 0, 1, 0]
-        rng = np.random.default_rng(42)
+        np.random.default_rng(42)
         all_bits = []
         for i in range(12):
             if i < 9:
@@ -350,8 +348,6 @@ class TestTileSurvivalCombined:
             (h - nh) // 2 : (h - nh) // 2 + nh,
             (w - nw) // 2 : (w - nw) // 2 + nw,
         ].copy()
-        attacked = cv2.GaussianBlur(
-            cropped.astype(np.float32), (5, 5), 1.0
-        ).astype(np.float64)
+        attacked = cv2.GaussianBlur(cropped.astype(np.float32), (5, 5), 1.0).astype(np.float64)
         result = detector.detect(attacked, author_keys.public_key)
         assert result.ring_confidence > 0.2 or result.payload_confidence > 0.2

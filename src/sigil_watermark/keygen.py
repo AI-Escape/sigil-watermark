@@ -11,14 +11,13 @@ import hmac
 from dataclasses import dataclass
 
 import numpy as np
+from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import (
     Ed25519PrivateKey,
-    Ed25519PublicKey,
 )
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
-from cryptography.hazmat.primitives import hashes, serialization
 
-from sigil_watermark.config import SigilConfig, DEFAULT_CONFIG
+from sigil_watermark.config import DEFAULT_CONFIG, SigilConfig
 
 
 @dataclass
@@ -108,16 +107,14 @@ def _bytes_to_bipolar_pn(data: bytes, length: int) -> np.ndarray:
     expanded = bytearray()
     counter = 0
     while len(expanded) < needed_bytes:
-        expanded.extend(
-            hmac.new(data, counter.to_bytes(4, "big"), hashlib.sha256).digest()
-        )
+        expanded.extend(hmac.new(data, counter.to_bytes(4, "big"), hashlib.sha256).digest())
         counter += 1
 
     # Convert bytes to bits, then to bipolar
     bits = np.unpackbits(np.frombuffer(bytes(expanded[:needed_bytes]), dtype=np.uint8))
     bits = bits[:length]  # Trim to exact length
     # Map 0 -> -1, 1 -> +1
-    return (bits.astype(np.float64) * 2 - 1)
+    return bits.astype(np.float64) * 2 - 1
 
 
 def derive_pn_sequence(
@@ -140,9 +137,7 @@ def derive_ring_radii(
     guaranteed to be distinct.
     """
     seed = _hkdf_derive(public_key, salt=config.ring_salt, info=b"ring-radii", length=32)
-    rng = np.random.default_rng(
-        seed=int.from_bytes(seed[:8], "big")
-    )
+    rng = np.random.default_rng(seed=int.from_bytes(seed[:8], "big"))
     span = config.ring_radius_max - config.ring_radius_min
 
     # Generate evenly-spaced base radii with random jitter for distinctness
@@ -162,9 +157,7 @@ def derive_ring_phase_offsets(
 
     Returns array of phase offsets in [0, 2*pi) for each ring.
     """
-    seed = _hkdf_derive(
-        public_key, salt=config.ring_salt, info=b"ring-phase-offsets", length=32
-    )
+    seed = _hkdf_derive(public_key, salt=config.ring_salt, info=b"ring-phase-offsets", length=32)
     rng = np.random.default_rng(seed=int.from_bytes(seed[:8], "big"))
     return rng.uniform(0, 2 * np.pi, num_rings)
 
@@ -192,7 +185,7 @@ def derive_content_ring_radii(
     coarse = np.zeros(64, dtype=np.float64)
     for i in range(8):
         for j in range(8):
-            block = gray[i * block_h:(i + 1) * block_h, j * block_w:(j + 1) * block_w]
+            block = gray[i * block_h : (i + 1) * block_h, j * block_w : (j + 1) * block_w]
             coarse[i * 8 + j] = block.mean()
     # Quantize to bytes for hashing (robust to small pixel changes)
     coarse_bytes = np.clip(coarse, 0, 255).astype(np.uint8).tobytes()
@@ -200,8 +193,7 @@ def derive_content_ring_radii(
     # Combine image hash with key
     content_hash = hashlib.sha256(public_key + coarse_bytes).digest()
     seed = _hkdf_derive(
-        content_hash, salt=config.content_ring_salt,
-        info=b"content-ring-radii", length=32
+        content_hash, salt=config.content_ring_salt, info=b"content-ring-radii", length=32
     )
     rng = np.random.default_rng(seed=int.from_bytes(seed[:8], "big"))
 
@@ -222,8 +214,7 @@ def derive_sentinel_ring_radii(
     Returns array of `config.num_sentinel_rings` radii.
     """
     seed = _hkdf_derive(
-        config.sentinel_secret, salt=config.sentinel_salt,
-        info=b"sentinel-ring-radii", length=32
+        config.sentinel_secret, salt=config.sentinel_salt, info=b"sentinel-ring-radii", length=32
     )
     rng = np.random.default_rng(seed=int.from_bytes(seed[:8], "big"))
 
@@ -285,9 +276,7 @@ def get_ghost_hash_pns(
     """
     pns = []
     for i in range(num_bits):
-        seed_bytes = hashlib.sha256(
-            f"signarture-ghost-hash-pn-v1-{i}".encode()
-        ).digest()
+        seed_bytes = hashlib.sha256(f"signarture-ghost-hash-pn-v1-{i}".encode()).digest()
         pn = _bytes_to_bipolar_pn(seed_bytes, length)
         pns.append(pn)
     return pns
@@ -320,9 +309,7 @@ def get_universal_beacon_pn(
     config: SigilConfig = DEFAULT_CONFIG,
 ) -> np.ndarray:
     """Get the universal Signarture beacon PN sequence (same for all watermarks)."""
-    seed = _hkdf_derive(
-        config.beacon_seed, salt=config.beacon_salt, info=b"beacon-pn", length=32
-    )
+    seed = _hkdf_derive(config.beacon_seed, salt=config.beacon_salt, info=b"beacon-pn", length=32)
     return _bytes_to_bipolar_pn(seed, length)
 
 

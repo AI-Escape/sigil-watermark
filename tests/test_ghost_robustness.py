@@ -8,18 +8,16 @@ import io
 import cv2
 import numpy as np
 import pytest
-from PIL import Image
-
-from sigil_watermark.ghost.spectral_analysis import (
-    analyze_ghost_signature,
-    batch_analyze_ghost,
-    GhostAnalysisResult,
-)
-
 from conftest import (
     NATURAL_IMAGE_GENERATORS,
     make_natural_scene,
-    jpeg_roundtrip_gray,
+)
+from PIL import Image
+
+from sigil_watermark.ghost.spectral_analysis import (
+    GhostAnalysisResult,
+    analyze_ghost_signature,
+    batch_analyze_ghost,
 )
 
 
@@ -49,7 +47,9 @@ class TestGhostSurvivesJPEG:
         compressed_clean = _jpeg_compress(img, quality)
 
         wm_result = analyze_ghost_signature(compressed_wm, multi_author_keys.public_key, config)
-        clean_result = analyze_ghost_signature(compressed_clean, multi_author_keys.public_key, config)
+        clean_result = analyze_ghost_signature(
+            compressed_clean, multi_author_keys.public_key, config
+        )
 
         assert wm_result.correlation != clean_result.correlation, (
             f"Ghost correlation identical on {name} after JPEG Q{quality}"
@@ -90,8 +90,12 @@ class TestGhostSurvivesBlur:
         name, img = natural_image
         watermarked = embedder.embed(img, multi_author_keys)
         ksize = max(3, int(sigma * 6) | 1)
-        blurred_wm = cv2.GaussianBlur(watermarked.astype(np.float32), (ksize, ksize), sigma).astype(np.float64)
-        blurred_clean = cv2.GaussianBlur(img.astype(np.float32), (ksize, ksize), sigma).astype(np.float64)
+        blurred_wm = cv2.GaussianBlur(watermarked.astype(np.float32), (ksize, ksize), sigma).astype(
+            np.float64
+        )
+        blurred_clean = cv2.GaussianBlur(img.astype(np.float32), (ksize, ksize), sigma).astype(
+            np.float64
+        )
 
         wm_result = analyze_ghost_signature(blurred_wm, multi_author_keys.public_key, config)
         clean_result = analyze_ghost_signature(blurred_clean, multi_author_keys.public_key, config)
@@ -102,11 +106,17 @@ class TestGhostSurvivesBlur:
 
 class TestGhostSurvivesBrightness:
     @pytest.mark.parametrize("delta", [-40, 40])
-    def test_spectral_difference_brightness(self, embedder, natural_image, multi_author_keys, config, delta):
+    def test_spectral_difference_brightness(
+        self, embedder, natural_image, multi_author_keys, config, delta
+    ):
         name, img = natural_image
         watermarked = embedder.embed(img, multi_author_keys)
-        wm_result = analyze_ghost_signature(np.clip(watermarked + delta, 0, 255), multi_author_keys.public_key, config)
-        clean_result = analyze_ghost_signature(np.clip(img + delta, 0, 255), multi_author_keys.public_key, config)
+        wm_result = analyze_ghost_signature(
+            np.clip(watermarked + delta, 0, 255), multi_author_keys.public_key, config
+        )
+        clean_result = analyze_ghost_signature(
+            np.clip(img + delta, 0, 255), multi_author_keys.public_key, config
+        )
         # On binary/saturated images, clipping may produce identical spectra
         if name not in {"edges"}:
             assert wm_result.correlation != clean_result.correlation, (
@@ -114,7 +124,9 @@ class TestGhostSurvivesBrightness:
             )
 
     @pytest.mark.parametrize("factor", [0.7, 1.3])
-    def test_spectral_difference_contrast(self, embedder, natural_image, multi_author_keys, config, factor):
+    def test_spectral_difference_contrast(
+        self, embedder, natural_image, multi_author_keys, config, factor
+    ):
         name, img = natural_image
         watermarked = embedder.embed(img, multi_author_keys)
         wm_adj = np.clip(watermarked.mean() + factor * (watermarked - watermarked.mean()), 0, 255)
@@ -130,7 +142,9 @@ class TestGhostSurvivesBrightness:
 
 class TestGhostSurvivesGamma:
     @pytest.mark.parametrize("gamma", [0.7, 1.5])
-    def test_spectral_difference_gamma(self, embedder, natural_image, multi_author_keys, config, gamma):
+    def test_spectral_difference_gamma(
+        self, embedder, natural_image, multi_author_keys, config, gamma
+    ):
         name, img = natural_image
         watermarked = embedder.embed(img, multi_author_keys)
         wm_gamma = np.power(np.clip(watermarked, 0, 255) / 255.0, gamma) * 255.0
@@ -150,9 +164,7 @@ class TestGhostKeyDiscrimination:
         watermarked = embedder.embed(img, author_keys)
         right = analyze_ghost_signature(watermarked, author_keys.public_key, config)
         wrong = analyze_ghost_signature(watermarked, author_keys_b.public_key, config)
-        assert right.correlation != wrong.correlation, (
-            f"Key discrimination failed on {name}"
-        )
+        assert right.correlation != wrong.correlation, f"Key discrimination failed on {name}"
 
     def test_consistent_correlation_across_image_types(self, embedder, multi_author_keys, config):
         """Same author key should produce consistent patterns across diverse images."""
@@ -216,7 +228,8 @@ class TestGhostBandEnergies:
         clean_result = analyze_ghost_signature(img, multi_author_keys.public_key, config)
 
         different_count = sum(
-            1 for band in config.ghost_bands
+            1
+            for band in config.ghost_bands
             if abs(wm_result.band_energies[band] - clean_result.band_energies[band]) > 1.0
         )
         assert different_count >= 1, f"No band energies changed on {name}"

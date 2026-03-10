@@ -17,8 +17,8 @@ Outputs:
     scripts/output/vae_passband_report.txt      — text summary with band recommendations
 """
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import numpy as np
 
@@ -37,9 +37,7 @@ def load_vae():
     """Load the SD VAE model."""
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Loading VAE on {device}...")
-    vae = AutoencoderKL.from_pretrained(
-        "stabilityai/sd-vae-ft-mse", torch_dtype=torch.float32
-    )
+    vae = AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-mse", torch_dtype=torch.float32)
     vae = vae.to(device)
     vae.eval()
     return vae, device
@@ -117,9 +115,7 @@ def generate_diverse_images(n=50, size=(512, 512)):
                 a = rng.uniform(10, 40)
                 yy = np.arange(h).reshape(-1, 1)
                 xx = np.arange(w).reshape(1, -1)
-                img += a * np.sin(
-                    (yy * np.cos(angle) + xx * np.sin(angle)) / f
-                )
+                img += a * np.sin((yy * np.cos(angle) + xx * np.sin(angle)) / f)
             img += 128
 
         img += rng.normal(0, 5, (h, w))
@@ -204,6 +200,7 @@ def find_best_bands(radii, radial_values, n_bands=6, min_freq=0.05, max_freq=0.4
 
     # Smooth to avoid noise peaks
     from scipy.ndimage import uniform_filter1d
+
     smoothed = uniform_filter1d(masked_vals, size=5)
 
     # Find peaks (local maxima)
@@ -244,6 +241,7 @@ def save_plot(radii, radial_values, current_bands, best_bands, output_path):
     """Save a visualization of the VAE passband."""
     try:
         import matplotlib
+
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
     except ImportError:
@@ -258,14 +256,16 @@ def save_plot(radii, radial_values, current_bands, best_bands, output_path):
     # Mark current ghost bands
     for band in current_bands:
         ax.axvline(x=band, color="red", linestyle="--", alpha=0.7)
-    ax.axvline(x=current_bands[0], color="red", linestyle="--", alpha=0.7,
-               label="Current ghost bands")
+    ax.axvline(
+        x=current_bands[0], color="red", linestyle="--", alpha=0.7, label="Current ghost bands"
+    )
 
     # Mark recommended bands
     for freq, val in best_bands:
         ax.axvline(x=freq, color="green", linestyle="-", alpha=0.5)
-    ax.axvline(x=best_bands[0][0], color="green", linestyle="-", alpha=0.5,
-               label="Recommended bands")
+    ax.axvline(
+        x=best_bands[0][0], color="green", linestyle="-", alpha=0.5, label="Recommended bands"
+    )
 
     ax.set_xlabel("Normalized Frequency (fraction of Nyquist)")
     ax.set_ylabel("Power Survival Ratio (after/before)")
@@ -323,10 +323,14 @@ def main():
     mid_mask = (radii > 0.05) & (radii < 0.45)
     if mid_mask.any():
         mid_vals = radial_values[mid_mask]
-        print(f"\nMid-frequency statistics (0.05-0.45 Nyquist):")
+        print("\nMid-frequency statistics (0.05-0.45 Nyquist):")
         print(f"  Mean survival: {mid_vals.mean():.4f}")
-        print(f"  Max survival:  {mid_vals.max():.4f} at {radii[mid_mask][np.argmax(mid_vals)]:.3f}")
-        print(f"  Min survival:  {mid_vals.min():.4f} at {radii[mid_mask][np.argmin(mid_vals)]:.3f}")
+        print(
+            f"  Max survival:  {mid_vals.max():.4f} at {radii[mid_mask][np.argmax(mid_vals)]:.3f}"
+        )
+        print(
+            f"  Min survival:  {mid_vals.min():.4f} at {radii[mid_mask][np.argmin(mid_vals)]:.3f}"
+        )
 
     # Save report
     report_path = OUTPUT_DIR / "vae_passband_report.txt"
@@ -337,25 +341,24 @@ def main():
         for band in current_bands:
             idx = np.argmin(np.abs(radii - band))
             f.write(f"  {band:.3f}: survival = {radial_values[idx]:.4f}\n")
-        f.write(f"\nRecommended bands:\n")
+        f.write("\nRecommended bands:\n")
         for freq, val in best_bands:
             f.write(f"  {freq:.3f}: survival = {val:.4f}\n")
-        f.write(f"\nRecommended config:\n")
+        f.write("\nRecommended config:\n")
         band_tuple = tuple(round(freq, 3) for freq, _ in best_bands)
         f.write(f"  ghost_bands = {band_tuple}\n")
-        f.write(f"  ghost_bandwidth = 0.05\n")
+        f.write("  ghost_bandwidth = 0.05\n")
     print(f"\nReport saved to {report_path}")
 
     # Save plot
-    save_plot(radii, radial_values, current_bands, best_bands,
-              OUTPUT_DIR / "vae_passband_plot.png")
+    save_plot(radii, radial_values, current_bands, best_bands, OUTPUT_DIR / "vae_passband_plot.png")
 
     # Print config recommendation
     band_tuple = tuple(round(freq, 3) for freq, _ in best_bands)
     print(f"\n{'=' * 70}")
-    print(f"RECOMMENDED CONFIG CHANGE:")
+    print("RECOMMENDED CONFIG CHANGE:")
     print(f"  ghost_bands = {band_tuple}")
-    print(f"  ghost_bandwidth = 0.05")
+    print("  ghost_bandwidth = 0.05")
     print(f"{'=' * 70}")
 
 

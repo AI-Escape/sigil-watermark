@@ -6,24 +6,25 @@ Tests watermark survival under various attacks, parameterized across:
 """
 
 import io
+
 import numpy as np
 import pytest
-from PIL import Image
-
 from conftest import (
-    NATURAL_IMAGE_GENERATORS,
     make_natural_scene,
+)
+from conftest import (
     psnr as compute_psnr,
 )
-
+from PIL import Image
 
 # --- Attack functions ---
 
+
 def jpeg_compress(image: np.ndarray, quality: int) -> np.ndarray:
     img_uint8 = np.clip(image, 0, 255).astype(np.uint8)
-    pil_img = Image.fromarray(img_uint8, mode='L')
+    pil_img = Image.fromarray(img_uint8, mode="L")
     buf = io.BytesIO()
-    pil_img.save(buf, format='JPEG', quality=quality)
+    pil_img.save(buf, format="JPEG", quality=quality)
     buf.seek(0)
     return np.array(Image.open(buf), dtype=np.float64)
 
@@ -36,20 +37,21 @@ def crop_image(image: np.ndarray, crop_fraction: float) -> np.ndarray:
     new_w = max(new_w - new_w % 2, 64)
     y_start = (h - new_h) // 2
     x_start = (w - new_w) // 2
-    return image[y_start:y_start + new_h, x_start:x_start + new_w].copy()
+    return image[y_start : y_start + new_h, x_start : x_start + new_w].copy()
 
 
 def rotate_image(image: np.ndarray, angle: float) -> np.ndarray:
     import cv2
+
     h, w = image.shape
     center = (w // 2, h // 2)
     M = cv2.getRotationMatrix2D(center, angle, 1.0)
-    return cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_LINEAR,
-                          borderMode=cv2.BORDER_REFLECT)
+    return cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
 
 
 def resize_image(image: np.ndarray, scale: float) -> np.ndarray:
     import cv2
+
     h, w = image.shape
     new_h, new_w = int(h * scale), int(w * scale)
     resized = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_LINEAR)
@@ -71,6 +73,7 @@ def adjust_contrast(image: np.ndarray, factor: float) -> np.ndarray:
 
 
 # --- JPEG Compression Tests ---
+
 
 class TestJPEGRobustness:
     """Watermark survival under JPEG compression, across image types and keys."""
@@ -102,11 +105,11 @@ class TestJPEGRobustness:
         compressed = jpeg_compress(watermarked, 20)
         beacon = detector.detect_beacon(compressed)
         result = detector.detect(compressed, multi_author_keys.public_key)
-        assert beacon or result.payload_confidence > 0.3, \
-            "No watermark trace survives JPEG Q20"
+        assert beacon or result.payload_confidence > 0.3, "No watermark trace survives JPEG Q20"
 
 
 # --- Cropping Tests ---
+
 
 class TestCropRobustness:
     """Watermark survival under cropping."""
@@ -118,8 +121,10 @@ class TestCropRobustness:
         watermarked = embedder.embed(img, multi_author_keys)
         cropped = crop_image(watermarked, crop_frac)
         result = detector.detect(cropped, multi_author_keys.public_key)
-        assert result.ring_confidence > 0.1, \
-            f"Ring detection failed after {int(crop_frac*100)}% crop (conf={result.ring_confidence:.2f})"
+        assert result.ring_confidence > 0.1, (
+            f"Ring detection failed after {int(crop_frac * 100)}% crop "
+            f"(conf={result.ring_confidence:.2f})"
+        )
 
     def test_crop_50_percent_partial(self, embedder, detector, multi_author_keys):
         """50% crop -- severe, but ring detection may still show signal."""
@@ -127,11 +132,13 @@ class TestCropRobustness:
         watermarked = embedder.embed(img, multi_author_keys)
         cropped = crop_image(watermarked, 0.50)
         result = detector.detect(cropped, multi_author_keys.public_key)
-        assert result.ring_confidence > 0.1 or result.payload_confidence > 0.3, \
-            f"No signal after 50% crop"
+        assert result.ring_confidence > 0.1 or result.payload_confidence > 0.3, (
+            "No signal after 50% crop"
+        )
 
 
 # --- Rotation Tests ---
+
 
 class TestRotationRobustness:
     """Watermark survival under rotation."""
@@ -155,11 +162,13 @@ class TestRotationRobustness:
         if angle <= 1.0:
             assert result.detected, f"Detection failed after {angle} rotation+correction"
         else:
-            assert result.beacon_found or result.payload_confidence > 0.4, \
+            assert result.beacon_found or result.payload_confidence > 0.4, (
                 f"No signal after {angle} rotation+correction"
+            )
 
 
 # --- Resize Tests ---
+
 
 class TestResizeRobustness:
     """Watermark survival under resizing."""
@@ -171,8 +180,7 @@ class TestResizeRobustness:
         resized = resize_image(watermarked, scale)
         result = detector.detect(resized, multi_author_keys.public_key)
         assert result.detected or result.payload_confidence > 0.4, (
-            f"No signal after {scale}x resize roundtrip: "
-            f"payload={result.payload_confidence:.3f}"
+            f"No signal after {scale}x resize roundtrip: payload={result.payload_confidence:.3f}"
         )
 
     def test_resize_quarter_and_back(self, embedder, detector, multi_author_keys):
@@ -180,11 +188,13 @@ class TestResizeRobustness:
         watermarked = embedder.embed(img, multi_author_keys)
         resized = resize_image(watermarked, 0.25)
         result = detector.detect(resized, multi_author_keys.public_key)
-        assert result.beacon_found or result.payload_confidence > 0.3, \
+        assert result.beacon_found or result.payload_confidence > 0.3, (
             "No signal after 0.25x resize roundtrip"
+        )
 
 
 # --- Noise Tests ---
+
 
 class TestNoiseRobustness:
     """Watermark survival under additive noise."""
@@ -203,8 +213,7 @@ class TestNoiseRobustness:
         noisy = add_gaussian_noise(watermarked, sigma)
         result = detector.detect(noisy, multi_author_keys.public_key)
         assert result.detected or result.payload_confidence > 0.4, (
-            f"No signal on {name} with sigma={sigma} noise: "
-            f"payload={result.payload_confidence:.3f}"
+            f"No signal on {name} with sigma={sigma} noise: payload={result.payload_confidence:.3f}"
         )
 
     def test_heavy_noise(self, embedder, detector, multi_author_keys):
@@ -212,11 +221,13 @@ class TestNoiseRobustness:
         watermarked = embedder.embed(img, multi_author_keys)
         noisy = add_gaussian_noise(watermarked, 20)
         result = detector.detect(noisy, multi_author_keys.public_key)
-        assert result.beacon_found or result.payload_confidence > 0.3, \
+        assert result.beacon_found or result.payload_confidence > 0.3, (
             "No signal with sigma=20 noise"
+        )
 
 
 # --- Brightness/Contrast Tests ---
+
 
 class TestBrightnessContrastRobustness:
     """Watermark survival under brightness and contrast changes."""
@@ -239,6 +250,7 @@ class TestBrightnessContrastRobustness:
 
 
 # --- Combined Attacks ---
+
 
 class TestCombinedAttacks:
     """Watermark survival under multiple simultaneous attacks."""
@@ -265,12 +277,11 @@ class TestCombinedAttacks:
         attacked = add_gaussian_noise(resize_image(watermarked, 0.5), 5)
         result = detector.detect(attacked, multi_author_keys.public_key)
         # Resize 0.5x + sigma=5 noise is aggressive combined attack
-        assert result.detected or result.payload_confidence > 0.3, (
-            "No signal after resize + noise"
-        )
+        assert result.detected or result.payload_confidence > 0.3, "No signal after resize + noise"
 
 
 # --- Quality Metrics Across Image Types ---
+
 
 class TestQualityMetrics:
     """Measure PSNR and max deviation across all natural image types and keys."""
@@ -297,6 +308,7 @@ class TestQualityMetrics:
 
 # --- Robustness Report ---
 
+
 class TestRobustnessReport:
     def test_print_robustness_summary(self, embedder, detector, author_keys, capsys):
         img = make_natural_scene()
@@ -315,11 +327,11 @@ class TestRobustnessReport:
             "Contrast 1.3x": adjust_contrast(watermarked, 1.3),
         }
 
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print(f"ROBUSTNESS REPORT (PSNR: {p:.1f} dB)")
-        print(f"{'='*70}")
+        print(f"{'=' * 70}")
         print(f"{'Attack':<20} {'Detected':>10} {'Payload':>10} {'Ring':>10} {'AuthorID':>10}")
-        print(f"{'-'*70}")
+        print(f"{'-' * 70}")
 
         for name, attacked_img in attacks.items():
             result = detector.detect(attacked_img, author_keys.public_key)
@@ -330,4 +342,4 @@ class TestRobustnessReport:
                 f"{result.ring_confidence:>10.2f} "
                 f"{'YES' if result.author_id_match else 'no':>10}"
             )
-        print(f"{'='*70}")
+        print(f"{'=' * 70}")

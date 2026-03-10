@@ -10,10 +10,10 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.config import SigilConfig
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.keygen import generate_author_keys
 
 
 @pytest.fixture
@@ -27,10 +27,7 @@ def _make_image(rng, size=(512, 512)):
     for i in range(h):
         for j in range(w):
             img[i, j] = (
-                128
-                + 40 * np.sin(i / 20.0)
-                + 30 * np.cos(j / 15.0)
-                + 20 * np.sin((i + j) / 25.0)
+                128 + 40 * np.sin(i / 20.0) + 30 * np.cos(j / 15.0) + 20 * np.sin((i + j) / 25.0)
             )
     img += rng.normal(0, 8, img.shape)
     return np.clip(img, 0, 255)
@@ -117,9 +114,7 @@ class TestEmbedStrength:
             watermarked = embedder.embed(img, author_keys)
             mse = np.mean((watermarked - img) ** 2)
             psnr = 10 * np.log10(255.0**2 / mse) if mse > 0 else float("inf")
-            assert psnr < prev_psnr, (
-                f"PSNR not decreasing: strength {strength} -> {psnr:.1f} dB"
-            )
+            assert psnr < prev_psnr, f"PSNR not decreasing: strength {strength} -> {psnr:.1f} dB"
             prev_psnr = psnr
 
 
@@ -130,9 +125,7 @@ class TestRingStrength:
     """Ring strength affects DFT layer robustness."""
 
     @pytest.mark.parametrize("ring_strength", [20.0, 50.0, 100.0])
-    def test_ring_detection_at_different_strengths(
-        self, author_keys, ring_strength
-    ):
+    def test_ring_detection_at_different_strengths(self, author_keys, ring_strength):
         config = SigilConfig(ring_strength=ring_strength)
         embedder = SigilEmbedder(config=config)
         detector = SigilDetector(config=config)
@@ -339,10 +332,7 @@ class TestConfigReport:
         print(f"\n{'=' * 80}")
         print("CONFIG SENSITIVITY COMPARISON")
         print(f"{'=' * 80}")
-        print(
-            f"{'Config':<15} {'PSNR':>6} {'Clean':>7} {'JPGQ75':>7} "
-            f"{'JPGQ50':>7} {'Ring':>6}"
-        )
+        print(f"{'Config':<15} {'PSNR':>6} {'Clean':>7} {'JPGQ75':>7} {'JPGQ50':>7} {'Ring':>6}")
         print(f"{'-' * 80}")
 
         for name, cfg in configs.items():

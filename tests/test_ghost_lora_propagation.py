@@ -33,8 +33,8 @@ except ImportError:
 
 from sigil_watermark.config import SigilConfig
 from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.ghost.spectral_analysis import analyze_ghost_signature, batch_analyze_ghost
 from sigil_watermark.keygen import generate_author_keys
-from sigil_watermark.ghost.spectral_analysis import batch_analyze_ghost, analyze_ghost_signature
 
 pytestmark = [
     pytest.mark.gpu,
@@ -117,7 +117,9 @@ def training_data_and_generated(author_keys, config):
     vae = AutoencoderKL.from_pretrained(model_id, subfolder="vae", torch_dtype=dtype)
     unet = UNet2DConditionModel.from_pretrained(model_id, subfolder="unet", torch_dtype=dtype)
     tokenizer = CLIPTokenizer.from_pretrained(model_id, subfolder="tokenizer")
-    text_encoder = CLIPTextModel.from_pretrained(model_id, subfolder="text_encoder", torch_dtype=dtype)
+    text_encoder = CLIPTextModel.from_pretrained(
+        model_id, subfolder="text_encoder", torch_dtype=dtype
+    )
     scheduler = DDPMScheduler.from_pretrained(model_id, subfolder="scheduler")
 
     vae = vae.to(device)
@@ -233,9 +235,7 @@ class TestGhostLoRAPropagation:
             f"  Band energies: {result.band_energies}"
         )
 
-    def test_ghost_wrong_key_no_detection(
-        self, training_data_and_generated, wrong_keys, config
-    ):
+    def test_ghost_wrong_key_no_detection(self, training_data_and_generated, wrong_keys, config):
         """Ghost correlation with wrong key should be near zero."""
         _, generated = training_data_and_generated
 

@@ -10,16 +10,15 @@ These tests verify correctness on diverse image content.
 
 import numpy as np
 import pytest
+from conftest import NATURAL_IMAGE_GENERATORS, make_natural_scene
 
 from sigil_watermark.ghost.spectral_analysis import (
+    GhostAnalysisResult,
     analyze_ghost_signature,
     batch_analyze_ghost,
     extract_ghost_hash,
-    GhostAnalysisResult,
 )
-from sigil_watermark.keygen import generate_author_keys, derive_ghost_hash
-
-from conftest import NATURAL_IMAGE_GENERATORS, make_natural_scene
+from sigil_watermark.keygen import derive_ghost_hash
 
 
 class TestSingleImageGhost:
@@ -41,7 +40,9 @@ class TestSingleImageGhost:
         result = analyze_ghost_signature(img, multi_author_keys.public_key, config)
         assert 0 <= result.p_value <= 1
 
-    def test_watermarked_vs_clean_difference(self, embedder, natural_image, multi_author_keys, config):
+    def test_watermarked_vs_clean_difference(
+        self, embedder, natural_image, multi_author_keys, config
+    ):
         """Watermarked and clean images should differ in spectral analysis."""
         name, img = natural_image
         watermarked = embedder.embed(img, multi_author_keys)
@@ -49,11 +50,11 @@ class TestSingleImageGhost:
         clean_result = analyze_ghost_signature(img, multi_author_keys.public_key, config)
         wm_result = analyze_ghost_signature(watermarked, multi_author_keys.public_key, config)
 
-        assert clean_result.correlation != wm_result.correlation, (
-            f"Ghost identical on {name}"
-        )
+        assert clean_result.correlation != wm_result.correlation, f"Ghost identical on {name}"
 
-    def test_wrong_key_different_correlation(self, embedder, natural_image, author_keys, author_keys_b, config):
+    def test_wrong_key_different_correlation(
+        self, embedder, natural_image, author_keys, author_keys_b, config
+    ):
         """Right key and wrong key should give different correlations."""
         name, img = natural_image
         watermarked = embedder.embed(img, author_keys)
@@ -89,7 +90,9 @@ class TestGhostHashExtraction:
             f"(threshold={max_errors}, expected {expected}, got {extracted})"
         )
 
-    def test_ghost_hash_wrong_key_differs(self, embedder, natural_image, author_keys, author_keys_b, config):
+    def test_ghost_hash_wrong_key_differs(
+        self, embedder, natural_image, author_keys, author_keys_b, config
+    ):
         """Ghost hash from wrong key should differ on images with sufficient spectral content."""
         name, img = natural_image
         # Pathological images can't reliably extract ghost hash at all

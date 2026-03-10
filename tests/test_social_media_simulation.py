@@ -15,12 +15,12 @@ import io
 import cv2
 import numpy as np
 import pytest
-from PIL import Image, ImageFilter
+from PIL import Image
 
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.config import SigilConfig
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.keygen import generate_author_keys
 
 
 @pytest.fixture
@@ -49,10 +49,7 @@ def _make_image(rng, size=(512, 512)):
     for i in range(h):
         for j in range(w):
             img[i, j] = (
-                128
-                + 40 * np.sin(i / 20.0)
-                + 30 * np.cos(j / 15.0)
-                + 20 * np.sin((i + j) / 25.0)
+                128 + 40 * np.sin(i / 20.0) + 30 * np.cos(j / 15.0) + 20 * np.sin((i + j) / 25.0)
             )
     img += rng.normal(0, 8, img.shape)
     return np.clip(img, 0, 255)
@@ -64,11 +61,7 @@ def _make_rgb_image(rng, size=(512, 512)):
     for c in range(3):
         for i in range(h):
             for j in range(w):
-                img[i, j, c] = (
-                    128
-                    + 40 * np.sin((i + c * 30) / 25)
-                    + 30 * np.cos((j + c * 20) / 20)
-                )
+                img[i, j, c] = 128 + 40 * np.sin((i + c * 30) / 25) + 30 * np.cos((j + c * 20) / 20)
     img += rng.normal(0, 5, img.shape)
     return np.clip(img, 0, 255)
 
@@ -92,20 +85,14 @@ def _jpeg_compress(image, quality):
 def _resize_to(image, new_h, new_w):
     """Resize image to specific dimensions."""
     if image.ndim == 3:
-        return cv2.resize(
-            image.astype(np.float32), (new_w, new_h)
-        ).astype(np.float64)
+        return cv2.resize(image.astype(np.float32), (new_w, new_h)).astype(np.float64)
     else:
-        return cv2.resize(
-            image.astype(np.float32), (new_w, new_h)
-        ).astype(np.float64)
+        return cv2.resize(image.astype(np.float32), (new_w, new_h)).astype(np.float64)
 
 
 def _sharpen(image, amount=1.0):
     """Unsharp masking sharpening."""
-    blurred = cv2.GaussianBlur(
-        image.astype(np.float32), (0, 0), 3
-    ).astype(np.float64)
+    blurred = cv2.GaussianBlur(image.astype(np.float32), (0, 0), 3).astype(np.float64)
     sharpened = image + amount * (image - blurred)
     return np.clip(sharpened, 0, 255)
 
@@ -203,8 +190,7 @@ class TestWhatsAppPipeline:
         attacked = _resize_to(attacked, 512, 512)
         result = detector.detect(attacked, author_keys.public_key)
         assert result.payload_confidence > 0.2 or result.ring_confidence > 0.2, (
-            f"WhatsApp: payload={result.payload_confidence:.2f}, "
-            f"ring={result.ring_confidence:.2f}"
+            f"WhatsApp: payload={result.payload_confidence:.2f}, ring={result.ring_confidence:.2f}"
         )
 
 

@@ -6,8 +6,8 @@ log-polar phase correlation. This replaces the stub in transforms.py.
 
 from __future__ import annotations
 
-import numpy as np
 import cv2
+import numpy as np
 
 
 def _highpass_filter(image: np.ndarray) -> np.ndarray:
@@ -107,8 +107,9 @@ def estimate_rotation_scale(
 
     # Make both the same size
     if mag_test.shape != mag_ref.shape:
-        mag_test = cv2.resize(mag_test.astype(np.float32),
-                              (mag_ref.shape[1], mag_ref.shape[0])).astype(np.float64)
+        mag_test = cv2.resize(
+            mag_test.astype(np.float32), (mag_ref.shape[1], mag_ref.shape[0])
+        ).astype(np.float64)
 
     # Highpass filter to suppress DC
     hpf = _highpass_filter(mag_ref)
@@ -156,7 +157,9 @@ def auto_correct(
     # Apply inverse: rotate back and rescale
     M = cv2.getRotationMatrix2D(center, -angle, 1.0 / scale)
     corrected = cv2.warpAffine(
-        image.astype(np.float32), M, (w, h),
+        image.astype(np.float32),
+        M,
+        (w, h),
         flags=cv2.INTER_LINEAR,
         borderMode=cv2.BORDER_REFLECT_101,
     )

@@ -11,10 +11,10 @@ Tests watermark embedding/detection on:
 import numpy as np
 import pytest
 
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.config import SigilConfig
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.tiling import best_tile_size
 
 
@@ -43,11 +43,7 @@ def _make_image(rng, size):
     img = np.zeros((h, w), dtype=np.float64)
     for i in range(h):
         for j in range(w):
-            img[i, j] = (
-                128
-                + 40 * np.sin(i / max(h / 25, 1))
-                + 30 * np.cos(j / max(w / 30, 1))
-            )
+            img[i, j] = 128 + 40 * np.sin(i / max(h / 25, 1)) + 30 * np.cos(j / max(w / 30, 1))
     img += rng.normal(0, 8, img.shape)
     return np.clip(img, 0, 255)
 

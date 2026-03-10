@@ -14,26 +14,19 @@ system's true vulnerability floor.
 """
 
 import numpy as np
-import pytest
+from conftest import NATURAL_IMAGE_GENERATORS, make_natural_scene
+from conftest import psnr as _psnr
 
-from sigil_watermark.config import SigilConfig
-from sigil_watermark.detect import SigilDetector, _encoded_payload_length
-from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.detect import _encoded_payload_length
+from sigil_watermark.ghost.spectral_analysis import analyze_ghost_signature
 from sigil_watermark.keygen import (
-    generate_author_keys,
+    build_ghost_composite_pn,
     derive_ring_radii,
     derive_sentinel_ring_radii,
-    derive_pn_sequence,
     get_universal_beacon_pn,
-    build_ghost_composite_pn,
 )
-from sigil_watermark.transforms import detect_dft_rings, dwt_decompose, dwt_reconstruct
 from sigil_watermark.tiling import best_tile_size
-from sigil_watermark.ghost.spectral_analysis import analyze_ghost_signature
-
-
-from conftest import make_natural_scene, NATURAL_IMAGE_GENERATORS, psnr as _psnr
-
+from sigil_watermark.transforms import detect_dft_rings, dwt_decompose, dwt_reconstruct
 
 # --- Attack 1: Ring Notch Filter ---
 
@@ -62,7 +55,7 @@ class TestRingNotchFilter:
         # Build notch mask: 1.0 everywhere except at ring positions
         notch_mask = np.ones((h, w), dtype=np.float64)
         for r in ring_radii:
-            ring_profile = np.exp(-((dist - r) ** 2) / (2 * config.ring_width ** 2))
+            ring_profile = np.exp(-((dist - r) ** 2) / (2 * config.ring_width**2))
             notch_mask -= notch_depth * ring_profile
 
         notch_mask = np.clip(notch_mask, 0.0, 1.0)
@@ -105,10 +98,14 @@ class TestRingNotchFilter:
         result = detector.detect(attacked, multi_author_keys.public_key)
 
         # Payload should survive ring notch (different domains)
-        print(f"Payload confidence: {baseline.payload_confidence:.3f} -> {result.payload_confidence:.3f}")
+        print(
+            f"Payload confidence: "
+            f"{baseline.payload_confidence:.3f} -> {result.payload_confidence:.3f}"
+        )
         assert result.payload_confidence > baseline.payload_confidence * 0.7, (
             f"Ring notch shouldn't damage payload: "
-            f"{baseline.payload_confidence:.3f} -> {result.payload_confidence:.3f}"
+            f"{baseline.payload_confidence:.3f} -> "
+            f"{result.payload_confidence:.3f}"
         )
 
     def test_ring_notch_image_quality(self, embedder, multi_author_keys, config):
@@ -178,7 +175,7 @@ class TestPNSubtraction:
                     for x in range(0, sw, ts):
                         th = min(ts, sh - y)
                         tw = min(ts, sw - x)
-                        tile = subband[y:y + th, x:x + tw]
+                        tile = subband[y : y + th, x : x + tw]
 
                         tile_n = th * tw
                         tile_sf = min(cfg.spreading_factor, tile_n // encoded_len)
@@ -189,7 +186,7 @@ class TestPNSubtraction:
                         flat = tile.flatten().copy()
 
                         # Step 1: Extract bits via correlation
-                        total_chips = encoded_len * tile_sf
+                        encoded_len * tile_sf
                         for i in range(encoded_len):
                             start = i * tile_sf
                             end = start + tile_sf
@@ -198,15 +195,17 @@ class TestPNSubtraction:
                             corr = np.dot(flat[start:end], tile_pn[start:end])
                             # Step 2: Subtract estimated contribution
                             estimated_bit = 1.0 if corr > 0 else -1.0
-                            flat[start:end] -= estimated_strength * estimated_bit * tile_pn[start:end]
+                            flat[start:end] -= (
+                                estimated_strength * estimated_bit * tile_pn[start:end]
+                            )
 
-                        subband[y:y + th, x:x + tw] = flat.reshape(th, tw)
+                        subband[y : y + th, x : x + tw] = flat.reshape(th, tw)
 
                 new_details[sb_idx] = subband
             coeffs[level_idx] = tuple(new_details)
 
         result = dwt_reconstruct(coeffs, wavelet=cfg.wavelet)
-        return result[:image.shape[0], :image.shape[1]]
+        return result[: image.shape[0], : image.shape[1]]
 
     def test_pn_subtraction_reduces_payload(self, embedder, detector, multi_author_keys, config):
         """PN subtraction should significantly reduce payload confidence."""
@@ -219,10 +218,14 @@ class TestPNSubtraction:
         attacked = self._subtract_pn_from_dwt(wm, config)
         result = detector.detect(attacked, multi_author_keys.public_key)
 
-        print(f"Payload confidence: {baseline.payload_confidence:.3f} -> {result.payload_confidence:.3f}")
+        print(
+            f"Payload confidence: "
+            f"{baseline.payload_confidence:.3f} -> {result.payload_confidence:.3f}"
+        )
         assert result.payload_confidence < baseline.payload_confidence, (
             f"PN subtraction didn't reduce payload: "
-            f"{baseline.payload_confidence:.3f} -> {result.payload_confidence:.3f}"
+            f"{baseline.payload_confidence:.3f} -> "
+            f"{result.payload_confidence:.3f}"
         )
 
     def test_pn_subtraction_preserves_rings(self, embedder, detector, multi_author_keys, config):
@@ -239,8 +242,8 @@ class TestPNSubtraction:
         # related transforms. Ring confidence may drop as a side effect, but the
         # attack is not specifically targeting rings.
         print(
-            f"Note: PN subtraction cross-domain leakage caused ring drop. "
-            f"This is expected — DWT coefficient changes affect the overall spectrum."
+            "Note: PN subtraction cross-domain leakage caused ring drop. "
+            "This is expected — DWT coefficient changes affect the overall spectrum."
         )
 
     def test_pn_subtraction_image_quality(self, embedder, multi_author_keys, config):
@@ -299,9 +302,7 @@ class TestGhostBandRemoval:
         estimated_depth = config.ghost_strength_multiplier / 10000.0
 
         for band_freq in config.ghost_bands:
-            band_mask = np.exp(
-                -((freq_dist - band_freq) ** 2) / (2 * config.ghost_bandwidth ** 2)
-            )
+            band_mask = np.exp(-((freq_dist - band_freq) ** 2) / (2 * config.ghost_bandwidth**2))
             # Reverse the multiplicative modulation
             demod = 1.0 + estimated_depth * pn_sign * band_mask
             f_shifted /= demod
@@ -390,7 +391,7 @@ class TestCombinedTargetedRemoval:
         ring_radii = derive_ring_radii(public_key, config=config)
         notch_mask = np.ones((h, w), dtype=np.float64)
         for r in ring_radii:
-            ring_profile = np.exp(-((dist - r) ** 2) / (2 * config.ring_width ** 2))
+            ring_profile = np.exp(-((dist - r) ** 2) / (2 * config.ring_width**2))
             notch_mask -= ring_profile
         notch_mask = np.clip(notch_mask, 0.0, 1.0)
 
@@ -401,9 +402,7 @@ class TestCombinedTargetedRemoval:
         pn_spectrum = np.fft.fftshift(np.fft.fft2(pn_2d))
 
         for band_freq in config.ghost_bands:
-            band_mask = np.exp(
-                -((freq_dist - band_freq) ** 2) / (2 * config.ghost_bandwidth ** 2)
-            )
+            band_mask = np.exp(-((freq_dist - band_freq) ** 2) / (2 * config.ghost_bandwidth**2))
             img_band = f_shifted * band_mask
             pn_band = pn_spectrum * band_mask
             pn_norm_sq = np.sum(np.abs(pn_band) ** 2)
@@ -448,7 +447,7 @@ class TestCombinedTargetedRemoval:
                             continue
 
                         tile_pn = payload_pn[:tile_n]
-                        flat = subband[ty:ty + th, tx:tx + tw].flatten().copy()
+                        flat = subband[ty : ty + th, tx : tx + tw].flatten().copy()
 
                         for i in range(encoded_len):
                             start = i * tile_sf
@@ -459,7 +458,7 @@ class TestCombinedTargetedRemoval:
                             est_bit = 1.0 if corr > 0 else -1.0
                             flat[start:end] -= config.embed_strength * est_bit * tile_pn[start:end]
 
-                        subband[ty:ty + th, tx:tx + tw] = flat.reshape(th, tw)
+                        subband[ty : ty + th, tx : tx + tw] = flat.reshape(th, tw)
 
                 new_details[sb_idx] = subband
             coeffs[level_idx] = tuple(new_details)
@@ -494,10 +493,14 @@ class TestCombinedTargetedRemoval:
         # Sentinel rings survive because the attacker doesn't know their positions.
         # Verify they're still present after the attack.
         from sigil_watermark.color import extract_y_channel
+
         y_attacked = extract_y_channel(attacked)
         sentinel_radii = derive_sentinel_ring_radii(config=config)
         _, sentinel_conf = detect_dft_rings(
-            y_attacked, sentinel_radii, tolerance=0.02, ring_width=config.ring_width,
+            y_attacked,
+            sentinel_radii,
+            tolerance=0.02,
+            ring_width=config.ring_width,
         )
         print(f"  Sentinel confidence after attack: {sentinel_conf:.3f}")
         # With adaptive ring strength on synthetic images, sentinel confidence
@@ -564,7 +567,7 @@ class TestQualityConstrainedRemoval:
             ring_radii = derive_ring_radii(public_key, config=config)
             notch_mask = np.ones((h, w), dtype=np.float64)
             for r in ring_radii:
-                ring_profile = np.exp(-((dist - r) ** 2) / (2 * config.ring_width ** 2))
+                ring_profile = np.exp(-((dist - r) ** 2) / (2 * config.ring_width**2))
                 notch_mask -= strength_scale * ring_profile
             notch_mask = np.clip(notch_mask, 0.0, 1.0)
 
@@ -602,7 +605,7 @@ class TestQualityConstrainedRemoval:
                                 continue
 
                             tile_pn = payload_pn[:tile_n]
-                            flat = subband[ty:ty + th, tx:tx + tw].flatten().copy()
+                            flat = subband[ty : ty + th, tx : tx + tw].flatten().copy()
 
                             for i in range(encoded_len):
                                 start = i * tile_sf
@@ -614,7 +617,7 @@ class TestQualityConstrainedRemoval:
                                 sub_strength = config.embed_strength * strength_scale
                                 flat[start:end] -= sub_strength * est_bit * tile_pn[start:end]
 
-                            subband[ty:ty + th, tx:tx + tw] = flat.reshape(th, tw)
+                            subband[ty : ty + th, tx : tx + tw] = flat.reshape(th, tw)
 
                     new_details[sb_idx] = subband
                 coeffs[level_idx] = tuple(new_details)
@@ -634,9 +637,7 @@ class TestQualityConstrainedRemoval:
         img = make_natural_scene()
         wm = embedder.embed(img, multi_author_keys)
 
-        attacked = self._quality_constrained_removal(
-            wm, multi_author_keys.public_key, config, 30.0
-        )
+        attacked = self._quality_constrained_removal(wm, multi_author_keys.public_key, config, 30.0)
         quality = _psnr(wm, attacked)
         result = detector.detect(attacked, multi_author_keys.public_key)
 
@@ -653,9 +654,7 @@ class TestQualityConstrainedRemoval:
         img = make_natural_scene()
         wm = embedder.embed(img, multi_author_keys)
 
-        attacked = self._quality_constrained_removal(
-            wm, multi_author_keys.public_key, config, 35.0
-        )
+        attacked = self._quality_constrained_removal(wm, multi_author_keys.public_key, config, 35.0)
         quality = _psnr(wm, attacked)
         result = detector.detect(attacked, multi_author_keys.public_key)
 

@@ -10,7 +10,7 @@ from __future__ import annotations
 import numpy as np
 from scipy.ndimage import uniform_filter
 
-from sigil_watermark.config import SigilConfig, DEFAULT_CONFIG
+from sigil_watermark.config import DEFAULT_CONFIG, SigilConfig
 
 
 def compute_perceptual_mask(
@@ -33,8 +33,8 @@ def compute_perceptual_mask(
     """
     # Compute local mean and variance
     local_mean = uniform_filter(image, size=block_size)
-    local_sq_mean = uniform_filter(image ** 2, size=block_size)
-    local_var = np.maximum(local_sq_mean - local_mean ** 2, 0)
+    local_sq_mean = uniform_filter(image**2, size=block_size)
+    local_var = np.maximum(local_sq_mean - local_mean**2, 0)
     local_std = np.sqrt(local_var)
 
     # Normalize: map local_std to [0, 1] range

@@ -54,7 +54,9 @@ def tile_embed(
 
             tile_pn = pn_sequence[:tile_n]
             result[y : y + th, x : x + tw] = embed_spread_spectrum(
-                tile, tile_pn, payload_bits,
+                tile,
+                tile_pn,
+                payload_bits,
                 strength=strength,
                 spreading_factor=tile_sf,
             )
@@ -97,7 +99,8 @@ def tile_extract(
 
             tile_pn = pn_sequence[:tile_n]
             bits = extract_spread_spectrum(
-                tile, tile_pn,
+                tile,
+                tile_pn,
                 num_bits=num_bits,
                 spreading_factor=tile_sf,
             )
@@ -109,9 +112,7 @@ def tile_extract(
     return majority_vote(all_bits, num_bits)
 
 
-def majority_vote(
-    all_bits: list[list[int]], num_bits: int
-) -> tuple[list[int], float]:
+def majority_vote(all_bits: list[list[int]], num_bits: int) -> tuple[list[int], float]:
     """Majority vote across multiple bit extractions.
 
     Returns:
@@ -139,7 +140,9 @@ def majority_vote(
     return voted, confidence
 
 
-def best_tile_size(subband_shape: tuple[int, int], tile_sizes: tuple[int, ...], num_bits: int) -> int:
+def best_tile_size(
+    subband_shape: tuple[int, int], tile_sizes: tuple[int, ...], num_bits: int
+) -> int:
     """Choose the largest tile size that gives at least 2 tiles and enough capacity.
 
     Args:

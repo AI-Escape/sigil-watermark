@@ -14,21 +14,20 @@ from PIL import Image
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from sigil_watermark.config import SigilConfig, DEFAULT_CONFIG
-from sigil_watermark.keygen import (
-    generate_author_keys,
-    derive_pn_sequence,
-    derive_ring_radii,
-    derive_ring_phase_offsets,
-    derive_content_ring_radii,
-    derive_sentinel_ring_radii,
-)
-from sigil_watermark.transforms import embed_dft_rings, dwt_decompose, dwt_reconstruct
-from sigil_watermark.perceptual import compute_perceptual_mask
-from sigil_watermark.tiling import tile_embed, best_tile_size
-from sigil_watermark.embed import build_payload, SigilEmbedder
 from sigil_watermark.color import prepare_for_embedding, reconstruct_from_embedding
-from sigil_watermark.keygen import get_universal_beacon_pn
+from sigil_watermark.config import DEFAULT_CONFIG
+from sigil_watermark.embed import SigilEmbedder, build_payload
+from sigil_watermark.keygen import (
+    derive_content_ring_radii,
+    derive_ring_phase_offsets,
+    derive_ring_radii,
+    derive_sentinel_ring_radii,
+    generate_author_keys,
+    get_universal_beacon_pn,
+)
+from sigil_watermark.perceptual import compute_perceptual_mask
+from sigil_watermark.tiling import best_tile_size, tile_embed
+from sigil_watermark.transforms import dwt_decompose, dwt_reconstruct, embed_dft_rings
 
 
 def amplified_diff_color(a: np.ndarray, b: np.ndarray, gain: float = 20.0) -> np.ndarray:
@@ -48,7 +47,7 @@ def amplified_diff_color(a: np.ndarray, b: np.ndarray, gain: float = 20.0) -> np
     # Create a heatmap: black -> red -> yellow -> white
     out = np.zeros((*diff.shape, 3), dtype=np.uint8)
     norm = diff / 255.0
-    out[..., 0] = np.clip(norm * 3, 0, 1) * 255          # Red ramps up first
+    out[..., 0] = np.clip(norm * 3, 0, 1) * 255  # Red ramps up first
     out[..., 1] = np.clip((norm - 0.33) * 3, 0, 1) * 255  # Green second
     out[..., 2] = np.clip((norm - 0.66) * 3, 0, 1) * 255  # Blue last
     return out
@@ -93,12 +92,15 @@ def _resize_mask(mask: np.ndarray, target_h: int, target_w: int) -> np.ndarray:
 def main():
     parser = argparse.ArgumentParser(description="Generate Sigil watermark example images.")
     parser.add_argument(
-        "--output-dir", type=Path,
+        "--output-dir",
+        type=Path,
         default=Path(__file__).parent / "output",
         help="Directory to write output images (default: scripts/output/)",
     )
     parser.add_argument(
-        "--source", type=Path, default=None,
+        "--source",
+        type=Path,
+        default=None,
         help="Source image path (default: <output-dir>/source.jpg)",
     )
     args = parser.parse_args()
@@ -136,10 +138,9 @@ def main():
     print("Saved after_all.png")
 
     # Now do per-layer intermediates on the Y channel to show what each layer adds
-    from sigil_watermark.color import prepare_for_embedding, reconstruct_from_embedding
 
     y_channel, color_meta = prepare_for_embedding(original.copy())
-    y_original = y_channel.copy()
+    y_channel.copy()
 
     # --- Layer 1: DFT Ring Anchor ---
     # Must match SigilEmbedder.embed() exactly: derive content rings from
@@ -155,13 +156,18 @@ def main():
     content_strength = cfg.ring_strength * len(content_radii) / total_rings
     adaptive_psnr = cfg.ring_target_psnr if cfg.adaptive_ring_strength else None
     y_after_l1 = embed_dft_rings(
-        y_channel.copy(), stable_radii, strength=stable_strength,
-        ring_width=cfg.ring_width, phase_offsets=stable_phase,
+        y_channel.copy(),
+        stable_radii,
+        strength=stable_strength,
+        ring_width=cfg.ring_width,
+        phase_offsets=stable_phase,
         target_psnr=adaptive_psnr,
         min_alpha_fraction=cfg.ring_min_alpha_fraction,
     )
     y_after_l1 = embed_dft_rings(
-        y_after_l1, content_radii, strength=content_strength,
+        y_after_l1,
+        content_radii,
+        strength=content_strength,
         ring_width=cfg.ring_width,
         target_psnr=adaptive_psnr,
         min_alpha_fraction=cfg.ring_min_alpha_fraction,
@@ -208,7 +214,9 @@ def main():
             mean_mask = _resize_mask(mask, sh, sw).mean()
             ts = best_tile_size((sh, sw), cfg.tile_sizes, len(encoded_payload))
             subband = tile_embed(
-                subband, payload_pn, encoded_payload,
+                subband,
+                payload_pn,
+                encoded_payload,
                 tile_size=ts,
                 strength=cfg.embed_strength * mean_mask,
                 spreading_factor=cfg.spreading_factor,

@@ -11,10 +11,10 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.config import SigilConfig
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.keygen import generate_author_keys
 
 
 @pytest.fixture
@@ -43,10 +43,7 @@ def _make_image(rng, size=(512, 512)):
     for i in range(h):
         for j in range(w):
             img[i, j] = (
-                128
-                + 40 * np.sin(i / 20.0)
-                + 30 * np.cos(j / 15.0)
-                + 20 * np.sin((i + j) / 25.0)
+                128 + 40 * np.sin(i / 20.0) + 30 * np.cos(j / 15.0) + 20 * np.sin((i + j) / 25.0)
             )
     img += rng.normal(0, 8, img.shape)
     return np.clip(img, 0, 255)
@@ -63,9 +60,7 @@ def _jpeg(image, quality):
 
 def _blur(image, sigma):
     ksize = max(3, int(sigma * 6) | 1)
-    return cv2.GaussianBlur(
-        image.astype(np.float32), (ksize, ksize), sigma
-    ).astype(np.float64)
+    return cv2.GaussianBlur(image.astype(np.float32), (ksize, ksize), sigma).astype(np.float64)
 
 
 def _noise(image, sigma, rng):
@@ -266,9 +261,7 @@ class TestRepeatedAttacks:
 class TestAttackOrdering:
     """Same attacks in different orders may have different effects."""
 
-    def test_jpeg_then_noise_vs_noise_then_jpeg(
-        self, embedder, detector, author_keys
-    ):
+    def test_jpeg_then_noise_vs_noise_then_jpeg(self, embedder, detector, author_keys):
         rng = np.random.default_rng(42)
         img = _make_image(rng)
         wm = embedder.embed(img, author_keys)
@@ -285,16 +278,14 @@ class TestAttackOrdering:
         result_b = detector.detect(b, author_keys.public_key)
 
         # Both should survive, but may have different confidence
-        assert (
-            result_a.payload_confidence > 0.3 or result_a.ring_confidence > 0.3
-        ), f"Order A failed: conf={result_a.payload_confidence:.2f}"
-        assert (
-            result_b.payload_confidence > 0.3 or result_b.ring_confidence > 0.3
-        ), f"Order B failed: conf={result_b.payload_confidence:.2f}"
+        assert result_a.payload_confidence > 0.3 or result_a.ring_confidence > 0.3, (
+            f"Order A failed: conf={result_a.payload_confidence:.2f}"
+        )
+        assert result_b.payload_confidence > 0.3 or result_b.ring_confidence > 0.3, (
+            f"Order B failed: conf={result_b.payload_confidence:.2f}"
+        )
 
-    def test_blur_then_gamma_vs_gamma_then_blur(
-        self, embedder, detector, author_keys
-    ):
+    def test_blur_then_gamma_vs_gamma_then_blur(self, embedder, detector, author_keys):
         rng = np.random.default_rng(42)
         img = _make_image(rng)
         wm = embedder.embed(img, author_keys)

@@ -21,8 +21,6 @@ from scipy.stats import binom
 
 from sigil_watermark.config import SigilConfig
 from sigil_watermark.detect import SigilDetector, _encoded_payload_length
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.fec import encode_payload
 from sigil_watermark.keygen import generate_author_keys
 
 
@@ -66,9 +64,7 @@ class TestAnalyticalFPRate:
         p_rs_success = binom.sf(min_correct - 1, total_symbols, p_symbol_correct)
 
         # This should be astronomically small
-        assert p_rs_success < 1e-30, (
-            f"P(RS decode on random data) = {p_rs_success:.2e} — too high"
-        )
+        assert p_rs_success < 1e-30, f"P(RS decode on random data) = {p_rs_success:.2e} — too high"
 
     def test_beacon_false_match_probability(self):
         """P(beacon match) when 8 bits are random.
@@ -90,9 +86,7 @@ class TestAnalyticalFPRate:
         p_author_match = binom.cdf(max_errors, 48, 0.5)
 
         # This should be very small: P(<=7 heads in 48 fair coin flips)
-        assert p_author_match < 1e-5, (
-            f"P(author ID match on random) = {p_author_match:.2e}"
-        )
+        assert p_author_match < 1e-5, f"P(author ID match on random) = {p_author_match:.2e}"
 
     def test_combined_false_positive_rate(self):
         """Combined FP rate through the RS decode path.
@@ -199,12 +193,8 @@ class TestEmpiricalFPRateLargeScale:
 
         # With adaptive ring strength + payload_confidence > 0.5 threshold,
         # up to 1 in 10K false detections is acceptable (rate < 1e-4).
-        assert false_detected <= 1, (
-            f"{false_detected}/10000 false detections (expect <= 1)"
-        )
-        assert false_author_match == 0, (
-            f"{false_author_match}/10000 false author ID matches"
-        )
+        assert false_detected <= 1, f"{false_detected}/10000 false detections (expect <= 1)"
+        assert false_author_match == 0, f"{false_author_match}/10000 false author ID matches"
 
     def test_diverse_image_types_no_false_positives(self, detector):
         """Test across flat, gradient, noise, and patterned images."""

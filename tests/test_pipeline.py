@@ -7,16 +7,14 @@ Tests are parameterized across:
 
 import numpy as np
 import pytest
+from conftest import (
+    make_edges_image,
+    make_natural_scene,
+    psnr,
+)
 
 from sigil_watermark.detect import DetectionResult
 from sigil_watermark.keygen import generate_author_keys
-
-from conftest import (
-    NATURAL_IMAGE_GENERATORS,
-    make_natural_scene,
-    make_edges_image,
-    psnr,
-)
 
 
 class TestBasicRoundTrip:
@@ -56,9 +54,7 @@ class TestBasicRoundTrip:
             )
         else:
             assert result.detected is True, f"Detection failed on {name}"
-            assert result.confidence > 0.4, (
-                f"Low confidence on {name}: {result.confidence:.3f}"
-            )
+            assert result.confidence > 0.4, f"Low confidence on {name}: {result.confidence:.3f}"
             assert result.author_id_match is True, f"Author ID mismatch on {name}"
 
     def test_no_false_positive_on_clean_image(self, detector, natural_image, multi_author_keys):
@@ -69,14 +65,14 @@ class TestBasicRoundTrip:
             f"False positive on clean {name} image"
         )
 
-    def test_wrong_key_does_not_detect(self, embedder, detector, natural_image, author_keys, author_keys_b):
+    def test_wrong_key_does_not_detect(
+        self, embedder, detector, natural_image, author_keys, author_keys_b
+    ):
         """Embedding with key A, detecting with key B should fail."""
         name, img = natural_image
         watermarked = embedder.embed(img, author_keys)
         result = detector.detect(watermarked, author_keys_b.public_key)
-        assert result.author_id_match is False, (
-            f"Cross-key false positive on {name}"
-        )
+        assert result.author_id_match is False, f"Cross-key false positive on {name}"
 
 
 class TestImperceptibility:
@@ -132,9 +128,7 @@ class TestBeaconDetection:
 
     def test_no_beacon_in_clean_image(self, detector, natural_image):
         name, img = natural_image
-        assert detector.detect_beacon(img) is False, (
-            f"False beacon on clean {name} image"
-        )
+        assert detector.detect_beacon(img) is False, f"False beacon on clean {name} image"
 
 
 class TestAuthorIndexExtraction:
@@ -142,6 +136,7 @@ class TestAuthorIndexExtraction:
 
     def test_correct_index_extracted_when_detectable(self, embedder, detector, multi_author_keys):
         from sigil_watermark.keygen import derive_author_index
+
         img = make_natural_scene()
         watermarked = embedder.embed(img, multi_author_keys)
         expected_index = derive_author_index(multi_author_keys.public_key)

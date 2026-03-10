@@ -18,21 +18,18 @@ Image set (all public domain):
 - photo_architecture.jpg — Pyramids of Giza, geometric edges
 """
 
-import io
 from pathlib import Path
 
 import numpy as np
 import pytest
+from conftest import AUTHOR_SEEDS
 from PIL import Image
 
 from sigil_watermark.config import SigilConfig
 from sigil_watermark.detect import SigilDetector
 from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.ghost.spectral_analysis import analyze_ghost_signature
-
-from conftest import AUTHOR_SEEDS
-
+from sigil_watermark.keygen import generate_author_keys
 
 REAL_IMAGES_DIR = Path(__file__).parent / "test_images" / "real"
 
@@ -102,12 +99,11 @@ def _psnr(a: np.ndarray, b: np.ndarray) -> float:
 def _jpeg_roundtrip(image: np.ndarray, quality: int) -> np.ndarray:
     """JPEG roundtrip for RGB float64."""
     import cv2
+
     img_u8 = np.clip(image, 0, 255).astype(np.uint8)
     img_bgr = cv2.cvtColor(img_u8, cv2.COLOR_RGB2BGR)
     _, encoded = cv2.imencode(".jpg", img_bgr, [cv2.IMWRITE_JPEG_QUALITY, quality])
-    decoded_bgr = cv2.imdecode(
-        np.frombuffer(encoded.tobytes(), np.uint8), cv2.IMREAD_COLOR
-    )
+    decoded_bgr = cv2.imdecode(np.frombuffer(encoded.tobytes(), np.uint8), cv2.IMREAD_COLOR)
     decoded_rgb = cv2.cvtColor(decoded_bgr, cv2.COLOR_BGR2RGB).astype(np.float64)
     return decoded_rgb
 
@@ -136,9 +132,7 @@ def multi_author_keys(request):
 class TestRealImageQuality:
     """Measure actual PSNR on real photographs and artwork."""
 
-    def test_psnr_on_real_image(
-        self, embedder, image_name, rgb_image, multi_author_keys
-    ):
+    def test_psnr_on_real_image(self, embedder, image_name, rgb_image, multi_author_keys):
         """PSNR should be documented accurately — no synthetic inflation."""
         wm = embedder.embed(rgb_image, multi_author_keys)
         p = _psnr(rgb_image, wm)
@@ -146,12 +140,8 @@ class TestRealImageQuality:
 
         # With adaptive ring strength, real images achieve 35-49 dB (avg ~40 dB).
         # Floor of 33 dB covers key-dependent variation on worst-case images.
-        assert p > 33, (
-            f"PSNR {p:.1f} dB on {image_name} is unacceptable"
-        )
-        assert max_dev < 50, (
-            f"Max deviation {max_dev:.1f} on {image_name} is too high"
-        )
+        assert p > 33, f"PSNR {p:.1f} dB on {image_name} is unacceptable"
+        assert max_dev < 50, f"Max deviation {max_dev:.1f} on {image_name} is too high"
 
     def test_detection_on_real_image(
         self, embedder, detector, image_name, rgb_image, multi_author_keys
@@ -165,9 +155,7 @@ class TestRealImageQuality:
             f"ring={result.ring_confidence:.3f}, "
             f"payload={result.payload_confidence:.3f}"
         )
-        assert result.author_id_match, (
-            f"Author ID mismatch on {image_name}"
-        )
+        assert result.author_id_match, f"Author ID mismatch on {image_name}"
 
     def test_no_false_positive_on_real_image(
         self, detector, image_name, rgb_image, multi_author_keys
@@ -226,9 +214,7 @@ class TestRealImageJPEG:
 class TestRealImageGhost:
     """Ghost signal detection on real photographs."""
 
-    def test_ghost_present(
-        self, embedder, detector, image_name, rgb_image, multi_author_keys
-    ):
+    def test_ghost_present(self, embedder, detector, image_name, rgb_image, multi_author_keys):
         """Ghost signal should be present on real images."""
         h, w = rgb_image.shape[:2]
         # Very small images (<400px) don't have enough spectral resolution for ghost bands
@@ -240,9 +226,7 @@ class TestRealImageGhost:
             f"Ghost too low on {image_name}: {result.ghost_confidence:.3f}"
         )
 
-    def test_ghost_wrong_key(
-        self, embedder, detector, image_name, rgb_image
-    ):
+    def test_ghost_wrong_key(self, embedder, detector, image_name, rgb_image):
         """Ghost confidence should be low with wrong key."""
         keys_a = generate_author_keys(seed=b"real-photo-ghost-key-a-32bytes!")
         keys_b = generate_author_keys(seed=b"real-photo-ghost-key-b-32bytes!")
@@ -268,19 +252,19 @@ class TestRealImageReport:
         if not image_names:
             pytest.skip("No real images available")
 
-        print(f"\n{'='*95}")
+        print(f"\n{'=' * 95}")
         print("REAL IMAGE QUALITY REPORT")
         print(
             f"Config: embed_strength={embedder.config.embed_strength}, "
             f"ring_strength={embedder.config.ring_strength}, "
             f"ghost={embedder.config.ghost_strength_multiplier}x"
         )
-        print(f"{'='*95}")
+        print(f"{'=' * 95}")
         print(
             f"{'Image':<28} {'Size':>12} {'PSNR':>8} {'MaxDev':>8} "
             f"{'Ring':>7} {'Payload':>9} {'Ghost':>7} {'Author':>8}"
         )
-        print(f"{'-'*95}")
+        print(f"{'-' * 95}")
 
         psnrs = []
         max_devs = []
@@ -301,16 +285,10 @@ class TestRealImageReport:
                 f"{'YES' if result.author_id_match else 'no':>8}"
             )
 
-        print(f"{'-'*95}")
-        print(
-            f"{'AVERAGE':<28} {'':>12} {np.mean(psnrs):>7.1f} "
-            f"{np.mean(max_devs):>8.1f}"
-        )
-        print(
-            f"{'MIN':<28} {'':>12} {np.min(psnrs):>7.1f} "
-            f"{np.max(max_devs):>8.1f}"
-        )
-        print(f"{'='*95}")
+        print(f"{'-' * 95}")
+        print(f"{'AVERAGE':<28} {'':>12} {np.mean(psnrs):>7.1f} {np.mean(max_devs):>8.1f}")
+        print(f"{'MIN':<28} {'':>12} {np.min(psnrs):>7.1f} {np.max(max_devs):>8.1f}")
+        print(f"{'=' * 95}")
 
     def test_jpeg_robustness_report(self, embedder, detector, capsys):
         """Print JPEG robustness across quality levels on real images."""
@@ -321,15 +299,15 @@ class TestRealImageReport:
 
         qualities = [99, 90, 75, 60, 50]
 
-        print(f"\n{'='*100}")
+        print(f"\n{'=' * 100}")
         print("REAL IMAGE JPEG ROBUSTNESS REPORT")
-        print(f"{'='*100}")
+        print(f"{'=' * 100}")
 
         header = f"{'Image':<28}"
         for q in qualities:
-            header += f" {'Q'+str(q):>8}"
+            header += f" {'Q' + str(q):>8}"
         print(header)
-        print(f"{'-'*100}")
+        print(f"{'-' * 100}")
 
         for name in image_names:
             img = _load_rgb(name)
@@ -350,8 +328,10 @@ class TestRealImageReport:
                 row += f" {status:>8}"
             print(row)
 
-        print(f"{'='*100}")
-        print("FULL = detected + author match, det = detected, weak = some signal, FAIL = no signal")
+        print(f"{'=' * 100}")
+        print(
+            "FULL = detected + author match, det = detected, weak = some signal, FAIL = no signal"
+        )
 
     def test_ghost_report(self, embedder, config, capsys):
         """Print ghost signal analysis on real images."""
@@ -360,14 +340,11 @@ class TestRealImageReport:
         if not image_names:
             pytest.skip("No real images available")
 
-        print(f"\n{'='*85}")
+        print(f"\n{'=' * 85}")
         print("REAL IMAGE GHOST SIGNAL REPORT")
-        print(f"{'='*85}")
-        print(
-            f"{'Image':<28} {'Ghost corr':>12} {'P-value':>10} "
-            f"{'Detected':>10}"
-        )
-        print(f"{'-'*85}")
+        print(f"{'=' * 85}")
+        print(f"{'Image':<28} {'Ghost corr':>12} {'P-value':>10} {'Detected':>10}")
+        print(f"{'-' * 85}")
 
         for name in image_names:
             img = _load_rgb(name)
@@ -375,6 +352,7 @@ class TestRealImageReport:
 
             # Extract Y channel for ghost analysis
             from sigil_watermark.color import extract_y_channel
+
             y = extract_y_channel(wm)
             ghost = analyze_ghost_signature(y, keys.public_key, config)
             print(
@@ -383,4 +361,4 @@ class TestRealImageReport:
                 f"{'YES' if ghost.ghost_detected else 'no':>10}"
             )
 
-        print(f"{'='*85}")
+        print(f"{'=' * 85}")

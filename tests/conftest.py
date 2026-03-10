@@ -19,7 +19,6 @@ from sigil_watermark.detect import SigilDetector
 from sigil_watermark.embed import SigilEmbedder
 from sigil_watermark.keygen import generate_author_keys
 
-
 # ---------------------------------------------------------------------------
 # Core fixtures
 # ---------------------------------------------------------------------------
@@ -98,11 +97,7 @@ def make_texture_image(h=512, w=512, seed=42):
     rng = np.random.default_rng(seed)
     yy = np.arange(h).reshape(-1, 1)
     xx = np.arange(w).reshape(1, -1)
-    img = (
-        128.0
-        + 50 * np.sin(yy / 3.0) * np.cos(xx / 4.0)
-        + 30 * np.sin((yy * 7 + xx * 11) / 50.0)
-    )
+    img = 128.0 + 50 * np.sin(yy / 3.0) * np.cos(xx / 4.0) + 30 * np.sin((yy * 7 + xx * 11) / 50.0)
     img += rng.normal(0, 5, (h, w))
     return np.clip(img, 0, 255)
 
@@ -164,12 +159,7 @@ def make_natural_scene(h=512, w=512, seed=42):
     rng = np.random.default_rng(seed)
     yy = np.arange(h).reshape(-1, 1).astype(np.float64)
     xx = np.arange(w).reshape(1, -1).astype(np.float64)
-    img = (
-        128.0
-        + 40 * np.sin(yy / 20.0)
-        + 30 * np.cos(xx / 15.0)
-        + 20 * np.sin((yy + xx) / 25.0)
-    )
+    img = 128.0 + 40 * np.sin(yy / 20.0) + 30 * np.cos(xx / 15.0) + 20 * np.sin((yy + xx) / 25.0)
     img += rng.normal(0, 8, (h, w))
     return np.clip(img, 0, 255)
 
@@ -209,8 +199,7 @@ NATURAL_IMAGE_GENERATORS = {
 PATHOLOGICAL_IMAGES = {"gradient", "edges", "highfreq", "dark"}
 
 REALISTIC_IMAGE_GENERATORS = {
-    k: v for k, v in NATURAL_IMAGE_GENERATORS.items()
-    if k not in PATHOLOGICAL_IMAGES
+    k: v for k, v in NATURAL_IMAGE_GENERATORS.items() if k not in PATHOLOGICAL_IMAGES
 }
 
 

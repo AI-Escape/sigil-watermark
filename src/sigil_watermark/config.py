@@ -9,7 +9,7 @@ The module-level :data:`DEFAULT_CONFIG` instance uses production-tuned
 defaults and is shared by all other modules when no explicit config is passed.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)

@@ -1,18 +1,18 @@
 """Tests for geometric auto-correction (Fourier-Mellin Transform)."""
 
-import numpy as np
 import cv2
+import numpy as np
 import pytest
 
+from sigil_watermark.config import SigilConfig
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
 from sigil_watermark.geometric import (
     auto_correct,
-    try_rotations,
     estimate_rotation_scale,
+    try_rotations,
 )
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
 from sigil_watermark.keygen import generate_author_keys
-from sigil_watermark.config import SigilConfig
 
 
 @pytest.fixture
@@ -41,12 +41,7 @@ def _make_test_image(rng, size=(512, 512)):
     img = np.zeros(size, dtype=np.float64)
     for i in range(h):
         for j in range(w):
-            img[i, j] = (
-                128
-                + 30 * np.sin(i / 30)
-                + 20 * np.cos(j / 20)
-                + 10 * np.sin((i + j) / 15)
-            )
+            img[i, j] = 128 + 30 * np.sin(i / 30) + 20 * np.cos(j / 20) + 10 * np.sin((i + j) / 15)
     img += rng.normal(0, 5, size)
     return np.clip(img, 0, 255)
 
@@ -57,7 +52,9 @@ def _rotate_image(image, angle_degrees):
     center = (w / 2, h / 2)
     M = cv2.getRotationMatrix2D(center, angle_degrees, 1.0)
     rotated = cv2.warpAffine(
-        image.astype(np.float32), M, (w, h),
+        image.astype(np.float32),
+        M,
+        (w, h),
         flags=cv2.INTER_LINEAR,
         borderMode=cv2.BORDER_REFLECT_101,
     )
@@ -75,11 +72,11 @@ def _scale_image(image, scale_factor):
     y_off = (new_h - h) // 2
     x_off = (new_w - w) // 2
     if scale_factor >= 1.0:
-        result = scaled[y_off:y_off + h, x_off:x_off + w]
+        result = scaled[y_off : y_off + h, x_off : x_off + w]
     else:
-        dst_y = (-y_off)
-        dst_x = (-x_off)
-        result[dst_y:dst_y + new_h, dst_x:dst_x + new_w] = scaled
+        dst_y = -y_off
+        dst_x = -x_off
+        result[dst_y : dst_y + new_h, dst_x : dst_x + new_w] = scaled
     return result
 
 
@@ -231,8 +228,9 @@ class TestDetectionWithRotation:
         rotated = _rotate_image(watermarked, 1)
 
         result = detector.detect(rotated, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.4, \
+        assert result.detected or result.payload_confidence > 0.4, (
             f"1-degree rotation: conf={result.payload_confidence:.2f}"
+        )
 
     def test_detect_small_rotation_2deg(self, embedder, detector, author_keys):
         """2-degree rotation."""
@@ -242,8 +240,9 @@ class TestDetectionWithRotation:
         rotated = _rotate_image(watermarked, 2)
 
         result = detector.detect(rotated, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.4, \
+        assert result.detected or result.payload_confidence > 0.4, (
             f"2-degree rotation: conf={result.payload_confidence:.2f}"
+        )
 
     def test_detect_5deg_rotation(self, embedder, detector, author_keys):
         """5-degree rotation — moderate angle."""
@@ -253,8 +252,9 @@ class TestDetectionWithRotation:
         rotated = _rotate_image(watermarked, 5)
 
         result = detector.detect(rotated, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"5-degree rotation: conf={result.payload_confidence:.2f}"
+        )
 
     def test_unmodified_still_detected(self, embedder, detector, author_keys):
         """Unrotated watermarked image still detected (no regression)."""
@@ -282,17 +282,18 @@ class TestDetectionWithScale:
         watermarked = embedder.embed(img, author_keys)
 
         h, w = watermarked.shape
-        small = cv2.resize(watermarked.astype(np.float32),
-                           (int(w * 0.75), int(h * 0.75)))
+        small = cv2.resize(watermarked.astype(np.float32), (int(w * 0.75), int(h * 0.75)))
         restored = cv2.resize(small, (w, h)).astype(np.float64)
 
         result = detector.detect(restored, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.4, \
+        assert result.detected or result.payload_confidence > 0.4, (
             f"Downscale/upscale: conf={result.payload_confidence:.2f}"
+        )
 
     def test_detect_after_rotation_plus_jpeg(self, embedder, detector, author_keys):
         """Rotation + JPEG — combined attack."""
         import io
+
         from PIL import Image
 
         rng = np.random.default_rng(42)
@@ -302,12 +303,13 @@ class TestDetectionWithScale:
 
         # JPEG compress
         img_uint8 = np.clip(rotated, 0, 255).astype(np.uint8)
-        pil = Image.fromarray(img_uint8, mode='L')
+        pil = Image.fromarray(img_uint8, mode="L")
         buf = io.BytesIO()
-        pil.save(buf, format='JPEG', quality=75)
+        pil.save(buf, format="JPEG", quality=75)
         buf.seek(0)
-        jpeg_img = np.array(Image.open(buf).convert('L'), dtype=np.float64)
+        jpeg_img = np.array(Image.open(buf).convert("L"), dtype=np.float64)
 
         result = detector.detect(jpeg_img, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"Rotation+JPEG: conf={result.payload_confidence:.2f}"
+        )

@@ -3,8 +3,8 @@
 import numpy as np
 import pytest
 
-from sigil_watermark.perceptual import compute_perceptual_mask
 from sigil_watermark.config import SigilConfig
+from sigil_watermark.perceptual import compute_perceptual_mask
 
 
 @pytest.fixture

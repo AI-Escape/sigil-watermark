@@ -10,7 +10,6 @@ The watermark is embedded in the Y (luminance) channel only, which:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
 
 import numpy as np
 
@@ -18,6 +17,7 @@ import numpy as np
 @dataclass
 class ColorMetadata:
     """Metadata for reconstructing the original color format after embedding."""
+
     is_color: bool
     original_shape: tuple[int, ...]
     cb_channel: np.ndarray | None = None
@@ -88,9 +88,7 @@ def prepare_for_embedding(image: np.ndarray) -> tuple[np.ndarray, ColorMetadata]
     raise ValueError(f"Unsupported image shape: {image.shape}")
 
 
-def reconstruct_from_embedding(
-    y_watermarked: np.ndarray, metadata: ColorMetadata
-) -> np.ndarray:
+def reconstruct_from_embedding(y_watermarked: np.ndarray, metadata: ColorMetadata) -> np.ndarray:
     """Recombine watermarked Y channel with original Cb/Cr.
 
     Args:
@@ -103,6 +101,7 @@ def reconstruct_from_embedding(
     if not metadata.is_color:
         return y_watermarked
 
+    assert metadata.cb_channel is not None and metadata.cr_channel is not None
     ycbcr = np.stack([y_watermarked, metadata.cb_channel, metadata.cr_channel], axis=-1)
     return ycbcr_to_rgb(ycbcr)
 

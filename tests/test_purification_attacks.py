@@ -23,12 +23,12 @@ import io
 import cv2
 import numpy as np
 import pytest
-from PIL import Image, ImageFilter
+from PIL import Image
 
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.config import SigilConfig
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.keygen import generate_author_keys
 
 
 @pytest.fixture
@@ -57,10 +57,7 @@ def _make_image(rng, size=(512, 512)):
     for i in range(h):
         for j in range(w):
             img[i, j] = (
-                128
-                + 40 * np.sin(i / 20.0)
-                + 30 * np.cos(j / 15.0)
-                + 20 * np.sin((i + j) / 25.0)
+                128 + 40 * np.sin(i / 20.0) + 30 * np.cos(j / 15.0) + 20 * np.sin((i + j) / 25.0)
             )
     img += rng.normal(0, 8, img.shape)
     return np.clip(img, 0, 255)
@@ -77,9 +74,7 @@ def _jpeg(image, quality):
 
 def _blur(image, sigma):
     ksize = max(3, int(sigma * 6) | 1)
-    return cv2.GaussianBlur(
-        image.astype(np.float32), (ksize, ksize), sigma
-    ).astype(np.float64)
+    return cv2.GaussianBlur(image.astype(np.float32), (ksize, ksize), sigma).astype(np.float64)
 
 
 def _resize(image, scale):
@@ -102,7 +97,8 @@ class TestGaussianNoising:
     """
 
     @pytest.mark.parametrize(
-        "sigma_01", [0.05, 0.10, 0.15, 0.20, 0.25],
+        "sigma_01",
+        [0.05, 0.10, 0.15, 0.20, 0.25],
         ids=["sigma_0.05", "sigma_0.10", "sigma_0.15", "sigma_0.20", "sigma_0.25"],
     )
     def test_gaussian_noising(self, embedder, detector, author_keys, sigma_01):
@@ -237,9 +233,7 @@ class TestNoisyUpscaling:
         h, w = image.shape[:2]
         noised = np.clip(image + rng.normal(0, noise_sigma, image.shape), 0, 255)
         new_h, new_w = max(1, int(h / down_factor)), max(1, int(w / down_factor))
-        down = cv2.resize(
-            noised.astype(np.float32), (new_w, new_h), interpolation=cv2.INTER_AREA
-        )
+        down = cv2.resize(noised.astype(np.float32), (new_w, new_h), interpolation=cv2.INTER_AREA)
         up = cv2.resize(down, (w, h), interpolation=cv2.INTER_CUBIC)
         return np.clip(up.astype(np.float64), 0, 255)
 
@@ -248,9 +242,7 @@ class TestNoisyUpscaling:
         [(10, 1.5), (20, 2.0), (30, 2.0), (40, 2.0), (15, 4.0)],
         ids=["mild", "moderate", "strong", "extreme", "high_downscale"],
     )
-    def test_noisy_upscaling(
-        self, embedder, detector, author_keys, noise_sigma, down_factor
-    ):
+    def test_noisy_upscaling(self, embedder, detector, author_keys, noise_sigma, down_factor):
         """Simulate noisy upscaling at various intensities."""
         rng = np.random.default_rng(42)
         img = _make_image(rng)
@@ -309,9 +301,7 @@ class TestSuperresolutionSimulation:
         """Downscale → upscale → sharpen."""
         h, w = image.shape[:2]
         new_h, new_w = max(1, int(h / down_factor)), max(1, int(w / down_factor))
-        down = cv2.resize(
-            image.astype(np.float32), (new_w, new_h), interpolation=cv2.INTER_AREA
-        )
+        down = cv2.resize(image.astype(np.float32), (new_w, new_h), interpolation=cv2.INTER_AREA)
         up = cv2.resize(down, (w, h), interpolation=cv2.INTER_CUBIC)
         # Unsharp mask for sharpening
         blurred = cv2.GaussianBlur(up, (0, 0), 3)
@@ -323,9 +313,7 @@ class TestSuperresolutionSimulation:
         [(2.0, 0.5), (2.0, 1.0), (4.0, 0.5), (4.0, 1.0)],
         ids=["2x_mild", "2x_strong", "4x_mild", "4x_strong"],
     )
-    def test_sr_simulation(
-        self, embedder, detector, author_keys, down_factor, sharpen
-    ):
+    def test_sr_simulation(self, embedder, detector, author_keys, down_factor, sharpen):
         rng = np.random.default_rng(42)
         img = _make_image(rng)
         wm = embedder.embed(img, author_keys)
@@ -370,12 +358,10 @@ class TestTrainingSimulation:
         """
         h, w = image.shape[:2]
         # Step 1: Resize to training resolution
-        resized = cv2.resize(
-            image.astype(np.float32), (512, 512), interpolation=cv2.INTER_AREA
-        )
+        resized = cv2.resize(image.astype(np.float32), (512, 512), interpolation=cv2.INTER_AREA)
         # Step 2: Center crop (95% to simulate slight crop)
         margin = int(512 * 0.025)
-        cropped = resized[margin:512 - margin, margin:512 - margin]
+        cropped = resized[margin : 512 - margin, margin : 512 - margin]
         cropped = cv2.resize(cropped, (512, 512), interpolation=cv2.INTER_LINEAR)
         # Step 3: Skip flip (deterministic for testing)
         # Step 4-5: Normalize → add noise → denormalize (simulates one training step)
@@ -407,12 +393,10 @@ class TestTrainingSimulation:
         wm = embedder.embed(img, author_keys)
 
         # Resize to 512
-        resized = cv2.resize(
-            wm.astype(np.float32), (512, 512), interpolation=cv2.INTER_AREA
-        )
+        resized = cv2.resize(wm.astype(np.float32), (512, 512), interpolation=cv2.INTER_AREA)
         # Center crop 90%
         margin = int(512 * 0.05)
-        cropped = resized[margin:512 - margin, margin:512 - margin]
+        cropped = resized[margin : 512 - margin, margin : 512 - margin]
         cropped = cv2.resize(cropped, (512, 512), interpolation=cv2.INTER_LINEAR)
 
         result = detector.detect(cropped.astype(np.float64), author_keys.public_key)
@@ -434,8 +418,7 @@ class TestTrainingSimulation:
         result = detector.detect(processed, author_keys.public_key)
         # After 3 passes, some signal should remain in at least one layer
         assert result.payload_confidence > 0.1 or result.ring_confidence > 0.2, (
-            f"3 epochs: payload={result.payload_confidence:.2f}, "
-            f"ring={result.ring_confidence:.2f}"
+            f"3 epochs: payload={result.payload_confidence:.2f}, ring={result.ring_confidence:.2f}"
         )
 
 

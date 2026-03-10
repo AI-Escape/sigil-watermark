@@ -3,18 +3,17 @@
 import numpy as np
 import pytest
 
+from sigil_watermark.config import SigilConfig
+from sigil_watermark.keygen import derive_pn_sequence, derive_ring_radii, generate_author_keys
 from sigil_watermark.transforms import (
-    embed_dft_rings,
+    apply_geometric_correction,
     detect_dft_rings,
-    estimate_rotation_from_rings,
     dwt_decompose,
     dwt_reconstruct,
+    embed_dft_rings,
     embed_spread_spectrum,
     extract_spread_spectrum,
-    apply_geometric_correction,
 )
-from sigil_watermark.keygen import generate_author_keys, derive_ring_radii, derive_pn_sequence
-from sigil_watermark.config import SigilConfig
 
 
 @pytest.fixture
@@ -31,7 +30,9 @@ class TestDFTRings:
     def test_embed_preserves_shape(self, medium_gray_image, author_keys, config):
         radii = derive_ring_radii(author_keys.public_key, config=config)
         result = embed_dft_rings(
-            medium_gray_image, radii, strength=config.ring_strength,
+            medium_gray_image,
+            radii,
+            strength=config.ring_strength,
             ring_width=config.ring_width,
         )
         assert result.shape == medium_gray_image.shape
@@ -39,7 +40,9 @@ class TestDFTRings:
     def test_embed_does_not_grossly_distort(self, medium_gray_image, author_keys, config):
         radii = derive_ring_radii(author_keys.public_key, config=config)
         result = embed_dft_rings(
-            medium_gray_image, radii, strength=config.ring_strength,
+            medium_gray_image,
+            radii,
+            strength=config.ring_strength,
             ring_width=config.ring_width,
         )
         # PSNR should be > 35dB for just the ring layer
@@ -51,43 +54,61 @@ class TestDFTRings:
     def test_detect_finds_embedded_rings(self, medium_gray_image, author_keys, config):
         radii = derive_ring_radii(author_keys.public_key, config=config)
         watermarked = embed_dft_rings(
-            medium_gray_image, radii, strength=config.ring_strength,
+            medium_gray_image,
+            radii,
+            strength=config.ring_strength,
             ring_width=config.ring_width,
         )
         detected_radii, confidence = detect_dft_rings(
-            watermarked, radii, tolerance=0.02, ring_width=config.ring_width,
+            watermarked,
+            radii,
+            tolerance=0.02,
+            ring_width=config.ring_width,
         )
         assert confidence > 0.5, f"Ring detection confidence too low: {confidence}"
 
     def test_no_false_positive_on_clean_image(self, medium_gray_image, author_keys, config):
         radii = derive_ring_radii(author_keys.public_key, config=config)
         _, confidence = detect_dft_rings(
-            medium_gray_image, radii, tolerance=0.02, ring_width=config.ring_width,
+            medium_gray_image,
+            radii,
+            tolerance=0.02,
+            ring_width=config.ring_width,
         )
         assert confidence < 0.3, f"False positive on clean image: confidence={confidence}"
 
     def test_detect_after_90_degree_rotation(self, medium_gray_image, author_keys, config):
         radii = derive_ring_radii(author_keys.public_key, config=config)
         watermarked = embed_dft_rings(
-            medium_gray_image, radii, strength=config.ring_strength,
+            medium_gray_image,
+            radii,
+            strength=config.ring_strength,
             ring_width=config.ring_width,
         )
         rotated = np.rot90(watermarked)
         _, confidence = detect_dft_rings(
-            rotated, radii, tolerance=0.02, ring_width=config.ring_width,
+            rotated,
+            radii,
+            tolerance=0.02,
+            ring_width=config.ring_width,
         )
         assert confidence > 0.4, f"Ring detection after 90° rotation: {confidence}"
 
     def test_rings_survive_mild_noise(self, medium_gray_image, author_keys, config, rng):
         radii = derive_ring_radii(author_keys.public_key, config=config)
         watermarked = embed_dft_rings(
-            medium_gray_image, radii, strength=config.ring_strength,
+            medium_gray_image,
+            radii,
+            strength=config.ring_strength,
             ring_width=config.ring_width,
         )
         noisy = watermarked + rng.normal(0, 5, watermarked.shape)
         noisy = np.clip(noisy, 0, 255)
         _, confidence = detect_dft_rings(
-            noisy, radii, tolerance=0.03, ring_width=config.ring_width,
+            noisy,
+            radii,
+            tolerance=0.03,
+            ring_width=config.ring_width,
         )
         assert confidence > 0.3
 
@@ -118,7 +139,9 @@ class TestDWT:
             reconstructed = dwt_reconstruct(coeffs, wavelet=wavelet)
             h, w = small_gray_image.shape
             np.testing.assert_allclose(
-                reconstructed[:h, :w], small_gray_image, atol=1e-10,
+                reconstructed[:h, :w],
+                small_gray_image,
+                atol=1e-10,
                 err_msg=f"Roundtrip failed for wavelet {wavelet}",
             )
 
@@ -135,12 +158,15 @@ class TestSpreadSpectrum:
         payload_bits = [1, 0, 1, 1, 0, 0, 1, 0]
 
         watermarked = embed_spread_spectrum(
-            coeffs, pn, payload_bits,
+            coeffs,
+            pn,
+            payload_bits,
             strength=config.embed_strength,
             spreading_factor=config.spreading_factor,
         )
         extracted = extract_spread_spectrum(
-            watermarked, pn,
+            watermarked,
+            pn,
             num_bits=len(payload_bits),
             spreading_factor=config.spreading_factor,
         )
@@ -149,7 +175,7 @@ class TestSpreadSpectrum:
     def test_embed_does_not_modify_input(self, config):
         rng = np.random.default_rng(42)
         coeffs = rng.normal(0, 10, (64, 64))
-        original = coeffs.copy()
+        coeffs.copy()
         pn = derive_pn_sequence(
             generate_author_keys(seed=b"test-ss-nomod-seed-is-32-bytes!!").public_key,
             length=64 * 64,
@@ -169,13 +195,16 @@ class TestSpreadSpectrum:
         payload = [1, 0, 1, 1, 0, 0, 1, 0]
 
         watermarked = embed_spread_spectrum(
-            coeffs, pn1, payload,
+            coeffs,
+            pn1,
+            payload,
             strength=config.embed_strength,
             spreading_factor=config.spreading_factor,
         )
         # Extract with wrong key — should NOT match
         extracted = extract_spread_spectrum(
-            watermarked, pn2,
+            watermarked,
+            pn2,
             num_bits=len(payload),
             spreading_factor=config.spreading_factor,
         )
@@ -183,7 +212,7 @@ class TestSpreadSpectrum:
         # We can't guarantee any specific wrong result, but check it's different
         # In rare cases it might match by chance, so just verify the mechanism works
         # by checking correlation is low
-        errors = sum(a != b for a, b in zip(payload, extracted))
+        sum(a != b for a, b in zip(payload, extracted))
         # At least 1 error expected with high probability
         # (probability of 0 errors with random PN is (0.5)^8 ≈ 0.4%)
         # We accept the rare false pass
@@ -196,14 +225,17 @@ class TestSpreadSpectrum:
         payload = [1, 0, 1, 1, 0, 0, 1, 0]
 
         watermarked = embed_spread_spectrum(
-            coeffs, pn, payload,
+            coeffs,
+            pn,
+            payload,
             strength=config.embed_strength,
             spreading_factor=config.spreading_factor,
         )
         # Add noise
         noisy = watermarked + rng.normal(0, 1.0, watermarked.shape)
         extracted = extract_spread_spectrum(
-            noisy, pn,
+            noisy,
+            pn,
             num_bits=len(payload),
             spreading_factor=config.spreading_factor,
         )
@@ -215,15 +247,18 @@ class TestSpreadSpectrum:
         coeffs = rng.normal(0, 10, (256, 256))
         keys = generate_author_keys(seed=b"test-ss-large-seed-is-32-bytes!!")
         pn = derive_pn_sequence(keys.public_key, length=256 * 256, config=config)
-        payload = [int(b) for b in format(0xDEADBEEF, '032b')]  # 32 bits
+        payload = [int(b) for b in format(0xDEADBEEF, "032b")]  # 32 bits
 
         watermarked = embed_spread_spectrum(
-            coeffs, pn, payload,
+            coeffs,
+            pn,
+            payload,
             strength=config.embed_strength,
             spreading_factor=128,
         )
         extracted = extract_spread_spectrum(
-            watermarked, pn,
+            watermarked,
+            pn,
             num_bits=32,
             spreading_factor=128,
         )
@@ -244,7 +279,7 @@ class TestGeometricCorrection:
         h, w = medium_gray_image.shape
         # Check center region to avoid border artifacts from rotation
         margin = 30
-        orig_center = medium_gray_image[margin:h - margin, margin:w - margin]
-        corr_center = corrected[margin:h - margin, margin:w - margin]
+        orig_center = medium_gray_image[margin : h - margin, margin : w - margin]
+        corr_center = corrected[margin : h - margin, margin : w - margin]
         mse = np.mean((orig_center - corr_center) ** 2)
         assert mse < 50, f"90° roundtrip MSE too high: {mse}"

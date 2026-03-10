@@ -26,9 +26,8 @@ except ImportError:
 from sigil_watermark.config import SigilConfig
 from sigil_watermark.detect import SigilDetector
 from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.ghost.spectral_analysis import analyze_ghost_signature, extract_ghost_hash
-from sigil_watermark.keygen import derive_ghost_hash
+from sigil_watermark.keygen import derive_ghost_hash, generate_author_keys
 
 pytestmark = [
     pytest.mark.gpu,
@@ -61,9 +60,7 @@ def vae():
     """Load the SD VAE model (cached across tests in module)."""
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dtype = torch.float32
-    model = AutoencoderKL.from_pretrained(
-        "stabilityai/sd-vae-ft-mse", torch_dtype=dtype
-    )
+    model = AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-mse", torch_dtype=dtype)
     model = model.to(device)
     model.eval()
     return model
@@ -76,10 +73,7 @@ def _make_image(rng, size=(512, 512)):
     for i in range(h):
         for j in range(w):
             img[i, j] = (
-                128
-                + 40 * np.sin(i / 20.0)
-                + 30 * np.cos(j / 15.0)
-                + 20 * np.sin((i + j) / 25.0)
+                128 + 40 * np.sin(i / 20.0) + 30 * np.cos(j / 15.0) + 20 * np.sin((i + j) / 25.0)
             )
     img += rng.normal(0, 8, img.shape)
     return np.clip(img, 0, 255)
@@ -118,7 +112,9 @@ def _vae_roundtrip(vae_model, image: np.ndarray) -> np.ndarray:
     decoded_np = np.clip(decoded_np, 0, 255)
 
     # Extract Y channel (luminance) via standard BT.601 weights
-    y_channel = 0.299 * decoded_np[:, :, 0] + 0.587 * decoded_np[:, :, 1] + 0.114 * decoded_np[:, :, 2]
+    y_channel = (
+        0.299 * decoded_np[:, :, 0] + 0.587 * decoded_np[:, :, 1] + 0.114 * decoded_np[:, :, 2]
+    )
 
     return y_channel[:h, :w]
 
@@ -140,7 +136,7 @@ def _psnr(a, b):
     mse = np.mean((a - b) ** 2)
     if mse < 1e-10:
         return 100.0
-    return 10 * np.log10(255.0 ** 2 / mse)
+    return 10 * np.log10(255.0**2 / mse)
 
 
 class TestRealVAERoundtrip:
@@ -196,8 +192,10 @@ class TestRealVAERoundtrip:
             f"payload={real_result.payload_confidence:.3f}, PSNR={real_psnr:.1f}\n"
             f"Simulated VAE: ring={sim_result.ring_confidence:.3f}, "
             f"payload={sim_result.payload_confidence:.3f}, PSNR={sim_psnr:.1f}\n"
-            f"Simulation gap: ring={sim_result.ring_confidence - real_result.ring_confidence:+.3f}, "
-            f"payload={sim_result.payload_confidence - real_result.payload_confidence:+.3f}"
+            f"Simulation gap: "
+            f"ring={sim_result.ring_confidence - real_result.ring_confidence:+.3f}, "
+            f"payload="
+            f"{sim_result.payload_confidence - real_result.payload_confidence:+.3f}"
         )
 
         # If the simulation is significantly more generous, flag it
@@ -357,10 +355,9 @@ class TestJPEGBeforeVAE:
         )
 
         # At least some signal should survive the pipeline
-        assert (
-            result.ring_confidence > 0.0
-            or result.payload_confidence > 0.3
-        ), f"No signal after JPEG Q{quality} -> VAE"
+        assert result.ring_confidence > 0.0 or result.payload_confidence > 0.3, (
+            f"No signal after JPEG Q{quality} -> VAE"
+        )
 
     @pytest.mark.parametrize("quality", [99, 90, 75, 50])
     def test_jpeg_then_vae_ghost(self, vae, embedder, author_keys, config, quality):
@@ -392,14 +389,11 @@ class TestJPEGBeforeVAE:
         # Ghost is the designed VAE survival channel
         if quality >= 75:
             assert ghost.ghost_detected, (
-                f"Ghost lost after JPEG Q{quality} -> VAE "
-                f"(corr={ghost.correlation:.6f})"
+                f"Ghost lost after JPEG Q{quality} -> VAE (corr={ghost.correlation:.6f})"
             )
 
     @pytest.mark.parametrize("quality", [99, 90, 75, 50])
-    def test_jpeg_then_vae_ghost_hash(
-        self, vae, embedder, author_keys, config, quality
-    ):
+    def test_jpeg_then_vae_ghost_hash(self, vae, embedder, author_keys, config, quality):
         """Ghost hash extraction after JPEG -> VAE pipeline."""
         from PIL import Image
 
@@ -428,13 +422,10 @@ class TestJPEGBeforeVAE:
 
         if quality >= 75:
             assert errors <= 3, (
-                f"Ghost hash too damaged after JPEG Q{quality} -> VAE: "
-                f"{errors} errors"
+                f"Ghost hash too damaged after JPEG Q{quality} -> VAE: {errors} errors"
             )
 
-    def test_vae_then_jpeg_vs_jpeg_then_vae(
-        self, vae, embedder, detector, author_keys, config
-    ):
+    def test_vae_then_jpeg_vs_jpeg_then_vae(self, vae, embedder, detector, author_keys, config):
         """Compare: does order matter? VAE->JPEG vs JPEG->VAE."""
         from PIL import Image
 
@@ -450,9 +441,7 @@ class TestJPEGBeforeVAE:
         buf = io.BytesIO()
         pil.save(buf, format="JPEG", quality=quality)
         buf.seek(0)
-        path_a = _vae_roundtrip(
-            vae, np.array(Image.open(buf).convert("L"), dtype=np.float64)
-        )
+        path_a = _vae_roundtrip(vae, np.array(Image.open(buf).convert("L"), dtype=np.float64))
 
         # Path B: VAE -> JPEG
         vae_first = _vae_roundtrip(vae, wm)
@@ -525,15 +514,15 @@ class TestJPEGBeforeVAE:
 
         qualities = [99, 95, 90, 85, 80, 75, 60, 50]
 
-        print(f"\n{'='*90}")
+        print(f"\n{'=' * 90}")
         print("JPEG BEFORE VAE — DETECTION REPORT")
-        print(f"{'='*90}")
+        print(f"{'=' * 90}")
         print(
             f"{'JPEG Q':<10} {'Ring':>8} {'Payload':>10} "
             f"{'Ghost corr':>12} {'Ghost det':>10} "
             f"{'Hash err':>10} {'Detected':>10}"
         )
-        print(f"{'-'*90}")
+        print(f"{'-' * 90}")
 
         # Baseline: VAE only (no JPEG)
         vae_only = _vae_roundtrip(vae, wm)
@@ -553,20 +542,17 @@ class TestJPEGBeforeVAE:
 
         for q in qualities:
             from PIL import Image
+
             img_u8 = np.clip(wm, 0, 255).astype(np.uint8)
             pil = Image.fromarray(img_u8, mode="L")
             buf = io.BytesIO()
             pil.save(buf, format="JPEG", quality=q)
             buf.seek(0)
-            jpeg_decoded = np.array(
-                Image.open(buf).convert("L"), dtype=np.float64
-            )
+            jpeg_decoded = np.array(Image.open(buf).convert("L"), dtype=np.float64)
             vae_decoded = _vae_roundtrip(vae, jpeg_decoded)
 
             result = detector.detect(vae_decoded, author_keys.public_key)
-            ghost = analyze_ghost_signature(
-                vae_decoded, author_keys.public_key, config
-            )
+            ghost = analyze_ghost_signature(vae_decoded, author_keys.public_key, config)
             extracted, _ = extract_ghost_hash(vae_decoded, config)
             errors = sum(a != b for a, b in zip(extracted, expected))
 
@@ -579,7 +565,7 @@ class TestJPEGBeforeVAE:
                 f"{'YES' if result.detected else 'no':>10}"
             )
 
-        print(f"{'='*90}")
+        print(f"{'=' * 90}")
 
 
 class TestGhostHashAuthorIdentification:
@@ -590,9 +576,7 @@ class TestGhostHashAuthorIdentification:
     and used to narrow O(N) author search to O(1) via indexed lookup.
     """
 
-    def test_ghost_hash_identifies_author_from_10k_keys(
-        self, vae, embedder, author_keys, config
-    ):
+    def test_ghost_hash_identifies_author_from_10k_keys(self, vae, embedder, author_keys, config):
         """After VAE, ghost hash should narrow 10K candidates to <10."""
         rng = np.random.default_rng(42)
         img = _make_image(rng)
@@ -661,9 +645,7 @@ class TestGhostHashAuthorIdentification:
             f"Ghost hash provided no reduction: {num_candidates} candidates"
         )
 
-    def test_ghost_hash_survives_multiple_vae_passes(
-        self, vae, embedder, author_keys, config
-    ):
+    def test_ghost_hash_survives_multiple_vae_passes(self, vae, embedder, author_keys, config):
         """Ghost hash should survive 3 consecutive VAE passes."""
         rng = np.random.default_rng(42)
         img = _make_image(rng)
@@ -681,9 +663,7 @@ class TestGhostHashAuthorIdentification:
             )
 
         # After 3 VAE passes, hash should be within fuzzy lookup range
-        assert errors <= 2, (
-            f"Ghost hash degraded after 3 VAE passes: {errors} errors"
-        )
+        assert errors <= 2, f"Ghost hash degraded after 3 VAE passes: {errors} errors"
 
     def test_ghost_hash_plus_jpeg(self, vae, embedder, author_keys, config):
         """Ghost hash should survive VAE + JPEG Q75."""
@@ -695,6 +675,7 @@ class TestGhostHashAuthorIdentification:
 
         # JPEG Q75
         from PIL import Image
+
         img_u8 = np.clip(decoded, 0, 255).astype(np.uint8)
         pil = Image.fromarray(img_u8, mode="L")
         buf = io.BytesIO()
@@ -712,9 +693,7 @@ class TestGhostHashAuthorIdentification:
             f"  Min confidence: {min(confidences):.6f}"
         )
 
-        assert errors <= 2, (
-            f"Ghost hash too damaged after VAE + JPEG: {errors} errors"
-        )
+        assert errors <= 2, f"Ghost hash too damaged after VAE + JPEG: {errors} errors"
 
     def test_ghost_hash_across_images(self, vae, embedder, config):
         """Ghost hash extraction should work across different images."""
@@ -733,17 +712,12 @@ class TestGhostHashAuthorIdentification:
             errors = sum(a != b for a, b in zip(extracted, expected_hash))
             if errors <= 2:
                 within_hamming_2 += 1
-            print(
-                f"Image {seed}: hash errors={errors}, "
-                f"min_conf={min(confidences):.6f}"
-            )
+            print(f"Image {seed}: hash errors={errors}, min_conf={min(confidences):.6f}")
 
         print(
-            f"\n{within_hamming_2}/{total} images: ghost hash within "
-            f"Hamming distance 2 after VAE"
+            f"\n{within_hamming_2}/{total} images: ghost hash within Hamming distance 2 after VAE"
         )
         # Most images should have ≤ 2 errors (within fuzzy lookup range)
         assert within_hamming_2 >= 3, (
-            f"Ghost hash too unreliable: only {within_hamming_2}/{total} "
-            f"within Hamming distance 2"
+            f"Ghost hash too unreliable: only {within_hamming_2}/{total} within Hamming distance 2"
         )

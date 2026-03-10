@@ -6,8 +6,7 @@ redundancy. Each RS symbol is 8 bits.
 
 from __future__ import annotations
 
-import numpy as np
-from reedsolo import RSCodec, ReedSolomonError
+from reedsolo import RSCodec
 
 
 def bits_to_bytes(bits: list[int]) -> bytes:

@@ -4,17 +4,13 @@ Verifies that unwatermarked images produce no false detections
 across many image types, random keys, and attack scenarios.
 """
 
-import io
-
-import cv2
 import numpy as np
 import pytest
-from PIL import Image
 
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
-from sigil_watermark.keygen import generate_author_keys, derive_author_index
 from sigil_watermark.config import SigilConfig
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.keygen import derive_author_index, generate_author_keys
 
 
 @pytest.fixture
@@ -61,8 +57,7 @@ class TestFalsePositiveCleanImages:
 
         result = detector.detect(img, keys.public_key)
         assert not result.detected, (
-            f"False positive on clean image seed={seed}: "
-            f"conf={result.payload_confidence:.2f}"
+            f"False positive on clean image seed={seed}: conf={result.payload_confidence:.2f}"
         )
 
     @pytest.mark.parametrize(
@@ -131,9 +126,7 @@ class TestWrongKeyFalsePositive:
             if result.author_id_match:
                 false_positives += 1
 
-        assert false_positives == 0, (
-            f"{false_positives}/50 wrong keys matched (should be 0)"
-        )
+        assert false_positives == 0, f"{false_positives}/50 wrong keys matched (should be 0)"
 
 
 # --- Beacon False Positive Rate ---
@@ -179,9 +172,7 @@ class TestAuthorIndexCollisions:
             index = tuple(derive_author_index(keys.public_key))
             indices.add(index)
 
-        assert len(indices) == 100, (
-            f"Only {len(indices)} unique indices from 100 keys"
-        )
+        assert len(indices) == 100, f"Only {len(indices)} unique indices from 100 keys"
 
     def test_1000_keys_collision_rate(self):
         """With 2^20 = 1M possible indices, 1000 keys should have ~0 collisions."""
@@ -209,7 +200,7 @@ class TestConfidenceDistributions:
     def test_positive_confidence_above_threshold(self, embedder, detector):
         """Watermarked images should consistently have high confidence."""
         author = generate_author_keys(seed=b"conf-dist-test-author-32-bytes!")
-        rng = np.random.default_rng(42)
+        np.random.default_rng(42)
         confidences = []
         for seed in range(10):
             img_rng = np.random.default_rng(seed + 100)
@@ -234,7 +225,7 @@ class TestConfidenceDistributions:
     def test_negative_confidence_below_threshold(self, detector):
         """Clean images should consistently have low confidence."""
         keys = generate_author_keys(seed=b"conf-neg-test-author-32-bytes!!")
-        rng = np.random.default_rng(42)
+        np.random.default_rng(42)
         confidences = []
         for seed in range(10):
             img_rng = np.random.default_rng(seed + 200)
@@ -258,7 +249,7 @@ class TestConfidenceDistributions:
     def test_separation_between_positive_and_negative(self, embedder, detector):
         """Gap between worst positive and best negative should be significant."""
         author = generate_author_keys(seed=b"conf-sep-test-author-32-bytes!!")
-        rng = np.random.default_rng(42)
+        np.random.default_rng(42)
 
         pos_confidences = []
         neg_confidences = []
@@ -287,6 +278,5 @@ class TestConfidenceDistributions:
         max_neg = max(neg_confidences)
         gap = min_pos - max_neg
         assert gap > 0.1, (
-            f"Confidence gap {gap:.2f} too small "
-            f"(min_pos={min_pos:.2f}, max_neg={max_neg:.2f})"
+            f"Confidence gap {gap:.2f} too small (min_pos={min_pos:.2f}, max_neg={max_neg:.2f})"
         )

@@ -15,10 +15,10 @@ from PIL import Image
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from sigil_watermark.config import DEFAULT_CONFIG
-from sigil_watermark.keygen import generate_author_keys, derive_ghost_hash
-from sigil_watermark.embed import SigilEmbedder
 from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
 from sigil_watermark.ghost.spectral_analysis import extract_ghost_hash
+from sigil_watermark.keygen import derive_ghost_hash, generate_author_keys
 
 
 def vae_roundtrip(vae, image_rgb: np.ndarray) -> np.ndarray:
@@ -76,12 +76,15 @@ def amplified_diff(a: np.ndarray, b: np.ndarray, gain: float = 30.0) -> np.ndarr
 def main():
     parser = argparse.ArgumentParser(description="Generate VAE roundtrip example images.")
     parser.add_argument(
-        "--output-dir", type=Path,
+        "--output-dir",
+        type=Path,
         default=Path(__file__).parent / "output",
         help="Directory to write output images (default: scripts/output/)",
     )
     parser.add_argument(
-        "--source", type=Path, default=None,
+        "--source",
+        type=Path,
+        default=None,
         help="Source image path (default: <output-dir>/source.jpg)",
     )
     args = parser.parse_args()
@@ -114,6 +117,7 @@ def main():
     # Load SD VAE
     print("Loading SD 1.5 VAE (stabilityai/sd-vae-ft-mse)...")
     from diffusers import AutoencoderKL
+
     vae = AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-mse", torch_dtype=torch.float32)
     vae = vae.to("cuda").eval()
     print("VAE loaded")
@@ -135,7 +139,7 @@ def main():
     extracted_str = "".join(str(b) for b in extracted_hash)
     expected_str = "".join(str(b) for b in expected_ghost_hash)
     errors = sum(a != b for a, b in zip(extracted_hash, expected_ghost_hash))
-    print(f"\nGhost hash extraction after VAE:")
+    print("\nGhost hash extraction after VAE:")
     print(f"  Expected:  {expected_str}")
     print(f"  Extracted: {extracted_str}")
     print(f"  Bit errors: {errors}/8")
@@ -145,7 +149,7 @@ def main():
     # Full detection with correct key
     detector = SigilDetector(config=cfg)
     result = detector.detect(after_vae, keys.public_key)
-    print(f"\nFull detection after VAE:")
+    print("\nFull detection after VAE:")
     print(f"  Detected: {result.detected}")
     print(f"  Ghost confidence: {result.ghost_confidence:.3f}")
     print(f"  Ghost hash match: {result.ghost_hash_match}")
@@ -171,7 +175,7 @@ def main():
         f"Ghost confidence: {result.ghost_confidence:.3f}\n"
     )
     (output_dir / "vae_summary.txt").write_text(summary)
-    print(f"\nSaved summary to vae_summary.txt")
+    print("\nSaved summary to vae_summary.txt")
     print(f"Output: {output_dir}")
 
 

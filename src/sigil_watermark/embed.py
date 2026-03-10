@@ -10,28 +10,27 @@ from __future__ import annotations
 
 import numpy as np
 
-from sigil_watermark.config import SigilConfig, DEFAULT_CONFIG
+from sigil_watermark.color import prepare_for_embedding, reconstruct_from_embedding
+from sigil_watermark.config import DEFAULT_CONFIG, SigilConfig
+from sigil_watermark.fec import encode_payload
 from sigil_watermark.keygen import (
     AuthorKeys,
-    derive_pn_sequence,
-    derive_ring_radii,
-    derive_ring_phase_offsets,
-    derive_content_ring_radii,
-    derive_sentinel_ring_radii,
+    build_ghost_composite_pn,
     derive_author_id,
     derive_author_index,
+    derive_content_ring_radii,
+    derive_ring_phase_offsets,
+    derive_ring_radii,
+    derive_sentinel_ring_radii,
     get_universal_beacon_pn,
-    build_ghost_composite_pn,
-)
-from sigil_watermark.transforms import (
-    embed_dft_rings,
-    dwt_decompose,
-    dwt_reconstruct,
 )
 from sigil_watermark.perceptual import compute_perceptual_mask
-from sigil_watermark.tiling import tile_embed, best_tile_size
-from sigil_watermark.fec import encode_payload
-from sigil_watermark.color import prepare_for_embedding, reconstruct_from_embedding
+from sigil_watermark.tiling import best_tile_size, tile_embed
+from sigil_watermark.transforms import (
+    dwt_decompose,
+    dwt_reconstruct,
+    embed_dft_rings,
+)
 
 
 def build_payload(author_keys: AuthorKeys, config: SigilConfig) -> list[int]:
@@ -106,9 +105,7 @@ class SigilEmbedder:
             author_keys.public_key, len(stable_radii), config=cfg
         )
         # Content-dependent rings (positions depend on image hash + key)
-        content_radii = derive_content_ring_radii(
-            author_keys.public_key, result, config=cfg
-        )
+        content_radii = derive_content_ring_radii(author_keys.public_key, result, config=cfg)
         # embed_dft_rings uses per-ring alpha = (strength/50) * (4/num_rings).
         # To keep total energy constant across separate calls, scale strength
         # so each subset gets the same per-ring alpha as if all rings were in one call.
@@ -118,13 +115,18 @@ class SigilEmbedder:
 
         adaptive_psnr = cfg.ring_target_psnr if cfg.adaptive_ring_strength else None
         result = embed_dft_rings(
-            result, stable_radii, strength=stable_strength,
-            ring_width=cfg.ring_width, phase_offsets=stable_phase,
+            result,
+            stable_radii,
+            strength=stable_strength,
+            ring_width=cfg.ring_width,
+            phase_offsets=stable_phase,
             target_psnr=adaptive_psnr,
             min_alpha_fraction=cfg.ring_min_alpha_fraction,
         )
         result = embed_dft_rings(
-            result, content_radii, strength=content_strength,
+            result,
+            content_radii,
+            strength=content_strength,
             ring_width=cfg.ring_width,
             target_psnr=adaptive_psnr,
             min_alpha_fraction=cfg.ring_min_alpha_fraction,
@@ -141,9 +143,7 @@ class SigilEmbedder:
         payload_pn = get_universal_beacon_pn(length=pn_length, config=cfg)
 
         # Build composite ghost PN encoding author's ghost hash bits
-        ghost_pn = build_ghost_composite_pn(
-            author_keys.public_key, length=pn_length, config=cfg
-        )
+        ghost_pn = build_ghost_composite_pn(author_keys.public_key, length=pn_length, config=cfg)
 
         # DWT decompose
         coeffs = dwt_decompose(result, wavelet=cfg.wavelet, level=cfg.dwt_levels)
@@ -162,12 +162,12 @@ class SigilEmbedder:
                 sh, sw = subband.shape
                 mean_mask = _resize_mask(mask, sh, sw).mean()
 
-                ts = best_tile_size(
-                    (sh, sw), cfg.tile_sizes, len(encoded_payload)
-                )
+                ts = best_tile_size((sh, sw), cfg.tile_sizes, len(encoded_payload))
 
                 subband = tile_embed(
-                    subband, payload_pn, encoded_payload,
+                    subband,
+                    payload_pn,
+                    encoded_payload,
                     tile_size=ts,
                     strength=cfg.embed_strength * mean_mask,
                     spreading_factor=cfg.spreading_factor,
@@ -226,9 +226,7 @@ class SigilEmbedder:
         mask_scale = np.sqrt(mask.mean())
         ghost_mod_depth = cfg.ghost_strength_multiplier / 10000.0 * mask_scale
         for band_freq in cfg.ghost_bands:
-            band_mask = np.exp(
-                -((freq_dist - band_freq) ** 2) / (2 * cfg.ghost_bandwidth**2)
-            )
+            band_mask = np.exp(-((freq_dist - band_freq) ** 2) / (2 * cfg.ghost_bandwidth**2))
             # Multiplicative modulation: f *= (1 + depth * pn_sign * band_mask)
             modulation = 1.0 + ghost_mod_depth * pn_sign * band_mask
             f_shifted *= modulation

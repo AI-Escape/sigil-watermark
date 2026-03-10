@@ -16,11 +16,10 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.config import SigilConfig
-
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.keygen import generate_author_keys
 
 TEST_IMAGES_DIR = Path(__file__).parent / "test_images"
 
@@ -74,15 +73,16 @@ def _available_images() -> list[str]:
 
 def jpeg_compress(image: np.ndarray, quality: int) -> np.ndarray:
     img_uint8 = np.clip(image, 0, 255).astype(np.uint8)
-    pil_img = Image.fromarray(img_uint8, mode='L')
+    pil_img = Image.fromarray(img_uint8, mode="L")
     buf = io.BytesIO()
-    pil_img.save(buf, format='JPEG', quality=quality)
+    pil_img.save(buf, format="JPEG", quality=quality)
     buf.seek(0)
     return np.array(Image.open(buf), dtype=np.float64)
 
 
 def resize_attack(image: np.ndarray, scale: float) -> np.ndarray:
     import cv2
+
     h, w = image.shape
     new_h, new_w = int(h * scale), int(w * scale)
     resized = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_LINEAR)
@@ -114,8 +114,9 @@ class TestRealImageRoundTrip:
         # Baboon (mandrill) is the hardest — highly textured, perceptual mask
         # may cause uneven embedding. Allow beacon-only detection.
         if image_name == "baboon":
-            assert result.beacon_found or result.payload_confidence > 0.6, \
+            assert result.beacon_found or result.payload_confidence > 0.6, (
                 f"No signal on {image_name}"
+            )
         else:
             assert result.detected, f"Detection failed on {image_name}"
             assert result.author_id_match, f"Author ID mismatch on {image_name}"
@@ -129,13 +130,14 @@ class TestRealImageRoundTrip:
         watermarked = embedder.embed(gray_image, author_keys)
         mse = np.mean((watermarked - gray_image) ** 2)
         if mse > 0:
-            psnr = 10 * np.log10(255.0 ** 2 / mse)
+            psnr = 10 * np.log10(255.0**2 / mse)
             assert psnr > 29, f"PSNR {psnr:.1f}dB on {image_name} unacceptably low"
 
     def test_no_false_positive(self, detector, author_keys, image_name, gray_image):
         result = detector.detect(gray_image, author_keys.public_key)
-        assert not result.detected or result.confidence < 0.3, \
+        assert not result.detected or result.confidence < 0.3, (
             f"False positive on clean {image_name}"
+        )
 
 
 class TestRealImageAttacks:
@@ -147,29 +149,33 @@ class TestRealImageAttacks:
         attacked = jpeg_compress(watermarked, 75)
         result = detector.detect(attacked, author_keys.public_key)
         # Beacon or strong payload should survive Q75 on most images
-        assert result.beacon_found or result.payload_confidence > 0.5, \
+        assert result.beacon_found or result.payload_confidence > 0.5, (
             f"No signal after JPEG Q75 on {image_name}"
+        )
 
     def test_jpeg_q50(self, embedder, detector, author_keys, image_name, gray_image):
         watermarked = embedder.embed(gray_image, author_keys)
         attacked = jpeg_compress(watermarked, 50)
         result = detector.detect(attacked, author_keys.public_key)
-        assert result.beacon_found or result.payload_confidence > 0.4, \
+        assert result.beacon_found or result.payload_confidence > 0.4, (
             f"No signal after JPEG Q50 on {image_name}"
+        )
 
     def test_resize_half(self, embedder, detector, author_keys, image_name, gray_image):
         watermarked = embedder.embed(gray_image, author_keys)
         attacked = resize_attack(watermarked, 0.5)
         result = detector.detect(attacked, author_keys.public_key)
-        assert result.beacon_found or result.payload_confidence > 0.4, \
+        assert result.beacon_found or result.payload_confidence > 0.4, (
             f"No signal after 0.5x resize on {image_name}"
+        )
 
     def test_noise_sigma_10(self, embedder, detector, author_keys, image_name, gray_image):
         watermarked = embedder.embed(gray_image, author_keys)
         attacked = add_noise(watermarked, 10)
         result = detector.detect(attacked, author_keys.public_key)
-        assert result.beacon_found or result.payload_confidence > 0.5, \
+        assert result.beacon_found or result.payload_confidence > 0.5, (
             f"No signal after σ=10 noise on {image_name}"
+        )
 
 
 class TestRealImageReport:
@@ -191,21 +197,25 @@ class TestRealImageReport:
             ("Noise σ=20", lambda img: add_noise(img, 20)),
         ]
 
-        print(f"\n{'='*90}")
-        print(f"SIGIL WATERMARK - REAL IMAGE ROBUSTNESS REPORT")
-        print(f"{'='*90}")
+        print(f"\n{'=' * 90}")
+        print("SIGIL WATERMARK - REAL IMAGE ROBUSTNESS REPORT")
+        print(f"{'=' * 90}")
 
         for name in image_names:
             img = _load_grayscale(name)
             watermarked = embedder.embed(img, author_keys)
             mse = np.mean((watermarked - img) ** 2)
-            psnr = 10 * np.log10(255.0 ** 2 / mse) if mse > 0 else float('inf')
+            psnr = 10 * np.log10(255.0**2 / mse) if mse > 0 else float("inf")
             max_dev = np.max(np.abs(watermarked - img))
 
-            print(f"\n--- {name.upper()} ({img.shape[0]}x{img.shape[1]}) | "
-                  f"PSNR: {psnr:.1f} dB | Max dev: {max_dev:.1f} ---")
-            print(f"{'Attack':<16} {'Detected':>9} {'Beacon':>8} "
-                  f"{'Payload':>9} {'Ring':>7} {'Author':>8}")
+            print(
+                f"\n--- {name.upper()} ({img.shape[0]}x{img.shape[1]}) | "
+                f"PSNR: {psnr:.1f} dB | Max dev: {max_dev:.1f} ---"
+            )
+            print(
+                f"{'Attack':<16} {'Detected':>9} {'Beacon':>8} "
+                f"{'Payload':>9} {'Ring':>7} {'Author':>8}"
+            )
 
             for attack_name, attack_fn in attacks:
                 attacked = attack_fn(watermarked)
@@ -219,4 +229,4 @@ class TestRealImageReport:
                     f"{'YES' if result.author_id_match else 'no':>8}"
                 )
 
-        print(f"\n{'='*90}")
+        print(f"\n{'=' * 90}")

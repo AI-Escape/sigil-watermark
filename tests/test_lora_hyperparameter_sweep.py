@@ -9,7 +9,6 @@ Sweeps:
 Requires: torch, diffusers, peft (install via `pip install sigil-watermark[gpu-tests]`)
 """
 
-import io
 from pathlib import Path
 
 import numpy as np
@@ -24,8 +23,8 @@ try:
         UNet2DConditionModel,
     )
     from peft import LoraConfig, get_peft_model
-    from transformers import CLIPTextModel, CLIPTokenizer
     from PIL import Image
+    from transformers import CLIPTextModel, CLIPTokenizer
 
     HAS_GPU_DEPS = True
 except ImportError:
@@ -33,11 +32,11 @@ except ImportError:
 
 from sigil_watermark.config import SigilConfig
 from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.ghost.spectral_analysis import (
-    batch_analyze_ghost,
     analyze_ghost_signature,
+    batch_analyze_ghost,
 )
+from sigil_watermark.keygen import generate_author_keys
 
 pytestmark = [
     pytest.mark.gpu,
@@ -83,7 +82,11 @@ def _augment_images(images, rng, target_count=30):
 
 
 def _train_lora_and_generate(
-    watermarked_images, lora_rank, lora_alpha, num_steps, num_generate=50,
+    watermarked_images,
+    lora_rank,
+    lora_alpha,
+    num_steps,
+    num_generate=50,
 ):
     """Train LoRA on watermarked images, generate new images.
 
@@ -102,9 +105,7 @@ def _train_lora_and_generate(
 
     # Load model
     vae = AutoencoderKL.from_pretrained(MODEL_ID, subfolder="vae", torch_dtype=DTYPE)
-    unet = UNet2DConditionModel.from_pretrained(
-        MODEL_ID, subfolder="unet", torch_dtype=DTYPE
-    )
+    unet = UNet2DConditionModel.from_pretrained(MODEL_ID, subfolder="unet", torch_dtype=DTYPE)
     tokenizer = CLIPTokenizer.from_pretrained(MODEL_ID, subfolder="tokenizer")
     text_encoder = CLIPTextModel.from_pretrained(
         MODEL_ID, subfolder="text_encoder", torch_dtype=DTYPE
@@ -151,9 +152,7 @@ def _train_lora_and_generate(
         idx = step % len(latents)
         lat = latents[idx]
 
-        t = torch.randint(
-            0, scheduler.config.num_train_timesteps, (1,), device=device
-        )
+        t = torch.randint(0, scheduler.config.num_train_timesteps, (1,), device=device)
         noise = torch.randn_like(lat)
         noisy_lat = scheduler.add_noise(lat, noise, t)
 
@@ -233,14 +232,14 @@ def watermarked_training_images(author_keys, config):
 
 # Each config: (rank, alpha, steps)
 SWEEP_CONFIGS = [
-    (8, 16, 500),     # baseline (same as previous test)
-    (8, 16, 1000),    # more steps
-    (8, 16, 2000),    # even more steps
-    (16, 32, 500),    # higher rank
+    (8, 16, 500),  # baseline (same as previous test)
+    (8, 16, 1000),  # more steps
+    (8, 16, 2000),  # even more steps
+    (16, 32, 500),  # higher rank
     (16, 32, 1000),
-    (32, 64, 500),    # high rank
+    (32, 64, 500),  # high rank
     (32, 64, 1000),
-    (64, 128, 500),   # very high rank
+    (64, 128, 500),  # very high rank
     (64, 128, 1000),
 ]
 
@@ -253,9 +252,9 @@ class TestLoRAHyperparameterSweep:
         results = []
 
         for rank, alpha, steps in SWEEP_CONFIGS:
-            print(f"\n{'='*60}")
+            print(f"\n{'=' * 60}")
             print(f"Training: rank={rank}, alpha={alpha}, steps={steps}")
-            print(f"{'='*60}")
+            print(f"{'=' * 60}")
 
             generated = _train_lora_and_generate(
                 watermarked_training_images,
@@ -266,12 +265,8 @@ class TestLoRAHyperparameterSweep:
             )
 
             # Batch analysis
-            correct = batch_analyze_ghost(
-                generated, author_keys.public_key, config
-            )
-            wrong = batch_analyze_ghost(
-                generated, wrong_keys.public_key, config
-            )
+            correct = batch_analyze_ghost(generated, author_keys.public_key, config)
+            wrong = batch_analyze_ghost(generated, wrong_keys.public_key, config)
 
             # Single-image detection
             detected = 0
@@ -308,9 +303,9 @@ class TestLoRAHyperparameterSweep:
             )
 
         # Summary table
-        print(f"\n{'='*80}")
+        print(f"\n{'=' * 80}")
         print("LORA HYPERPARAMETER SWEEP SUMMARY")
-        print(f"{'='*80}")
+        print(f"{'=' * 80}")
         print(
             f"{'Rank':>4} {'Alpha':>5} {'Steps':>5} | "
             f"{'Batch Corr':>10} {'Gap':>8} {'P-value':>8} | "

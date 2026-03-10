@@ -6,10 +6,9 @@ modulation, and geometric correction utilities.
 
 from __future__ import annotations
 
+import cv2
 import numpy as np
 import pywt
-import cv2
-
 
 # --- DFT Ring Template (Layer 1: Geometric Compass) ---
 
@@ -193,8 +192,9 @@ def detect_dft_rings(
         for r in expected_radii:
             expected_template += np.exp(-((dist - r) ** 2) / (2 * ring_width**2))
 
-        region_mask = ((dist > expected_radii.min() - 0.05) &
-                       (dist < expected_radii.max() + 0.05)).flatten()
+        region_mask = (
+            (dist > expected_radii.min() - 0.05) & (dist < expected_radii.max() + 0.05)
+        ).flatten()
 
         if region_mask.sum() < 10:
             mag_confidence = 0.0
@@ -378,7 +378,9 @@ def apply_geometric_correction(
     center = (w / 2, h / 2)
     M = cv2.getRotationMatrix2D(center, angle, scale)
     corrected = cv2.warpAffine(
-        image, M, (w, h),
+        image,
+        M,
+        (w, h),
         flags=cv2.INTER_LINEAR,
         borderMode=cv2.BORDER_REFLECT_101,
     )

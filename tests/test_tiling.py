@@ -3,12 +3,11 @@
 import numpy as np
 import pytest
 
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.config import SigilConfig
-from sigil_watermark.tiling import tile_embed, tile_extract, best_tile_size, majority_vote
-from sigil_watermark.transforms import embed_spread_spectrum, extract_spread_spectrum
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.keygen import generate_author_keys
+from sigil_watermark.tiling import best_tile_size, majority_vote, tile_embed, tile_extract
 
 
 @pytest.fixture
@@ -44,7 +43,7 @@ def crop_image(image, crop_fraction):
     h, w = image.shape
     margin_h = int(crop_fraction * h / 2)
     margin_w = int(crop_fraction * w / 2)
-    return image[margin_h:h - margin_h, margin_w:w - margin_w].copy()
+    return image[margin_h : h - margin_h, margin_w : w - margin_w].copy()
 
 
 def crop_asymmetric(image, top, left, bottom, right):
@@ -52,9 +51,9 @@ def crop_asymmetric(image, top, left, bottom, right):
     h, w = image.shape
     t = int(top * h)
     b = h - int(bottom * h)
-    l = int(left * w)
+    left_px = int(left * w)
     r = w - int(right * w)
-    return image[t:b, l:r].copy()
+    return image[t:b, left_px:r].copy()
 
 
 # --- Unit Tests: tile_embed / tile_extract ---
@@ -70,7 +69,9 @@ class TestTileEmbedExtract:
         pn = np.where(rng.integers(0, 2, 64 * 64) == 0, -1.0, 1.0)
         payload = [1, 0, 1, 1, 0, 0, 1, 0]
 
-        embedded = tile_embed(subband, pn, payload, tile_size=64, strength=5.0, spreading_factor=256)
+        embedded = tile_embed(
+            subband, pn, payload, tile_size=64, strength=5.0, spreading_factor=256
+        )
         bits, conf = tile_extract(embedded, pn, num_bits=8, tile_size=64, spreading_factor=256)
         assert bits == payload
 
@@ -81,7 +82,9 @@ class TestTileEmbedExtract:
         pn = np.where(rng.integers(0, 2, 256 * 256) == 0, -1.0, 1.0)
         payload = [1, 0, 1, 1, 0, 0, 1, 0, 1, 1]
 
-        embedded = tile_embed(subband, pn, payload, tile_size=64, strength=5.0, spreading_factor=128)
+        embedded = tile_embed(
+            subband, pn, payload, tile_size=64, strength=5.0, spreading_factor=128
+        )
         bits, conf = tile_extract(embedded, pn, num_bits=10, tile_size=64, spreading_factor=128)
         assert bits == payload
         assert conf > 0.9
@@ -94,7 +97,9 @@ class TestTileEmbedExtract:
         payload = [1, 0, 1, 1]
 
         # Should not crash — partial tiles will be handled
-        embedded = tile_embed(subband, pn, payload, tile_size=64, strength=5.0, spreading_factor=128)
+        embedded = tile_embed(
+            subband, pn, payload, tile_size=64, strength=5.0, spreading_factor=128
+        )
         bits, conf = tile_extract(embedded, pn, num_bits=4, tile_size=64, spreading_factor=128)
         assert bits == payload
 
@@ -147,8 +152,14 @@ class TestCropRobustnessIntegration:
         cropped = crop_image(watermarked, 0.10)
         result = detector.detect(cropped, author_keys.public_key)
         # After crop, tile alignment may shift — accept ring or payload signal
-        assert result.detected or result.payload_confidence > 0.4 or result.ring_confidence > 0.5, \
-            f"10% crop failed: conf={result.payload_confidence:.2f}, ring={result.ring_confidence:.2f}"
+        assert (
+            result.detected
+            or result.payload_confidence > 0.4
+            or result.ring_confidence > 0.5
+        ), (
+            f"10% crop failed: conf={result.payload_confidence:.2f}, "
+            f"ring={result.ring_confidence:.2f}"
+        )
 
     def test_crop_25_percent_detects(self, embedder, detector, author_keys):
         """25% crop should still show strong signal."""
@@ -157,8 +168,9 @@ class TestCropRobustnessIntegration:
         watermarked = embedder.embed(img, author_keys)
         cropped = crop_image(watermarked, 0.25)
         result = detector.detect(cropped, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.4, \
+        assert result.detected or result.payload_confidence > 0.4, (
             f"25% crop failed: conf={result.payload_confidence:.2f}"
+        )
 
     def test_crop_50_percent(self, embedder, detector, author_keys):
         """50% crop — severe but tiling should help."""
@@ -168,8 +180,9 @@ class TestCropRobustnessIntegration:
         cropped = crop_image(watermarked, 0.50)
         result = detector.detect(cropped, author_keys.public_key)
         # Even 50% crop should retain some signal with tiling
-        assert result.ring_confidence > 0.3 or result.payload_confidence > 0.3, \
+        assert result.ring_confidence > 0.3 or result.payload_confidence > 0.3, (
             f"50% crop: ring={result.ring_confidence:.2f}, payload={result.payload_confidence:.2f}"
+        )
 
     def test_asymmetric_crop(self, embedder, detector, author_keys):
         """Non-symmetric crop (more from one side)."""
@@ -192,6 +205,7 @@ class TestCropRobustnessIntegration:
     def test_crop_plus_jpeg(self, embedder, detector, author_keys):
         """Crop + JPEG compression — realistic attack chain."""
         import io
+
         from PIL import Image
 
         rng = np.random.default_rng(42)
@@ -201,15 +215,16 @@ class TestCropRobustnessIntegration:
 
         # JPEG Q75
         img_uint8 = np.clip(cropped, 0, 255).astype(np.uint8)
-        pil = Image.fromarray(img_uint8, mode='L')
+        pil = Image.fromarray(img_uint8, mode="L")
         buf = io.BytesIO()
-        pil.save(buf, format='JPEG', quality=75)
+        pil.save(buf, format="JPEG", quality=75)
         buf.seek(0)
         jpeg_img = np.array(Image.open(buf), dtype=np.float64)
 
         result = detector.detect(jpeg_img, author_keys.public_key)
-        assert result.ring_confidence > 0.3 or result.payload_confidence > 0.3, \
+        assert result.ring_confidence > 0.3 or result.payload_confidence > 0.3, (
             f"Crop+JPEG: ring={result.ring_confidence:.2f}, payload={result.payload_confidence:.2f}"
+        )
 
     def test_crop_different_sizes(self, embedder, detector, author_keys):
         """Crop robustness across different image sizes."""
@@ -219,5 +234,6 @@ class TestCropRobustnessIntegration:
             watermarked = embedder.embed(img, author_keys)
             cropped = crop_image(watermarked, 0.15)
             result = detector.detect(cropped, author_keys.public_key)
-            assert result.payload_confidence > 0.3 or result.ring_confidence > 0.3, \
+            assert result.payload_confidence > 0.3 or result.ring_confidence > 0.3, (
                 f"Crop failed for size {size}"
+            )

@@ -22,8 +22,8 @@ except ImportError:
 
 from sigil_watermark.config import SigilConfig
 from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.ghost.spectral_analysis import analyze_ghost_signature
+from sigil_watermark.keygen import generate_author_keys
 
 pytestmark = [
     pytest.mark.gpu,
@@ -90,7 +90,9 @@ def _vae_roundtrip(vae_model, image: np.ndarray) -> np.ndarray:
     if is_rgb:
         return decoded_np
     else:
-        return 0.299 * decoded_np[:, :, 0] + 0.587 * decoded_np[:, :, 1] + 0.114 * decoded_np[:, :, 2]
+        return (
+            0.299 * decoded_np[:, :, 0] + 0.587 * decoded_np[:, :, 1] + 0.114 * decoded_np[:, :, 2]
+        )
 
 
 def _psnr(original, modified):
@@ -122,9 +124,7 @@ def _ssim_simple(a, b, window=7):
 @pytest.fixture(scope="module")
 def vae():
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = AutoencoderKL.from_pretrained(
-        "stabilityai/sd-vae-ft-mse", torch_dtype=torch.float32
-    )
+    model = AutoencoderKL.from_pretrained("stabilityai/sd-vae-ft-mse", torch_dtype=torch.float32)
     model = model.to(device)
     model.eval()
     return model
@@ -175,16 +175,12 @@ class TestGhostStrengthSweep:
                 ssims.append(_ssim_simple(img, wm))
 
                 # Ghost on original
-                ghost_orig = analyze_ghost_signature(
-                    wm, author_keys.public_key, config
-                )
+                ghost_orig = analyze_ghost_signature(wm, author_keys.public_key, config)
                 corr_originals.append(ghost_orig.correlation)
 
                 # Ghost after VAE
                 vae_img = _vae_roundtrip(vae, wm)
-                ghost_vae = analyze_ghost_signature(
-                    vae_img, author_keys.public_key, config
-                )
+                ghost_vae = analyze_ghost_signature(vae_img, author_keys.public_key, config)
                 corr_after_vae.append(ghost_vae.correlation)
                 if ghost_vae.ghost_detected:
                     detected_after_vae += 1
@@ -254,8 +250,7 @@ class TestGhostStrengthSweep:
 
         # Check monotonicity (higher strength → higher correlation)
         monotonic = all(
-            correlations[i] <= correlations[i + 1]
-            for i in range(len(correlations) - 1)
+            correlations[i] <= correlations[i + 1] for i in range(len(correlations) - 1)
         )
         print(f"Correlations: {[f'{c:.4f}' for c in correlations]}")
         print(f"Monotonically increasing: {monotonic}")
@@ -283,16 +278,12 @@ class TestGhostStrengthSweep:
                 wm = embedder.embed(img, author_keys)
 
                 # Ghost on original (RGB input → multi-channel analysis)
-                ghost_orig = analyze_ghost_signature(
-                    wm, author_keys.public_key, config
-                )
+                ghost_orig = analyze_ghost_signature(wm, author_keys.public_key, config)
                 corr_originals.append(ghost_orig.correlation)
 
                 # Ghost after VAE (returns RGB)
                 vae_img = _vae_roundtrip(vae, wm)
-                ghost_vae = analyze_ghost_signature(
-                    vae_img, author_keys.public_key, config
-                )
+                ghost_vae = analyze_ghost_signature(vae_img, author_keys.public_key, config)
                 corr_after_vae.append(ghost_vae.correlation)
                 if ghost_vae.ghost_detected:
                     detected_after_vae += 1
@@ -316,9 +307,7 @@ class TestGhostStrengthSweep:
 
             ghost_before = analyze_ghost_signature(wm, author_keys.public_key, config)
             vae_img = _vae_roundtrip(vae, wm)
-            ghost_after = analyze_ghost_signature(
-                vae_img, author_keys.public_key, config
-            )
+            ghost_after = analyze_ghost_signature(vae_img, author_keys.public_key, config)
 
             ratio = ghost_after.correlation / max(abs(ghost_before.correlation), 1e-10)
             print(

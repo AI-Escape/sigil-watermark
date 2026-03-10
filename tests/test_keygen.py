@@ -5,15 +5,14 @@ import pytest
 
 from sigil_watermark.keygen import (
     AuthorKeys,
-    generate_author_keys,
-    derive_pn_sequence,
-    derive_ring_radii,
     derive_author_id,
     derive_author_index,
+    derive_pn_sequence,
+    derive_ring_radii,
+    generate_author_keys,
     get_universal_beacon_pn,
     get_universal_index_pn,
 )
-from sigil_watermark.config import SigilConfig
 
 
 class TestGenerateAuthorKeys:
@@ -93,10 +92,7 @@ class TestDerivePNSequence:
             generate_author_keys(seed=f"test-pn-xcorr-{i}-seed-32-bytes!".encode())
             for i in range(5)
         ]
-        pns = [
-            derive_pn_sequence(k.public_key, length=4096, config=config)
-            for k in keys_list
-        ]
+        pns = [derive_pn_sequence(k.public_key, length=4096, config=config) for k in keys_list]
 
         for i in range(len(pns)):
             for j in range(i + 1, len(pns)):

@@ -7,16 +7,16 @@ import pytest
 from PIL import Image
 
 from sigil_watermark.color import (
-    rgb_to_ycbcr,
-    ycbcr_to_rgb,
+    extract_y_channel,
     prepare_for_embedding,
     reconstruct_from_embedding,
-    extract_y_channel,
+    rgb_to_ycbcr,
+    ycbcr_to_rgb,
 )
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
-from sigil_watermark.keygen import generate_author_keys
 from sigil_watermark.config import SigilConfig
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.keygen import generate_author_keys
 
 
 @pytest.fixture
@@ -170,7 +170,7 @@ class TestColorPipeline:
         watermarked = embedder.embed(img, author_keys)
         mse = np.mean((watermarked - img) ** 2)
         if mse > 0:
-            psnr = 10 * np.log10(255.0 ** 2 / mse)
+            psnr = 10 * np.log10(255.0**2 / mse)
             assert psnr > 35.0, f"Color PSNR {psnr:.1f}dB too low"
 
     def test_grayscale_still_works(self, embedder, detector, author_keys):
@@ -197,15 +197,16 @@ class TestColorPipeline:
 
         # JPEG compress as RGB
         img_uint8 = np.clip(watermarked, 0, 255).astype(np.uint8)
-        pil = Image.fromarray(img_uint8, mode='RGB')
+        pil = Image.fromarray(img_uint8, mode="RGB")
         buf = io.BytesIO()
-        pil.save(buf, format='JPEG', quality=75)
+        pil.save(buf, format="JPEG", quality=75)
         buf.seek(0)
-        jpeg_img = np.array(Image.open(buf).convert('RGB'), dtype=np.float64)
+        jpeg_img = np.array(Image.open(buf).convert("RGB"), dtype=np.float64)
 
         result = detector.detect(jpeg_img, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.4, \
+        assert result.detected or result.payload_confidence > 0.4, (
             f"Color JPEG failed: conf={result.payload_confidence:.2f}"
+        )
 
     def test_rgb_different_sizes(self, embedder, detector, author_keys):
         """Color images of different sizes."""
@@ -227,10 +228,12 @@ class TestColorAttacks:
         watermarked = embedder.embed(img, author_keys)
 
         # Desaturate: move all channels toward the Y channel
-        y = 0.299 * watermarked[:, :, 0] + 0.587 * watermarked[:, :, 1] + 0.114 * watermarked[:, :, 2]
-        desaturated = np.stack([
-            watermarked[:, :, c] * 0.5 + y * 0.5 for c in range(3)
-        ], axis=-1)
+        y = (
+            0.299 * watermarked[:, :, 0]
+            + 0.587 * watermarked[:, :, 1]
+            + 0.114 * watermarked[:, :, 2]
+        )
+        desaturated = np.stack([watermarked[:, :, c] * 0.5 + y * 0.5 for c in range(3)], axis=-1)
 
         result = detector.detect(desaturated, author_keys.public_key)
         assert result.detected or result.payload_confidence > 0.4

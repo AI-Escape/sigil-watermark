@@ -17,18 +17,15 @@ import numpy as np
 import pytest
 from scipy.ndimage import gaussian_filter
 
-from sigil_watermark.config import SigilConfig, DEFAULT_CONFIG
+from sigil_watermark.config import DEFAULT_CONFIG
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
 from sigil_watermark.keygen import (
-    generate_author_keys,
     derive_ring_radii,
     derive_sentinel_ring_radii,
-    derive_ring_phase_offsets,
-    derive_content_ring_radii,
+    generate_author_keys,
 )
-from sigil_watermark.transforms import embed_dft_rings, detect_dft_rings
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
-from sigil_watermark.color import extract_y_channel, prepare_for_embedding
+from sigil_watermark.transforms import detect_dft_rings, embed_dft_rings
 
 
 @pytest.fixture
@@ -59,6 +56,7 @@ def stable_strength(stable_radii, config):
 # that previously caused ring detection to fail completely.
 # ---------------------------------------------------------------------------
 
+
 def _make_natural_photo(seed, h=1080, w=1920):
     """Simulate a natural photograph with 1/f spectral falloff."""
     rng = np.random.default_rng(seed)
@@ -69,7 +67,7 @@ def _make_natural_photo(seed, h=1080, w=1920):
     y, x = np.ogrid[:h, :w]
     r = np.sqrt((x - cx) ** 2 + (y - cy) ** 2) + 1.0
     # 1/f^1.2 spectrum (typical for natural images)
-    f_filtered = f / (r ** 1.2)
+    f_filtered = f / (r**1.2)
     img = np.real(np.fft.ifft2(np.fft.ifftshift(f_filtered)))
     # Normalize to [20, 235] range
     img = (img - img.min()) / (img.max() - img.min() + 1e-10) * 215 + 20
@@ -117,7 +115,7 @@ def _make_high_contrast(seed, h=512, w=768):
     for _ in range(20):
         y0, x0 = rng.integers(0, h - 50), rng.integers(0, w - 50)
         y1, x1 = y0 + rng.integers(30, 200), x0 + rng.integers(30, 300)
-        img[y0:min(y1, h), x0:min(x1, w)] = rng.uniform(50, 250)
+        img[y0 : min(y1, h), x0 : min(x1, w)] = rng.uniform(50, 250)
     img += gaussian_filter(rng.standard_normal((h, w)) * 10, sigma=2)
     return np.clip(img, 0, 255)
 
@@ -149,39 +147,39 @@ class TestRingDetectionNaturalImages:
     """
 
     @pytest.mark.parametrize("name", NATURAL_IMAGES.keys())
-    def test_rings_detectable_on_natural_image(
-        self, name, stable_radii, stable_strength, config
-    ):
+    def test_rings_detectable_on_natural_image(self, name, stable_radii, stable_strength, config):
         """Rings should be detectable on natural images (pristine, no JPEG)."""
         y = NATURAL_IMAGES[name]()
         y_wm = embed_dft_rings(
-            y.copy(), stable_radii, strength=stable_strength,
+            y.copy(),
+            stable_radii,
+            strength=stable_strength,
             ring_width=config.ring_width,
         )
         _, confidence = detect_dft_rings(
-            y_wm, stable_radii, tolerance=0.02, ring_width=config.ring_width,
+            y_wm,
+            stable_radii,
+            tolerance=0.02,
+            ring_width=config.ring_width,
         )
         assert confidence > 0.2, (
             f"{name}: ring confidence {confidence:.4f} too low on natural image"
         )
 
     @pytest.mark.parametrize("name", NATURAL_IMAGES.keys())
-    def test_no_false_positive_on_natural_image(
-        self, name, stable_radii, config
-    ):
+    def test_no_false_positive_on_natural_image(self, name, stable_radii, config):
         """Unwatermarked natural images should NOT trigger ring detection."""
         y = NATURAL_IMAGES[name]()
         _, confidence = detect_dft_rings(
-            y, stable_radii, tolerance=0.02, ring_width=config.ring_width,
+            y,
+            stable_radii,
+            tolerance=0.02,
+            ring_width=config.ring_width,
         )
-        assert confidence < 0.3, (
-            f"{name}: false positive on unwatermarked image: {confidence:.4f}"
-        )
+        assert confidence < 0.3, f"{name}: false positive on unwatermarked image: {confidence:.4f}"
 
     @pytest.mark.parametrize("name", NATURAL_IMAGES.keys())
-    def test_full_pipeline_on_natural_image(
-        self, name, author_keys, config
-    ):
+    def test_full_pipeline_on_natural_image(self, name, author_keys, config):
         """Full embed + detect pipeline should work on natural images."""
         y_gray = NATURAL_IMAGES[name]()
         # Make RGB (needed for full pipeline)
@@ -207,9 +205,7 @@ class TestRingDetectionNaturalImages:
         assert result.detected, f"{name}: not detected"
 
     @pytest.mark.parametrize("name", ["1f_photo_1080p", "dark_photo"])
-    def test_jpeg_roundtrip_on_natural_image(
-        self, name, author_keys, config
-    ):
+    def test_jpeg_roundtrip_on_natural_image(self, name, author_keys, config):
         """Ring detection should survive JPEG Q99 on natural images."""
         import cv2
 
@@ -223,10 +219,8 @@ class TestRingDetectionNaturalImages:
         # JPEG Q99 roundtrip (exact production flow)
         wm_uint8 = np.clip(watermarked, 0, 255).astype(np.uint8)
         wm_bgr = cv2.cvtColor(wm_uint8, cv2.COLOR_RGB2BGR)
-        _, encoded = cv2.imencode('.jpg', wm_bgr, [cv2.IMWRITE_JPEG_QUALITY, 99])
-        decoded = cv2.imdecode(
-            np.frombuffer(encoded.tobytes(), np.uint8), cv2.IMREAD_COLOR
-        )
+        _, encoded = cv2.imencode(".jpg", wm_bgr, [cv2.IMWRITE_JPEG_QUALITY, 99])
+        decoded = cv2.imdecode(np.frombuffer(encoded.tobytes(), np.uint8), cv2.IMREAD_COLOR)
         decoded_rgb = cv2.cvtColor(decoded, cv2.COLOR_BGR2RGB).astype(np.float64)
 
         detector = SigilDetector(config=config)
@@ -276,19 +270,26 @@ class TestSpectralWhiteningRobustness:
         """The gap between watermarked and unwatermarked NCC must be large."""
         y = _make_natural_photo(42)
         y_wm = embed_dft_rings(
-            y.copy(), stable_radii, strength=stable_strength,
+            y.copy(),
+            stable_radii,
+            strength=stable_strength,
             ring_width=config.ring_width,
         )
         _, conf_nowm = detect_dft_rings(
-            y, stable_radii, tolerance=0.02, ring_width=config.ring_width,
+            y,
+            stable_radii,
+            tolerance=0.02,
+            ring_width=config.ring_width,
         )
         _, conf_wm = detect_dft_rings(
-            y_wm, stable_radii, tolerance=0.02, ring_width=config.ring_width,
+            y_wm,
+            stable_radii,
+            tolerance=0.02,
+            ring_width=config.ring_width,
         )
         gap = conf_wm - conf_nowm
         assert gap > 0.2, (
-            f"Discrimination gap too small: wm={conf_wm:.4f}, "
-            f"nowm={conf_nowm:.4f}, gap={gap:.4f}"
+            f"Discrimination gap too small: wm={conf_wm:.4f}, nowm={conf_nowm:.4f}, gap={gap:.4f}"
         )
 
     def test_different_keys_produce_different_radii(self, config):

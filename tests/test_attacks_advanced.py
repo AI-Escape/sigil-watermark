@@ -15,11 +15,11 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from sigil_watermark.embed import SigilEmbedder
-from sigil_watermark.detect import SigilDetector
-from sigil_watermark.keygen import generate_author_keys
-from sigil_watermark.config import SigilConfig
 from sigil_watermark.color import extract_y_channel
+from sigil_watermark.config import SigilConfig
+from sigil_watermark.detect import SigilDetector
+from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.keygen import generate_author_keys
 
 
 @pytest.fixture
@@ -51,10 +51,7 @@ def _make_natural(rng, size=(512, 512)):
     for i in range(h):
         for j in range(w):
             img[i, j] = (
-                128
-                + 40 * np.sin(i / 20.0)
-                + 30 * np.cos(j / 15.0)
-                + 20 * np.sin((i + j) / 25.0)
+                128 + 40 * np.sin(i / 20.0) + 30 * np.cos(j / 15.0) + 20 * np.sin((i + j) / 25.0)
             )
     img += rng.normal(0, 8, img.shape)
     return np.clip(img, 0, 255)
@@ -66,11 +63,7 @@ def _make_rgb(rng, size=(512, 512)):
     for c in range(3):
         for i in range(h):
             for j in range(w):
-                img[i, j, c] = (
-                    128
-                    + 40 * np.sin((i + c * 30) / 25)
-                    + 30 * np.cos((j + c * 20) / 20)
-                )
+                img[i, j, c] = 128 + 40 * np.sin((i + c * 30) / 25) + 30 * np.cos((j + c * 20) / 20)
     img += rng.normal(0, 3, img.shape)
     return np.clip(img, 0, 255)
 
@@ -137,7 +130,9 @@ class TestPerspectiveAttack:
         )
         M = cv2.getPerspectiveTransform(src, dst)
         return cv2.warpPerspective(
-            image.astype(np.float32), M, (w, h),
+            image.astype(np.float32),
+            M,
+            (w, h),
             borderMode=cv2.BORDER_REFLECT_101,
         ).astype(np.float64)
 
@@ -148,8 +143,9 @@ class TestPerspectiveAttack:
         watermarked = embedder.embed(img, author_keys)
         warped = self._perspective_warp(watermarked, magnitude=0.03)
         result = detector.detect(warped, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.4, \
+        assert result.detected or result.payload_confidence > 0.4, (
             f"Mild perspective failed: conf={result.payload_confidence:.2f}"
+        )
 
     def test_moderate_perspective(self, embedder, detector, author_keys):
         """Moderate perspective warp (5%)."""
@@ -158,8 +154,10 @@ class TestPerspectiveAttack:
         watermarked = embedder.embed(img, author_keys)
         warped = self._perspective_warp(watermarked, magnitude=0.05)
         result = detector.detect(warped, author_keys.public_key)
-        assert result.payload_confidence > 0.3 or result.ring_confidence > 0.3, \
-            f"Moderate perspective: payload={result.payload_confidence:.2f}, ring={result.ring_confidence:.2f}"
+        assert result.payload_confidence > 0.3 or result.ring_confidence > 0.3, (
+            f"Moderate perspective: payload={result.payload_confidence:.2f}, "
+            f"ring={result.ring_confidence:.2f}"
+        )
 
 
 class TestAffineAttack:
@@ -169,7 +167,9 @@ class TestAffineAttack:
         h, w = image.shape[:2]
         M = np.float32([[1, shear_x, 0], [shear_y, 1, 0]])
         return cv2.warpAffine(
-            image.astype(np.float32), M, (w, h),
+            image.astype(np.float32),
+            M,
+            (w, h),
             borderMode=cv2.BORDER_REFLECT_101,
         ).astype(np.float64)
 
@@ -180,8 +180,9 @@ class TestAffineAttack:
         watermarked = embedder.embed(img, author_keys)
         sheared = self._affine_shear(watermarked, shear_x=0.05)
         result = detector.detect(sheared, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"Mild shear failed: conf={result.payload_confidence:.2f}"
+        )
 
     def test_combined_shear_rotation(self, embedder, detector, author_keys):
         """Shear + small rotation."""
@@ -192,12 +193,15 @@ class TestAffineAttack:
         h, w = sheared.shape[:2]
         M = cv2.getRotationMatrix2D((w / 2, h / 2), 2.0, 1.0)
         attacked = cv2.warpAffine(
-            sheared.astype(np.float32), M, (w, h),
+            sheared.astype(np.float32),
+            M,
+            (w, h),
             borderMode=cv2.BORDER_REFLECT_101,
         ).astype(np.float64)
         result = detector.detect(attacked, author_keys.public_key)
-        assert result.payload_confidence > 0.25 or result.ring_confidence > 0.3, \
+        assert result.payload_confidence > 0.25 or result.ring_confidence > 0.3, (
             f"Shear+rotation: payload={result.payload_confidence:.2f}"
+        )
 
 
 class TestBarrelDistortion:
@@ -212,8 +216,11 @@ class TestBarrelDistortion:
             cam, dist, None, cam, (w, h), cv2.CV_32FC1
         )
         return cv2.remap(
-            image.astype(np.float32), undist_map1, undist_map2,
-            cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT_101,
+            image.astype(np.float32),
+            undist_map1,
+            undist_map2,
+            cv2.INTER_LINEAR,
+            borderMode=cv2.BORDER_REFLECT_101,
         ).astype(np.float64)
 
     def test_mild_barrel(self, embedder, detector, author_keys):
@@ -223,8 +230,9 @@ class TestBarrelDistortion:
         watermarked = embedder.embed(img, author_keys)
         distorted = self._barrel_distort(watermarked, k1=0.1)
         result = detector.detect(distorted, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"Mild barrel: conf={result.payload_confidence:.2f}"
+        )
 
     def test_pincushion(self, embedder, detector, author_keys):
         """Pincushion distortion (k1=-0.1)."""
@@ -233,8 +241,9 @@ class TestBarrelDistortion:
         watermarked = embedder.embed(img, author_keys)
         distorted = self._barrel_distort(watermarked, k1=-0.1)
         result = detector.detect(distorted, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"Pincushion: conf={result.payload_confidence:.2f}"
+        )
 
 
 class TestNonUniformScale:
@@ -246,15 +255,14 @@ class TestNonUniformScale:
         img = _make_natural(rng)
         watermarked = embedder.embed(img, author_keys)
         h, w = watermarked.shape
-        stretched = cv2.resize(
-            watermarked.astype(np.float32), (int(w * 1.1), h)
-        )
+        stretched = cv2.resize(watermarked.astype(np.float32), (int(w * 1.1), h))
         # Crop back to original width
         x0 = (stretched.shape[1] - w) // 2
         result_img = stretched[:, x0 : x0 + w].astype(np.float64)
         result = detector.detect(result_img, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"H-stretch: conf={result.payload_confidence:.2f}"
+        )
 
     def test_stretch_vertical(self, embedder, detector, author_keys):
         """Stretch 10% vertically, then crop back."""
@@ -262,14 +270,13 @@ class TestNonUniformScale:
         img = _make_natural(rng)
         watermarked = embedder.embed(img, author_keys)
         h, w = watermarked.shape
-        stretched = cv2.resize(
-            watermarked.astype(np.float32), (w, int(h * 1.1))
-        )
+        stretched = cv2.resize(watermarked.astype(np.float32), (w, int(h * 1.1)))
         y0 = (stretched.shape[0] - h) // 2
         result_img = stretched[y0 : y0 + h, :].astype(np.float64)
         result = detector.detect(result_img, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"V-stretch: conf={result.payload_confidence:.2f}"
+        )
 
 
 # --- Print-Scan Simulation ---
@@ -295,8 +302,6 @@ class TestPrintScanSimulation:
             gamma, blur_sigma, persp_mag = 1.3, 1.2, 0.06
             noise_sigma, jitter, jpeg_q, crop_keep = 6, 0.15, 65, 0.85
 
-        is_color = result.ndim == 3
-
         # 1. Gamma correction (printer response curve)
         result = np.clip(result, 0, 255)
         result = np.power(result / 255.0, gamma) * 255.0
@@ -314,7 +319,9 @@ class TestPrintScanSimulation:
         dst = src + offsets * np.float32([[dx, dy]])
         M = cv2.getPerspectiveTransform(src, dst)
         result = cv2.warpPerspective(
-            result.astype(np.float32), M, (w, h),
+            result.astype(np.float32),
+            M,
+            (w, h),
             borderMode=cv2.BORDER_REFLECT_101,
         ).astype(np.float64)
 
@@ -340,8 +347,9 @@ class TestPrintScanSimulation:
         watermarked = embedder.embed(img, author_keys)
         scanned = self._simulate_print_scan(watermarked, rng, "mild")
         result = detector.detect(scanned, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"Mild print-scan: conf={result.payload_confidence:.2f}"
+        )
 
     def test_moderate_print_scan(self, embedder, detector, author_keys):
         """Moderate print-scan: typical office scan."""
@@ -350,8 +358,10 @@ class TestPrintScanSimulation:
         watermarked = embedder.embed(img, author_keys)
         scanned = self._simulate_print_scan(watermarked, rng, "moderate")
         result = detector.detect(scanned, author_keys.public_key)
-        assert result.payload_confidence > 0.25 or result.ring_confidence > 0.3, \
-            f"Moderate print-scan: payload={result.payload_confidence:.2f}, ring={result.ring_confidence:.2f}"
+        assert result.payload_confidence > 0.25 or result.ring_confidence > 0.3, (
+            f"Moderate print-scan: payload={result.payload_confidence:.2f}, "
+            f"ring={result.ring_confidence:.2f}"
+        )
 
     def test_severe_print_scan(self, embedder, detector, author_keys):
         """Severe print-scan: low quality, bad angle, poor lighting."""
@@ -361,8 +371,10 @@ class TestPrintScanSimulation:
         scanned = self._simulate_print_scan(watermarked, rng, "severe")
         result = detector.detect(scanned, author_keys.public_key)
         # Severe is very hard — ring detection is our fallback
-        assert result.payload_confidence > 0.2 or result.ring_confidence > 0.2, \
-            f"Severe print-scan: payload={result.payload_confidence:.2f}, ring={result.ring_confidence:.2f}"
+        assert result.payload_confidence > 0.2 or result.ring_confidence > 0.2, (
+            f"Severe print-scan: payload={result.payload_confidence:.2f}, "
+            f"ring={result.ring_confidence:.2f}"
+        )
 
     def test_rgb_print_scan(self, embedder, detector, author_keys):
         """Print-scan on RGB image."""
@@ -371,8 +383,9 @@ class TestPrintScanSimulation:
         watermarked = embedder.embed(img, author_keys)
         scanned = self._simulate_print_scan(watermarked, rng, "mild")
         result = detector.detect(scanned, author_keys.public_key)
-        assert result.payload_confidence > 0.25 or result.ring_confidence > 0.3, \
+        assert result.payload_confidence > 0.25 or result.ring_confidence > 0.3, (
             f"RGB print-scan: payload={result.payload_confidence:.2f}"
+        )
 
 
 # --- Removal Attacks ---
@@ -387,8 +400,9 @@ class TestMedianFilter:
         watermarked = embedder.embed(img, author_keys)
         filtered = cv2.medianBlur(watermarked.astype(np.float32), 3).astype(np.float64)
         result = detector.detect(filtered, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"Median 3x3: conf={result.payload_confidence:.2f}"
+        )
 
     def test_median_5x5(self, embedder, detector, author_keys):
         rng = np.random.default_rng(42)
@@ -398,8 +412,9 @@ class TestMedianFilter:
         img_u8 = np.clip(watermarked, 0, 255).astype(np.uint8)
         filtered = cv2.medianBlur(img_u8, 5).astype(np.float64)
         result = detector.detect(filtered, author_keys.public_key)
-        assert result.payload_confidence > 0.25 or result.ring_confidence > 0.3, \
+        assert result.payload_confidence > 0.25 or result.ring_confidence > 0.3, (
             f"Median 5x5: payload={result.payload_confidence:.2f}"
+        )
 
 
 class TestGaussianBlurAttack:
@@ -411,24 +426,24 @@ class TestGaussianBlurAttack:
         img = _make_natural(rng)
         watermarked = embedder.embed(img, author_keys)
         ksize = max(3, int(sigma * 6) | 1)
-        blurred = cv2.GaussianBlur(
-            watermarked.astype(np.float32), (ksize, ksize), sigma
-        ).astype(np.float64)
+        blurred = cv2.GaussianBlur(watermarked.astype(np.float32), (ksize, ksize), sigma).astype(
+            np.float64
+        )
         result = detector.detect(blurred, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"Gaussian blur sigma={sigma}: conf={result.payload_confidence:.2f}"
+        )
 
     def test_heavy_blur_sigma3(self, embedder, detector, author_keys):
         """Heavy blur (sigma=3) — very destructive."""
         rng = np.random.default_rng(42)
         img = _make_natural(rng)
         watermarked = embedder.embed(img, author_keys)
-        blurred = cv2.GaussianBlur(
-            watermarked.astype(np.float32), (19, 19), 3.0
-        ).astype(np.float64)
+        blurred = cv2.GaussianBlur(watermarked.astype(np.float32), (19, 19), 3.0).astype(np.float64)
         result = detector.detect(blurred, author_keys.public_key)
-        assert result.payload_confidence > 0.2 or result.ring_confidence > 0.3, \
+        assert result.payload_confidence > 0.2 or result.ring_confidence > 0.3, (
             f"Heavy blur: payload={result.payload_confidence:.2f}"
+        )
 
 
 class TestHistogramEqualization:
@@ -441,8 +456,9 @@ class TestHistogramEqualization:
         img_u8 = np.clip(watermarked, 0, 255).astype(np.uint8)
         equalized = cv2.equalizeHist(img_u8).astype(np.float64)
         result = detector.detect(equalized, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"Histogram equalization: conf={result.payload_confidence:.2f}"
+        )
 
     def test_clahe(self, embedder, detector, author_keys):
         """CLAHE (adaptive histogram equalization)."""
@@ -453,8 +469,9 @@ class TestHistogramEqualization:
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
         equalized = clahe.apply(img_u8).astype(np.float64)
         result = detector.detect(equalized, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"CLAHE: conf={result.payload_confidence:.2f}"
+        )
 
 
 class TestGammaCorrection:
@@ -468,8 +485,9 @@ class TestGammaCorrection:
         corrected = np.clip(watermarked, 0, 255)
         corrected = np.power(corrected / 255.0, gamma) * 255.0
         result = detector.detect(corrected, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"Gamma {gamma}: conf={result.payload_confidence:.2f}"
+        )
 
 
 class TestBitDepthReduction:
@@ -485,11 +503,13 @@ class TestBitDepthReduction:
         quantized = np.round(watermarked / 255.0 * (levels - 1)) / (levels - 1) * 255.0
         result = detector.detect(quantized, author_keys.public_key)
         if bits == 6:
-            assert result.detected or result.payload_confidence > 0.3, \
+            assert result.detected or result.payload_confidence > 0.3, (
                 f"{bits}-bit: conf={result.payload_confidence:.2f}"
+            )
         else:  # 4-bit is harsh
-            assert result.payload_confidence > 0.2 or result.ring_confidence > 0.2, \
+            assert result.payload_confidence > 0.2 or result.ring_confidence > 0.2, (
                 f"{bits}-bit: payload={result.payload_confidence:.2f}"
+            )
 
 
 class TestFrequencyNotchFilter:
@@ -521,8 +541,9 @@ class TestFrequencyNotchFilter:
         filtered = np.real(np.fft.ifft2(np.fft.ifftshift(f)))
         result = detector.detect(filtered, author_keys.public_key)
         # Notch removes rings but payload in DWT should partially survive
-        assert result.payload_confidence > 0.25, \
+        assert result.payload_confidence > 0.25, (
             f"Notch filter: payload={result.payload_confidence:.2f}"
+        )
 
 
 # --- Color/Lighting Attacks ---
@@ -542,8 +563,9 @@ class TestColorAttacks:
         hsv[:, :, 0] = (hsv[:, :, 0].astype(int) + 45) % 180  # 90 degrees in OpenCV
         rotated = cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB).astype(np.float64)
         result = detector.detect(rotated, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"Hue rotation 90: conf={result.payload_confidence:.2f}"
+        )
 
     def test_desaturation(self, embedder, detector, author_keys):
         """Full desaturation (convert to grayscale) — Y channel preserved."""
@@ -564,8 +586,9 @@ class TestColorAttacks:
         hsv[:, :, 1] = np.clip(hsv[:, :, 1] * 2.0, 0, 255)
         saturated = cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2RGB).astype(np.float64)
         result = detector.detect(saturated, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"Oversaturation: conf={result.payload_confidence:.2f}"
+        )
 
     def test_white_balance_shift(self, embedder, detector, author_keys):
         """Simulate white balance shift (warm: boost R, reduce B)."""
@@ -576,8 +599,9 @@ class TestColorAttacks:
         shifted[:, :, 0] = np.clip(shifted[:, :, 0] * 1.15, 0, 255)  # R up
         shifted[:, :, 2] = np.clip(shifted[:, :, 2] * 0.85, 0, 255)  # B down
         result = detector.detect(shifted, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"WB shift: conf={result.payload_confidence:.2f}"
+        )
 
     def test_vignetting(self, embedder, detector, author_keys):
         """Vignetting (center-weighted brightness falloff)."""
@@ -593,8 +617,9 @@ class TestColorAttacks:
             vignette = vignette[:, :, np.newaxis]
         vignetted = np.clip(watermarked * vignette, 0, 255)
         result = detector.detect(vignetted, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"Vignetting: conf={result.payload_confidence:.2f}"
+        )
 
 
 # --- Combined/Chained Attacks ---
@@ -612,8 +637,9 @@ class TestCombinedAttacksAdvanced:
         attacked = crop_center(attacked, 0.75)
         attacked = resize_roundtrip(attacked, 0.5)
         result = detector.detect(attacked, author_keys.public_key)
-        assert result.payload_confidence > 0.2 or result.ring_confidence > 0.3, \
+        assert result.payload_confidence > 0.2 or result.ring_confidence > 0.3, (
             f"JPEG+crop+resize: payload={result.payload_confidence:.2f}"
+        )
 
     def test_rotation_noise_jpeg(self, embedder, detector, author_keys):
         """5-degree rotation + noise sigma=10 + JPEG Q75."""
@@ -623,15 +649,18 @@ class TestCombinedAttacksAdvanced:
         h, w = watermarked.shape
         M = cv2.getRotationMatrix2D((w / 2, h / 2), 5.0, 1.0)
         attacked = cv2.warpAffine(
-            watermarked.astype(np.float32), M, (w, h),
+            watermarked.astype(np.float32),
+            M,
+            (w, h),
             borderMode=cv2.BORDER_REFLECT_101,
         ).astype(np.float64)
         attacked += rng.normal(0, 10, attacked.shape)
         attacked = np.clip(attacked, 0, 255)
         attacked = jpeg_compress(attacked, 75)
         result = detector.detect(attacked, author_keys.public_key)
-        assert result.payload_confidence > 0.2 or result.ring_confidence > 0.3, \
+        assert result.payload_confidence > 0.2 or result.ring_confidence > 0.3, (
             f"Rot+noise+JPEG: payload={result.payload_confidence:.2f}"
+        )
 
     def test_perspective_brightness_jpeg(self, embedder, detector, author_keys):
         """Perspective warp + brightness shift + JPEG Q50."""
@@ -645,14 +674,17 @@ class TestCombinedAttacksAdvanced:
         dst = src + offsets * np.float32([[dx, dy]])
         M = cv2.getPerspectiveTransform(src, dst)
         attacked = cv2.warpPerspective(
-            watermarked.astype(np.float32), M, (w, h),
+            watermarked.astype(np.float32),
+            M,
+            (w, h),
             borderMode=cv2.BORDER_REFLECT_101,
         ).astype(np.float64)
         attacked = np.clip(attacked + 25, 0, 255)
         attacked = jpeg_compress(attacked, 50)
         result = detector.detect(attacked, author_keys.public_key)
-        assert result.payload_confidence > 0.2 or result.ring_confidence > 0.2, \
+        assert result.payload_confidence > 0.2 or result.ring_confidence > 0.2, (
             f"Persp+bright+JPEG: payload={result.payload_confidence:.2f}"
+        )
 
     def test_blur_gamma_jpeg_crop(self, embedder, detector, author_keys):
         """Blur + gamma + JPEG + crop — realistic social media pipeline."""
@@ -660,9 +692,7 @@ class TestCombinedAttacksAdvanced:
         img = _make_natural(rng)
         watermarked = embedder.embed(img, author_keys)
         # Mild blur
-        attacked = cv2.GaussianBlur(
-            watermarked.astype(np.float32), (3, 3), 0.8
-        ).astype(np.float64)
+        attacked = cv2.GaussianBlur(watermarked.astype(np.float32), (3, 3), 0.8).astype(np.float64)
         # Gamma
         attacked = np.power(np.clip(attacked, 0, 255) / 255.0, 1.1) * 255.0
         # JPEG
@@ -670,8 +700,9 @@ class TestCombinedAttacksAdvanced:
         # Small crop
         attacked = crop_center(attacked, 0.95)
         result = detector.detect(attacked, author_keys.public_key)
-        assert result.detected or result.payload_confidence > 0.3, \
+        assert result.detected or result.payload_confidence > 0.3, (
             f"Social media pipeline: conf={result.payload_confidence:.2f}"
+        )
 
     def test_rgb_full_pipeline(self, embedder, detector, author_keys):
         """Full attack pipeline on RGB: blur + WB + JPEG + crop."""
@@ -679,9 +710,7 @@ class TestCombinedAttacksAdvanced:
         img = _make_rgb(rng)
         watermarked = embedder.embed(img, author_keys)
         # Blur
-        attacked = cv2.GaussianBlur(
-            watermarked.astype(np.float32), (3, 3), 0.5
-        ).astype(np.float64)
+        attacked = cv2.GaussianBlur(watermarked.astype(np.float32), (3, 3), 0.5).astype(np.float64)
         # White balance
         attacked[:, :, 0] = np.clip(attacked[:, :, 0] * 1.1, 0, 255)
         attacked[:, :, 2] = np.clip(attacked[:, :, 2] * 0.9, 0, 255)
@@ -690,8 +719,9 @@ class TestCombinedAttacksAdvanced:
         # Crop
         attacked = crop_center(attacked, 0.90)
         result = detector.detect(attacked, author_keys.public_key)
-        assert result.payload_confidence > 0.25 or result.ring_confidence > 0.3, \
+        assert result.payload_confidence > 0.25 or result.ring_confidence > 0.3, (
             f"RGB full pipeline: payload={result.payload_confidence:.2f}"
+        )
 
 
 # --- Robustness Report ---
@@ -705,8 +735,6 @@ class TestAdvancedRobustnessReport:
         img = _make_natural(rng)
         watermarked = embedder.embed(img, author_keys)
 
-        from sigil_watermark.keygen import derive_ring_radii
-
         mse = np.mean((watermarked - img) ** 2)
         psnr = 10 * np.log10(255.0**2 / mse) if mse > 0 else float("inf")
 
@@ -719,12 +747,16 @@ class TestAdvancedRobustnessReport:
         h, w = watermarked.shape
         M90 = cv2.getRotationMatrix2D((w / 2, h / 2), 90, 1.0)
         attacks["Rotation 90"] = cv2.warpAffine(
-            watermarked.astype(np.float32), M90, (w, h),
+            watermarked.astype(np.float32),
+            M90,
+            (w, h),
             borderMode=cv2.BORDER_REFLECT_101,
         ).astype(np.float64)
         M5 = cv2.getRotationMatrix2D((w / 2, h / 2), 5, 1.0)
         attacks["Rotation 5"] = cv2.warpAffine(
-            watermarked.astype(np.float32), M5, (w, h),
+            watermarked.astype(np.float32),
+            M5,
+            (w, h),
             borderMode=cv2.BORDER_REFLECT_101,
         ).astype(np.float64)
 
@@ -733,14 +765,14 @@ class TestAdvancedRobustnessReport:
         dst = src + np.float32([[-10, -10], [10, -5], [5, 10], [-8, 8]])
         Mp = cv2.getPerspectiveTransform(src, dst)
         attacks["Perspective 3%"] = cv2.warpPerspective(
-            watermarked.astype(np.float32), Mp, (w, h),
+            watermarked.astype(np.float32),
+            Mp,
+            (w, h),
             borderMode=cv2.BORDER_REFLECT_101,
         ).astype(np.float64)
 
         # Filters
-        attacks["Median 3x3"] = cv2.medianBlur(
-            watermarked.astype(np.float32), 3
-        ).astype(np.float64)
+        attacks["Median 3x3"] = cv2.medianBlur(watermarked.astype(np.float32), 3).astype(np.float64)
         attacks["Blur sigma=1"] = cv2.GaussianBlur(
             watermarked.astype(np.float32), (7, 7), 1.0
         ).astype(np.float64)
@@ -775,8 +807,7 @@ class TestAdvancedRobustnessReport:
         print(f"Image: 512x512 synthetic | PSNR: {psnr:.1f} dB")
         print(f"{'=' * 80}")
         print(
-            f"{'Attack':<20} {'Detected':>8} {'Beacon':>8} "
-            f"{'Payload':>8} {'Ring':>8} {'AuthID':>8}"
+            f"{'Attack':<20} {'Detected':>8} {'Beacon':>8} {'Payload':>8} {'Ring':>8} {'AuthID':>8}"
         )
         print(f"{'-' * 80}")
 

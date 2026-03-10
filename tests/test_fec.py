@@ -6,8 +6,8 @@ from reedsolo import ReedSolomonError
 from sigil_watermark.fec import (
     bits_to_bytes,
     bytes_to_bits,
-    encode_payload,
     decode_payload,
+    encode_payload,
 )
 
 

@@ -16,26 +16,25 @@ from dataclasses import dataclass
 import numpy as np
 from reedsolo import ReedSolomonError
 
-from sigil_watermark.config import SigilConfig, DEFAULT_CONFIG
+from sigil_watermark.color import extract_y_channel
+from sigil_watermark.config import DEFAULT_CONFIG, SigilConfig
+from sigil_watermark.fec import decode_payload, encode_payload
+from sigil_watermark.geometric import try_rotations
+from sigil_watermark.ghost.spectral_analysis import analyze_ghost_signature
 from sigil_watermark.keygen import (
-    derive_ring_radii,
-    derive_ring_phase_offsets,
-    derive_content_ring_radii,
-    derive_sentinel_ring_radii,
     derive_author_id,
     derive_author_index,
+    derive_ghost_hash,
+    derive_ring_phase_offsets,
+    derive_ring_radii,
+    derive_sentinel_ring_radii,
     get_universal_beacon_pn,
 )
+from sigil_watermark.tiling import best_tile_size, tile_extract
 from sigil_watermark.transforms import (
     detect_dft_rings,
     dwt_decompose,
 )
-from sigil_watermark.tiling import tile_extract, best_tile_size
-from sigil_watermark.fec import encode_payload, decode_payload
-from sigil_watermark.color import extract_y_channel
-from sigil_watermark.geometric import auto_correct, try_rotations
-from sigil_watermark.ghost.spectral_analysis import analyze_ghost_signature, extract_ghost_hash
-from sigil_watermark.keygen import derive_ghost_hash
 
 
 def _encoded_payload_length(config: SigilConfig) -> int:
@@ -147,7 +146,8 @@ class SigilDetector:
                 ts = best_tile_size(subband.shape, cfg.tile_sizes, encoded_len)
 
                 bits, conf = tile_extract(
-                    subband, payload_pn,
+                    subband,
+                    payload_pn,
                     num_bits=encoded_len,
                     tile_size=ts,
                     spreading_factor=cfg.spreading_factor,
@@ -185,9 +185,9 @@ class SigilDetector:
             decoded, num_corrected = decode_payload(
                 encoded_bits, nsym=cfg.rs_nsym, original_bit_count=raw_len
             )
-            beacon = decoded[:cfg.beacon_bits]
-            index = decoded[cfg.beacon_bits:cfg.beacon_bits + cfg.author_index_bits]
-            author_id = decoded[cfg.beacon_bits + cfg.author_index_bits:]
+            beacon = decoded[: cfg.beacon_bits]
+            index = decoded[cfg.beacon_bits : cfg.beacon_bits + cfg.author_index_bits]
+            author_id = decoded[cfg.beacon_bits + cfg.author_index_bits :]
             return beacon, index, author_id, True
         except ReedSolomonError:
             return None, None, None, False
@@ -220,29 +220,34 @@ class SigilDetector:
         key_radii = derive_ring_radii(public_key, config=cfg)
         sentinel_radii = derive_sentinel_ring_radii(config=cfg)
         stable_radii = np.sort(np.concatenate([key_radii, sentinel_radii]))
-        stable_phase = derive_ring_phase_offsets(
-            public_key, len(stable_radii), config=cfg
-        )
+        stable_phase = derive_ring_phase_offsets(public_key, len(stable_radii), config=cfg)
 
         _, ring_confidence = detect_dft_rings(
-            y, stable_radii, tolerance=0.02, ring_width=cfg.ring_width,
+            y,
+            stable_radii,
+            tolerance=0.02,
+            ring_width=cfg.ring_width,
             phase_offsets=stable_phase,
         )
 
         # Tampering detection: sentinel rings present but key rings absent
         _, sentinel_conf = detect_dft_rings(
-            y, sentinel_radii, tolerance=0.02, ring_width=cfg.ring_width,
+            y,
+            sentinel_radii,
+            tolerance=0.02,
+            ring_width=cfg.ring_width,
         )
         _, key_ring_conf = detect_dft_rings(
-            y, key_radii, tolerance=0.02, ring_width=cfg.ring_width,
+            y,
+            key_radii,
+            tolerance=0.02,
+            ring_width=cfg.ring_width,
         )
         tampering_suspected = sentinel_conf > 0.5 and key_ring_conf < 0.2
 
         # --- Extract combined tiled payload ---
         encoded_bits, tile_conf = self._extract_combined_payload(y)
-        beacon_bits, author_index, extracted_id, rs_ok = self._decode_combined_payload(
-            encoded_bits
-        )
+        beacon_bits, author_index, extracted_id, rs_ok = self._decode_combined_payload(encoded_bits)
 
         # --- Tier 1: Beacon ---
         if rs_ok and beacon_bits is not None:
@@ -260,9 +265,11 @@ class SigilDetector:
             author_id_match = ber < 0.15
             payload_confidence = 1.0 - ber
         else:
-            raw_payload = [1] * cfg.beacon_bits + \
-                derive_author_index(public_key, config=cfg) + \
-                derive_author_id(public_key, config=cfg)
+            raw_payload = (
+                [1] * cfg.beacon_bits
+                + derive_author_index(public_key, config=cfg)
+                + derive_author_id(public_key, config=cfg)
+            )
             expected_encoded = encode_payload(raw_payload, nsym=cfg.rs_nsym)
             errors = sum(a != b for a, b in zip(expected_encoded, encoded_bits))
             ber = errors / len(expected_encoded)
@@ -292,16 +299,14 @@ class SigilDetector:
         hash_ber = ghost_hash_errors / max(cfg.ghost_hash_bits, 1)
         ghost_confidence = raw_ghost_conf * max(0.0, 1.0 - hash_ber * 2.0)
 
-        detected = bool(payload_confidence > 0.5 and (
-            beacon_found or ring_confidence > 0.5 or author_id_match
-        ))
+        detected = bool(
+            payload_confidence > 0.5 and (beacon_found or ring_confidence > 0.5 or author_id_match)
+        )
 
         # Overall confidence: weighted blend of all three layers
-        overall_confidence = min(1.0, (
-            0.35 * ring_confidence +
-            0.45 * payload_confidence +
-            0.20 * ghost_confidence
-        ))
+        overall_confidence = min(
+            1.0, (0.35 * ring_confidence + 0.45 * payload_confidence + 0.20 * ghost_confidence)
+        )
 
         return DetectionResult(
             detected=detected,
@@ -341,6 +346,7 @@ class SigilDetector:
 
         # If ring confidence is high but payload is low, try geometric correction
         if result.ring_confidence > 0.3 and result.payload_confidence < 0.5:
+
             def conf_fn(img):
                 r = self._detect_on_image(img, public_key)
                 return r.payload_confidence
