@@ -1,0 +1,2037 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Invisible, crypto-verified, AI-training-resilient image watermarks">
+      
+      
+      
+        <link rel="canonical" href="https://ai-escape.github.io/sigil-watermark/api/keygen/">
+      
+      
+        <link rel="prev" href="../detect/">
+      
+      
+        <link rel="next" href="../ghost/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>Key Generation - Sigil Watermark</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#key-generation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Sigil Watermark" class="md-header__button md-logo" aria-label="Sigil Watermark" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Sigil Watermark
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Key Generation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/AI-Escape/sigil-watermark" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    AI-Escape/sigil-watermark
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Sigil Watermark" class="md-nav__button md-logo" aria-label="Sigil Watermark" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Sigil Watermark
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/AI-Escape/sigil-watermark" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    AI-Escape/sigil-watermark
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../technical-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Technical Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../embed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key Generation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;keygen
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" keygen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.AuthorKeys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;AuthorKeys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.generate_author_keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;generate_author_keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_pn_sequence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_pn_sequence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_ring_radii" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_ring_radii
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_ring_phase_offsets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_ring_phase_offsets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_content_ring_radii" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_content_ring_radii
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_sentinel_ring_radii" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_sentinel_ring_radii
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_author_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_author_id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_author_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_author_index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_ghost_hash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_ghost_hash
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.get_ghost_hash_pns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_ghost_hash_pns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.build_ghost_composite_pn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;build_ghost_composite_pn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.get_universal_beacon_pn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_universal_beacon_pn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.get_universal_index_pn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_universal_index_pn
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ghost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ghost Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;keygen
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" keygen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.AuthorKeys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;AuthorKeys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.generate_author_keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;generate_author_keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_pn_sequence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_pn_sequence
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_ring_radii" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_ring_radii
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_ring_phase_offsets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_ring_phase_offsets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_content_ring_radii" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_content_ring_radii
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_sentinel_ring_radii" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_sentinel_ring_radii
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_author_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_author_id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_author_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_author_index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.derive_ghost_hash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;derive_ghost_hash
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.get_ghost_hash_pns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_ghost_hash_pns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.build_ghost_composite_pn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;build_ghost_composite_pn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.get_universal_beacon_pn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_universal_beacon_pn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.keygen.get_universal_index_pn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_universal_index_pn
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="key-generation">Key Generation</h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<h2 id="sigil_watermark.keygen" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-module"></code>            <code>sigil_watermark.keygen</code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+        <p>Cryptographic key generation and PN sequence derivation for the Sigil watermark system.</p>
+<p>Uses Ed25519 for author identity, HKDF for key derivation, and HMAC-based DRBG
+for deterministic pseudo-random noise sequences.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="sigil_watermark.keygen.AuthorKeys" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <code>AuthorKeys</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Ed25519 keypair for a watermark author.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="sigil_watermark.keygen.AuthorKeys.private_key">private_key</span></code></td>
+            <td>
+                  <code><span title="bytes">bytes</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>32-byte raw Ed25519 private key seed.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="sigil_watermark.keygen.AuthorKeys.public_key">public_key</span></code></td>
+            <td>
+                  <code><span title="bytes">bytes</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>32-byte raw Ed25519 public key, used to derive all
+watermark parameters (ring positions, PN sequences, author ID).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AuthorKeys</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ed25519 keypair for a watermark author.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        private_key: 32-byte raw Ed25519 private key seed.</span>
+<span class="sd">        public_key: 32-byte raw Ed25519 public key, used to derive all</span>
+<span class="sd">            watermark parameters (ring positions, PN sequences, author ID).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">private_key</span><span class="p">:</span> <span class="nb">bytes</span>
+    <span class="n">public_key</span><span class="p">:</span> <span class="nb">bytes</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_private_key</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">private_key_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AuthorKeys</span><span class="p">:</span>
+        <span class="n">priv</span> <span class="o">=</span> <span class="n">Ed25519PrivateKey</span><span class="o">.</span><span class="n">from_private_bytes</span><span class="p">(</span><span class="n">private_key_bytes</span><span class="p">)</span>
+        <span class="n">pub</span> <span class="o">=</span> <span class="n">priv</span><span class="o">.</span><span class="n">public_key</span><span class="p">()</span>
+        <span class="n">pub_bytes</span> <span class="o">=</span> <span class="n">pub</span><span class="o">.</span><span class="n">public_bytes</span><span class="p">(</span>
+            <span class="n">serialization</span><span class="o">.</span><span class="n">Encoding</span><span class="o">.</span><span class="n">Raw</span><span class="p">,</span>
+            <span class="n">serialization</span><span class="o">.</span><span class="n">PublicFormat</span><span class="o">.</span><span class="n">Raw</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">private_key</span><span class="o">=</span><span class="n">private_key_bytes</span><span class="p">,</span> <span class="n">public_key</span><span class="o">=</span><span class="n">pub_bytes</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="sigil_watermark.keygen.generate_author_keys" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">generate_author_keys</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Generate a new Ed25519 keypair for watermark embedding.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>seed</code>
+            </td>
+            <td>
+                  <code><span title="bytes">bytes</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Optional seed bytes for deterministic key generation.
+If <code>None</code>, a cryptographically random key is generated.
+Useful for reproducible testing.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>An</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="            AuthorKeys
+
+
+  
+      dataclass
+   (sigil_watermark.keygen.AuthorKeys)" href="#sigil_watermark.keygen.AuthorKeys">AuthorKeys</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>class:<code>AuthorKeys</code> instance with both private and public keys.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>keys = generate_author_keys(seed=b"my-secret-seed")
+len(keys.public_key)
+32</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_author_keys</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AuthorKeys</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a new Ed25519 keypair for watermark embedding.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        seed: Optional seed bytes for deterministic key generation.</span>
+<span class="sd">            If ``None``, a cryptographically random key is generated.</span>
+<span class="sd">            Useful for reproducible testing.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An :class:`AuthorKeys` instance with both private and public keys.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; keys = generate_author_keys(seed=b&quot;my-secret-seed&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; len(keys.public_key)</span>
+<span class="sd">        32</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Use HKDF to derive a 32-byte key seed from arbitrary-length seed</span>
+        <span class="n">hkdf</span> <span class="o">=</span> <span class="n">HKDF</span><span class="p">(</span>
+            <span class="n">algorithm</span><span class="o">=</span><span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">(),</span>
+            <span class="n">length</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+            <span class="n">salt</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;signarture-keygen-v1&quot;</span><span class="p">,</span>
+            <span class="n">info</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;ed25519-seed&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">derived</span> <span class="o">=</span> <span class="n">hkdf</span><span class="o">.</span><span class="n">derive</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">priv</span> <span class="o">=</span> <span class="n">Ed25519PrivateKey</span><span class="o">.</span><span class="n">from_private_bytes</span><span class="p">(</span><span class="n">derived</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">priv</span> <span class="o">=</span> <span class="n">Ed25519PrivateKey</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+
+    <span class="n">priv_bytes</span> <span class="o">=</span> <span class="n">priv</span><span class="o">.</span><span class="n">private_bytes</span><span class="p">(</span>
+        <span class="n">serialization</span><span class="o">.</span><span class="n">Encoding</span><span class="o">.</span><span class="n">Raw</span><span class="p">,</span>
+        <span class="n">serialization</span><span class="o">.</span><span class="n">PrivateFormat</span><span class="o">.</span><span class="n">Raw</span><span class="p">,</span>
+        <span class="n">serialization</span><span class="o">.</span><span class="n">NoEncryption</span><span class="p">(),</span>
+    <span class="p">)</span>
+    <span class="n">pub_bytes</span> <span class="o">=</span> <span class="n">priv</span><span class="o">.</span><span class="n">public_key</span><span class="p">()</span><span class="o">.</span><span class="n">public_bytes</span><span class="p">(</span>
+        <span class="n">serialization</span><span class="o">.</span><span class="n">Encoding</span><span class="o">.</span><span class="n">Raw</span><span class="p">,</span>
+        <span class="n">serialization</span><span class="o">.</span><span class="n">PublicFormat</span><span class="o">.</span><span class="n">Raw</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">AuthorKeys</span><span class="p">(</span><span class="n">private_key</span><span class="o">=</span><span class="n">priv_bytes</span><span class="p">,</span> <span class="n">public_key</span><span class="o">=</span><span class="n">pub_bytes</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="sigil_watermark.keygen.derive_pn_sequence" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">derive_pn_sequence</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Derive a deterministic bipolar (+1/-1) PN sequence from an author's public key.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">derive_pn_sequence</span><span class="p">(</span>
+    <span class="n">public_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SigilConfig</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Derive a deterministic bipolar (+1/-1) PN sequence from an author&#39;s public key.&quot;&quot;&quot;</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">_hkdf_derive</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">pn_salt</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;pn-sequence&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_bytes_to_bipolar_pn</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="sigil_watermark.keygen.derive_ring_radii" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">derive_ring_radii</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Derive DFT ring radii from an author's public key.</p>
+<p>Returns array of <code>config.num_rings</code> radii, each in [ring_radius_min, ring_radius_max],
+guaranteed to be distinct.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">derive_ring_radii</span><span class="p">(</span>
+    <span class="n">public_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SigilConfig</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Derive DFT ring radii from an author&#39;s public key.</span>
+
+<span class="sd">    Returns array of `config.num_rings` radii, each in [ring_radius_min, ring_radius_max],</span>
+<span class="sd">    guaranteed to be distinct.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">_hkdf_derive</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">ring_salt</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;ring-radii&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">seed</span><span class="p">[:</span><span class="mi">8</span><span class="p">],</span> <span class="s2">&quot;big&quot;</span><span class="p">))</span>
+    <span class="n">span</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">ring_radius_max</span> <span class="o">-</span> <span class="n">config</span><span class="o">.</span><span class="n">ring_radius_min</span>
+
+    <span class="c1"># Generate evenly-spaced base radii with random jitter for distinctness</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">num_rings</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Exclude endpoints</span>
+    <span class="n">jitter</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.3</span> <span class="o">/</span> <span class="n">config</span><span class="o">.</span><span class="n">num_rings</span><span class="p">,</span> <span class="mf">0.3</span> <span class="o">/</span> <span class="n">config</span><span class="o">.</span><span class="n">num_rings</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">num_rings</span><span class="p">)</span>
+    <span class="n">radii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">base</span> <span class="o">+</span> <span class="n">jitter</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">span</span> <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">ring_radius_min</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">radii</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="sigil_watermark.keygen.derive_ring_phase_offsets" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">derive_ring_phase_offsets</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">num_rings</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Derive key-dependent phase offsets for ring frequencies.</p>
+<p>Returns array of phase offsets in [0, 2*pi) for each ring.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">derive_ring_phase_offsets</span><span class="p">(</span>
+    <span class="n">public_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+    <span class="n">num_rings</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SigilConfig</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Derive key-dependent phase offsets for ring frequencies.</span>
+
+<span class="sd">    Returns array of phase offsets in [0, 2*pi) for each ring.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">_hkdf_derive</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">ring_salt</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;ring-phase-offsets&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">seed</span><span class="p">[:</span><span class="mi">8</span><span class="p">],</span> <span class="s2">&quot;big&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">num_rings</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="sigil_watermark.keygen.derive_content_ring_radii" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">derive_content_ring_radii</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Derive content-dependent ring radii from image hash + author key.</p>
+<p>The image content is hashed (low-frequency DCT to be robust to minor
+changes) and combined with the key to produce ring positions that an
+attacker cannot predict without the original image.</p>
+<p>Returns array of <code>config.num_content_rings</code> radii.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">derive_content_ring_radii</span><span class="p">(</span>
+    <span class="n">public_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SigilConfig</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Derive content-dependent ring radii from image hash + author key.</span>
+
+<span class="sd">    The image content is hashed (low-frequency DCT to be robust to minor</span>
+<span class="sd">    changes) and combined with the key to produce ring positions that an</span>
+<span class="sd">    attacker cannot predict without the original image.</span>
+
+<span class="sd">    Returns array of `config.num_content_rings` radii.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Use a coarse image hash: downsample to 8x8, take mean of blocks</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">gray</span> <span class="o">=</span> <span class="mf">0.299</span> <span class="o">*</span> <span class="n">image</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.587</span> <span class="o">*</span> <span class="n">image</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.114</span> <span class="o">*</span> <span class="n">image</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">gray</span> <span class="o">=</span> <span class="n">image</span>
+    <span class="n">block_h</span><span class="p">,</span> <span class="n">block_w</span> <span class="o">=</span> <span class="n">h</span> <span class="o">//</span> <span class="mi">8</span><span class="p">,</span> <span class="n">w</span> <span class="o">//</span> <span class="mi">8</span>
+    <span class="n">coarse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+            <span class="n">block</span> <span class="o">=</span> <span class="n">gray</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">block_h</span> <span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">block_h</span><span class="p">,</span> <span class="n">j</span> <span class="o">*</span> <span class="n">block_w</span> <span class="p">:</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">block_w</span><span class="p">]</span>
+            <span class="n">coarse</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="c1"># Quantize to bytes for hashing (robust to small pixel changes)</span>
+    <span class="n">coarse_bytes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">coarse</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+
+    <span class="c1"># Combine image hash with key</span>
+    <span class="n">content_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">public_key</span> <span class="o">+</span> <span class="n">coarse_bytes</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">_hkdf_derive</span><span class="p">(</span>
+        <span class="n">content_hash</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">content_ring_salt</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;content-ring-radii&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">32</span>
+    <span class="p">)</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">seed</span><span class="p">[:</span><span class="mi">8</span><span class="p">],</span> <span class="s2">&quot;big&quot;</span><span class="p">))</span>
+
+    <span class="n">span</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">ring_radius_max</span> <span class="o">-</span> <span class="n">config</span><span class="o">.</span><span class="n">ring_radius_min</span>
+    <span class="n">radii</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">num_content_rings</span><span class="p">)</span> <span class="o">*</span> <span class="n">span</span> <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">ring_radius_min</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">radii</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="sigil_watermark.keygen.derive_sentinel_ring_radii" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">derive_sentinel_ring_radii</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Derive sentinel ring radii from server secret.</p>
+<p>Sentinel rings are at fixed positions known only to the server.
+If key-derived rings are removed but sentinels remain, tampering
+is suspected.</p>
+<p>Returns array of <code>config.num_sentinel_rings</code> radii.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">derive_sentinel_ring_radii</span><span class="p">(</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SigilConfig</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Derive sentinel ring radii from server secret.</span>
+
+<span class="sd">    Sentinel rings are at fixed positions known only to the server.</span>
+<span class="sd">    If key-derived rings are removed but sentinels remain, tampering</span>
+<span class="sd">    is suspected.</span>
+
+<span class="sd">    Returns array of `config.num_sentinel_rings` radii.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">_hkdf_derive</span><span class="p">(</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">sentinel_secret</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">sentinel_salt</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;sentinel-ring-radii&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">32</span>
+    <span class="p">)</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">seed</span><span class="p">[:</span><span class="mi">8</span><span class="p">],</span> <span class="s2">&quot;big&quot;</span><span class="p">))</span>
+
+    <span class="n">span</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">ring_radius_max</span> <span class="o">-</span> <span class="n">config</span><span class="o">.</span><span class="n">ring_radius_min</span>
+    <span class="n">radii</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">num_sentinel_rings</span><span class="p">)</span> <span class="o">*</span> <span class="n">span</span> <span class="o">+</span> <span class="n">config</span><span class="o">.</span><span class="n">ring_radius_min</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">radii</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="sigil_watermark.keygen.derive_author_id" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">derive_author_id</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Derive a truncated author ID (list of bits) from the public key.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">derive_author_id</span><span class="p">(</span>
+    <span class="n">public_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SigilConfig</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Derive a truncated author ID (list of bits) from the public key.&quot;&quot;&quot;</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;signarture-author-id-v1&quot;</span> <span class="o">+</span> <span class="n">public_key</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+    <span class="n">bits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unpackbits</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">bits</span><span class="p">[:</span> <span class="n">config</span><span class="o">.</span><span class="n">author_id_bits</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="sigil_watermark.keygen.derive_author_index" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">derive_author_index</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Derive the 20-bit author index for tier-2 blind scanning.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">derive_author_index</span><span class="p">(</span>
+    <span class="n">public_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SigilConfig</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Derive the 20-bit author index for tier-2 blind scanning.&quot;&quot;&quot;</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;signarture-author-index-v1&quot;</span> <span class="o">+</span> <span class="n">public_key</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+    <span class="n">bits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unpackbits</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">bits</span><span class="p">[:</span> <span class="n">config</span><span class="o">.</span><span class="n">author_index_bits</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="sigil_watermark.keygen.derive_ghost_hash" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">derive_ghost_hash</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Derive ghost hash bits from public key for ghost-layer author binning.</p>
+<p>Returns a list of ghost_hash_bits bits derived deterministically from
+the public key. Used to narrow O(N) author search to O(1) via indexed
+lookup in the database.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">derive_ghost_hash</span><span class="p">(</span>
+    <span class="n">public_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SigilConfig</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Derive ghost hash bits from public key for ghost-layer author binning.</span>
+
+<span class="sd">    Returns a list of ghost_hash_bits bits derived deterministically from</span>
+<span class="sd">    the public key. Used to narrow O(N) author search to O(1) via indexed</span>
+<span class="sd">    lookup in the database.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;signarture-ghost-hash-v1&quot;</span> <span class="o">+</span> <span class="n">public_key</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+    <span class="n">bits</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">ghost_hash_bits</span><span class="p">):</span>
+        <span class="n">byte_idx</span> <span class="o">=</span> <span class="n">i</span> <span class="o">//</span> <span class="mi">8</span>
+        <span class="n">bit_idx</span> <span class="o">=</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">8</span>
+        <span class="n">bits</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">h</span><span class="p">[</span><span class="n">byte_idx</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="n">bit_idx</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">bits</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="sigil_watermark.keygen.get_ghost_hash_pns" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">get_ghost_hash_pns</span><span class="p">(</span><span class="n">num_bits</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Generate universal PN sequences for ghost hash bit encoding.</p>
+<p>Each PN is derived from a unique universal seed, independent of any
+author key. During embedding, each PN is added with a sign (+/-1)
+determined by the author's ghost hash bit. During detection, correlating
+with each PN recovers the sign = the hash bit.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ghost_hash_pns</span><span class="p">(</span>
+    <span class="n">num_bits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SigilConfig</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate universal PN sequences for ghost hash bit encoding.</span>
+
+<span class="sd">    Each PN is derived from a unique universal seed, independent of any</span>
+<span class="sd">    author key. During embedding, each PN is added with a sign (+/-1)</span>
+<span class="sd">    determined by the author&#39;s ghost hash bit. During detection, correlating</span>
+<span class="sd">    with each PN recovers the sign = the hash bit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pns</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_bits</span><span class="p">):</span>
+        <span class="n">seed_bytes</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;signarture-ghost-hash-pn-v1-</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+        <span class="n">pn</span> <span class="o">=</span> <span class="n">_bytes_to_bipolar_pn</span><span class="p">(</span><span class="n">seed_bytes</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+        <span class="n">pns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pn</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pns</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="sigil_watermark.keygen.build_ghost_composite_pn" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">build_ghost_composite_pn</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build the composite ghost PN for an author.</p>
+<p>Encodes the author's ghost hash bits into a composite PN sequence
+by summing sign-modulated universal hash PNs. The composite has
+unit variance regardless of the number of hash bits.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_ghost_composite_pn</span><span class="p">(</span>
+    <span class="n">public_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SigilConfig</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the composite ghost PN for an author.</span>
+
+<span class="sd">    Encodes the author&#39;s ghost hash bits into a composite PN sequence</span>
+<span class="sd">    by summing sign-modulated universal hash PNs. The composite has</span>
+<span class="sd">    unit variance regardless of the number of hash bits.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ghost_hash</span> <span class="o">=</span> <span class="n">derive_ghost_hash</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+    <span class="n">hash_pns</span> <span class="o">=</span> <span class="n">get_ghost_hash_pns</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">ghost_hash_bits</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+
+    <span class="n">composite</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ghost_hash</span><span class="p">):</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="n">bit</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="o">-</span><span class="mf">1.0</span>
+        <span class="n">composite</span> <span class="o">+=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">hash_pns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">composite</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ghost_hash</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">composite</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="sigil_watermark.keygen.get_universal_beacon_pn" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">get_universal_beacon_pn</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the universal Signarture beacon PN sequence (same for all watermarks).</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_universal_beacon_pn</span><span class="p">(</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SigilConfig</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the universal Signarture beacon PN sequence (same for all watermarks).&quot;&quot;&quot;</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">_hkdf_derive</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">beacon_seed</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">beacon_salt</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;beacon-pn&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_bytes_to_bipolar_pn</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="sigil_watermark.keygen.get_universal_index_pn" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <code class="highlight language-python"><span class="n">get_universal_index_pn</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the universal PN sequence used for author index embedding (tier 2).</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/keygen.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_universal_index_pn</span><span class="p">(</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">SigilConfig</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the universal PN sequence used for author index embedding (tier 2).&quot;&quot;&quot;</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">_hkdf_derive</span><span class="p">(</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">universal_pn_seed</span><span class="p">,</span> <span class="n">salt</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">beacon_salt</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;index-pn&quot;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">32</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">_bytes_to_bipolar_pn</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.sections", "navigation.expand"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

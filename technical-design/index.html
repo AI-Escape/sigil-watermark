@@ -1,0 +1,3110 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Invisible, crypto-verified, AI-training-resilient image watermarks">
+      
+      
+      
+        <link rel="canonical" href="https://ai-escape.github.io/sigil-watermark/technical-design/">
+      
+      
+        <link rel="prev" href="../getting-started/">
+      
+      
+        <link rel="next" href="../api/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>Technical Design - Sigil Watermark</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sigil-watermark-system" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Sigil Watermark" class="md-header__button md-logo" aria-label="Sigil Watermark" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Sigil Watermark
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Technical Design
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/AI-Escape/sigil-watermark" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    AI-Escape/sigil-watermark
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Sigil Watermark" class="md-nav__button md-logo" aria-label="Sigil Watermark" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Sigil Watermark
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/AI-Escape/sigil-watermark" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    AI-Escape/sigil-watermark
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Technical Design
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Technical Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#three-embedding-layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three Embedding Layers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#three-detection-tiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three Detection Tiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detection-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detection Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ring-detection-spectral-whitening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ring Detection — Spectral Whitening
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tampering-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tampering Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ring-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ring Hardening
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ring Hardening">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-multiplicative-embedding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Multiplicative Embedding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-broader-ring-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Broader Ring Profiles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-phase-modulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Phase Modulation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-content-dependent-ring-positions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Content-Dependent Ring Positions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-sentinel-rings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Sentinel Rings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adaptive-ring-strength" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adaptive Ring Strength
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adaptive Ring Strength">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parsevals-theorem-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parseval's Theorem Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#impact-on-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Impact on Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tradeoffs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tradeoffs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quality-results-with-adaptive-strength" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quality Results with Adaptive Strength
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cryptographic-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cryptographic Identity
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cryptographic Identity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ed25519-keypairs-keygenpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ed25519 Keypairs (keygen.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-derivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Derivation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-correction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Correction
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Error Correction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reed-solomon-fec-fecpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reed-Solomon FEC (fec.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#robustness-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Robustness Features
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Robustness Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fractal-tiling-tilingpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fractal Tiling (tiling.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#color-support-colorpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Color Support (color.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geometric-auto-correction-geometricpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geometric Auto-Correction (geometric.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#perceptual-masking-perceptualpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Perceptual Masking (perceptual.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ghost-signal-vae-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ghost Signal — VAE Optimization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ghost Signal — VAE Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vae-passband-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VAE Passband Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#perceptual-masking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Perceptual Masking
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strength-vs-quality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strength vs. Quality
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-channel-embedding-tested-rejected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Channel Embedding (tested, rejected)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ghost-hash-author-binning-after-vae" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ghost Hash — Author Binning After VAE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#measured-quality-real-photographs-artwork" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measured Quality — Real Photographs &amp; Artwork
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jpeg-re-encoding-robustness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JPEG Re-Encoding Robustness
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jpeg-before-vae-social-media-ai-training-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JPEG Before VAE (Social Media → AI Training Pipeline)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lora-propagation-tested-fundamental-limitation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LoRA Propagation (tested, fundamental limitation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strength-tuning-and-backwards-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strength Tuning and Backwards Compatibility
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Strength Tuning and Backwards Compatibility">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#strength-history" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strength history
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-with-adversarial-perturbation-approaches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison with Adversarial Perturbation Approaches
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Comparison with Adversarial Perturbation Approaches">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#background-honig-et-al-iclr-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Background: Honig et al. (ICLR 2025)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-sigil-takes-a-fundamentally-different-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Sigil Takes a Fundamentally Different Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigils-performance-against-papers-bypass-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sigil's Performance Against Paper's Bypass Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implications-for-signartures-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implications for Signarture's Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test Coverage
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Test Coverage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test Matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image Categories
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coverage-areas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage Areas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test Infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#known-limitations-documented-by-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Known Limitations (documented by tests)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/embed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/detect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/keygen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/ghost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ghost Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#three-embedding-layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three Embedding Layers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#three-detection-tiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three Detection Tiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detection-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detection Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ring-detection-spectral-whitening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ring Detection — Spectral Whitening
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tampering-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tampering Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ring-hardening" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ring Hardening
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ring Hardening">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-multiplicative-embedding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Multiplicative Embedding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-broader-ring-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Broader Ring Profiles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-phase-modulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Phase Modulation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-content-dependent-ring-positions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Content-Dependent Ring Positions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-sentinel-rings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Sentinel Rings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adaptive-ring-strength" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adaptive Ring Strength
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adaptive Ring Strength">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parsevals-theorem-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parseval's Theorem Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#impact-on-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Impact on Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tradeoffs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tradeoffs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quality-results-with-adaptive-strength" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quality Results with Adaptive Strength
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cryptographic-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cryptographic Identity
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cryptographic Identity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ed25519-keypairs-keygenpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ed25519 Keypairs (keygen.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-derivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Derivation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-correction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Correction
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Error Correction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reed-solomon-fec-fecpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reed-Solomon FEC (fec.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#robustness-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Robustness Features
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Robustness Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fractal-tiling-tilingpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fractal Tiling (tiling.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#color-support-colorpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Color Support (color.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geometric-auto-correction-geometricpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geometric Auto-Correction (geometric.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#perceptual-masking-perceptualpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Perceptual Masking (perceptual.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ghost-signal-vae-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ghost Signal — VAE Optimization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ghost Signal — VAE Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vae-passband-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VAE Passband Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#perceptual-masking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Perceptual Masking
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strength-vs-quality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strength vs. Quality
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-channel-embedding-tested-rejected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Channel Embedding (tested, rejected)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ghost-hash-author-binning-after-vae" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ghost Hash — Author Binning After VAE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#measured-quality-real-photographs-artwork" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Measured Quality — Real Photographs &amp; Artwork
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jpeg-re-encoding-robustness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JPEG Re-Encoding Robustness
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jpeg-before-vae-social-media-ai-training-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JPEG Before VAE (Social Media → AI Training Pipeline)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lora-propagation-tested-fundamental-limitation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LoRA Propagation (tested, fundamental limitation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strength-tuning-and-backwards-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strength Tuning and Backwards Compatibility
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Strength Tuning and Backwards Compatibility">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#strength-history" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strength history
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-with-adversarial-perturbation-approaches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison with Adversarial Perturbation Approaches
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Comparison with Adversarial Perturbation Approaches">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#background-honig-et-al-iclr-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Background: Honig et al. (ICLR 2025)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-sigil-takes-a-fundamentally-different-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Sigil Takes a Fundamentally Different Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigils-performance-against-papers-bypass-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sigil's Performance Against Paper's Bypass Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implications-for-signartures-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implications for Signarture's Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test Coverage
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Test Coverage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test Matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image Categories
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coverage-areas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage Areas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test Infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#known-limitations-documented-by-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Known Limitations (documented by tests)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="sigil-watermark-system">Sigil Watermark System</h1>
+<p>Technical documentation for the Sigil invisible watermark, Signarture's proprietary artist ownership watermark.</p>
+<h2 id="overview">Overview</h2>
+<p>Sigil is a three-layer, three-tier invisible watermark designed for artist ownership verification. It embeds a cryptographic identity into images that survives JPEG compression, cropping, rotation, scaling, print-scan cycles, and common image manipulation attacks.</p>
+<p><strong>Design principles:</strong>
+- Pure signal processing (no neural networks, no training infrastructure)
+- Cryptographic identity via Ed25519 keypairs (not user-typed text)
+- QR-code-level robustness through redundancy at every layer
+- Hardened against targeted removal by key-aware attackers
+- Perceptually invisible on all content (35-47 dB on real photos/art with adaptive ring strength)</p>
+<h2 id="architecture">Architecture</h2>
+<h3 id="three-embedding-layers">Three Embedding Layers</h3>
+<pre><code>Input Image
+    |
+    +- Layer 1: DFT Ring Anchor ------- Geometric compass (rotation-invariant)
+    |
+    +- Layer 2: DWT Tiled Payload ----- RS-encoded identity (crop-robust)
+    |
+    +- Layer 3: Ghost Signal ---------- Spectral bias at VAE-transparent frequencies
+    |
+Output Image (watermarked)
+</code></pre>
+<p><strong>Layer 1 — DFT Ring Anchor</strong> (<code>transforms.py: embed_dft_rings</code>)
+- Embeds up to 8 concentric ring peaks in the Fourier spectrum (4 key-derived + 2 content-dependent + 2 sentinel)
+- Uses multiplicative embedding: <code>magnitude += alpha * ring_mask * capped_mag</code>, tying the watermark to local spectrum energy so a simple notch filter destroys image content
+- Soft ceiling caps the multiplicative boost at 2x median magnitude to prevent distortion on high-energy spectrum peaks
+- Per-ring strength scales by <code>4 / num_rings</code> to keep total energy constant regardless of ring count
+- Ring profiles are broad Gaussians (sigma=0.04 in normalized frequency space) — forces attackers to notch wider bands, increasing their quality cost
+- Key-derived phase modulation at each ring frequency adds a verification dimension that pure magnitude analysis cannot recover
+- Ring radii are derived from the author's public key via HKDF
+- Rings are rotation-invariant: they survive any rotation without correction</p>
+<p>Three types of rings provide defense-in-depth:</p>
+<table>
+<thead>
+<tr>
+<th>Ring Type</th>
+<th>Count</th>
+<th>Position Source</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Key-derived</td>
+<td>4</td>
+<td>HKDF from public key</td>
+<td>Primary detection</td>
+</tr>
+<tr>
+<td>Content-dependent</td>
+<td>2</td>
+<td>Image hash + public key</td>
+<td>Attacker confusion only (embedded but not checked during detection — positions require the original image to derive, so the detector cannot verify them without it)</td>
+</tr>
+<tr>
+<td>Sentinel</td>
+<td>2</td>
+<td>Server secret</td>
+<td>Tampering detection: if sentinels survive but key rings are gone, targeted removal is suspected</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Layer 2 — Fractal Sigil Tiling</strong> (<code>tiling.py: tile_embed</code>, <code>embed.py</code>)
+- Carries the actual payload: 8-bit beacon + 20-bit author index + 48-bit author ID
+- Payload is Reed-Solomon encoded (nsym=8) for error correction: 76 raw bits -&gt; ~144 encoded bits
+- DWT decomposition (db4 wavelet, 3 levels) of the Y channel
+- Spread-spectrum CDMA embedding in LH and HL subbands
+- Each subband is tiled into independent blocks (best-fit from 32/64/128/256)
+- Every tile embeds the same full payload with the same PN sequence
+- Any single surviving tile can recover the full identity -&gt; extreme crop robustness
+- Spreading factor: 256 chips per payload bit (adaptive reduction for small tiles)
+- Perceptual masking scales embedding strength by local image complexity</p>
+<p><strong>Layer 3 — Training Ghost Signal</strong> (<code>embed.py: _embed_ghost_signal</code>)
+- Adds faint spectral energy at frequencies empirically measured to survive the Stable Diffusion VAE encode/decode cycle
+- Ghost bands at (0.163, 0.218, 0.286, 0.343, 0.425) of Nyquist frequency, selected via <code>scripts/vae_passband_analysis.py</code> against <code>stabilityai/sd-vae-ft-mse</code>
+- VAE survival ratios: 0.343 -&gt; 55x, 0.425 -&gt; 26x, 0.218 -&gt; 24x, 0.163 -&gt; 14x, 0.286 -&gt; 9x
+- Bandwidth: 0.05 (wider than original 0.03 for more robust detection)
+- Strength multiplier: 200x (spectrally narrow signal has zero quality impact — PSNR stays &gt;46.9 dB)
+- Ghost hash: 8-bit author fingerprint encoded into the ghost signal via orthogonal universal PN sequences, enabling blind author binning after VAE (see Ghost Hash section)
+- Embedded in Y channel only — multi-channel (RGB) embedding was tested but hurts VAE survival because the SD VAE mixes channels in its latent space, destroying per-channel PN coherence
+- Single-image ghost detection after real SD VAE: 100% (up from 40% before optimization)
+- Ghost scaling capped at local_median=2000 to prevent unbounded distortion</p>
+<h3 id="three-detection-tiers">Three Detection Tiers</h3>
+<pre><code>Input Image
+    |
+    +- Tier 1: Beacon Check ---- &quot;Is this a Signarture watermark?&quot; (8 bits)
+    |
+    +- Tier 2: Author Index ---- &quot;Whose watermark is it?&quot; (20 bits, blind scan)
+    |
+    +- Tier 3: Author Verify --- &quot;Cryptographic proof of authorship&quot; (48 bits)
+    |
+Detection Result
+</code></pre>
+<p>All three tiers are extracted from a single combined RS-encoded payload:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Bits</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Beacon</td>
+<td>8</td>
+<td>All-ones marker — universal Signarture identifier</td>
+</tr>
+<tr>
+<td>Author Index</td>
+<td>20</td>
+<td>Derived from public key — enables blind scanning without key</td>
+</tr>
+<tr>
+<td>Author ID</td>
+<td>48</td>
+<td>Truncated SHA-256 of public key — cryptographic verification</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Tier 1 — Universal Beacon</strong> (no key required)
+- First 8 bits of decoded payload should all be 1
+- If &gt;=70% match -&gt; beacon found -&gt; image contains a Signarture watermark
+- Fast check: detect_beacon() runs the full extraction but only checks beacon bits</p>
+<p><strong>Tier 2 — Author Index</strong> (no key required)
+- Next 20 bits identify the author (2^20 = ~1M unique slots)
+- Used for blind scanning: "which artist watermarked this image?"
+- Can be matched against a database of known public keys by precomputing their indices</p>
+<p><strong>Tier 3 — Author Verification</strong> (requires candidate public key)
+- Final 48 bits are compared against the expected author ID derived from the public key
+- BER &lt; 15% -&gt; author verified (with RS correction, typically exact match)
+- Provides cryptographic proof: only the holder of the Ed25519 private key could have produced this watermark</p>
+<h3 id="detection-pipeline">Detection Pipeline</h3>
+<pre><code class="language-python">detector = SigilDetector(config)
+result = detector.detect(image, candidate_public_key)
+
+# result.detected            -&gt; True/False
+# result.beacon_found        -&gt; Tier 1
+# result.author_index        -&gt; Tier 2 (20-bit list)
+# result.author_id_match     -&gt; Tier 3
+# result.confidence          -&gt; Combined confidence (0-1)
+# result.ring_confidence     -&gt; Layer 1 DFT ring detection strength
+# result.payload_confidence  -&gt; Layer 2 payload correlation strength
+# result.ghost_confidence    -&gt; Layer 3 ghost signal strength (scaled by hash match)
+# result.ghost_hash          -&gt; Extracted 8-bit author hash (blind, no key needed)
+# result.ghost_hash_match    -&gt; Whether ghost hash matches the candidate key
+# result.tampering_suspected -&gt; Sentinel rings present but key rings removed
+</code></pre>
+<h3 id="ring-detection-spectral-whitening">Ring Detection — Spectral Whitening</h3>
+<p>Ring detection uses <strong>spectral whitening</strong> to handle natural images with 1/f spectral profiles. Without whitening, the natural radial magnitude falloff (~3.4x across the ring region in typical photographs) completely masks the ring signal, producing 0% ring confidence on all real photographs despite working perfectly on synthetic test images.</p>
+<p>The detection algorithm:
+1. Compute the 2D DFT magnitude spectrum
+2. Build a radial profile: mean magnitude per thin annular bin (200+ bins from 0.02 to 0.95 of Nyquist)
+3. Fit a degree-2 polynomial in log-log space to model the smooth 1/f spectral slope
+4. Divide the 2D magnitude by this radial model (<strong>spectral whitening</strong>) — removes the 1/f gradient while preserving the localized ring peaks
+5. Compute NCC between the whitened spectrum and the expected ring template in the ring region
+6. Map NCC to confidence: <code>(ncc - 0.03) / 0.09</code>, calibrated so unwatermarked images (NCC &lt; 0.05) score near 0 and watermarked images (NCC 0.06-0.28) score 0.5-1.0</p>
+<p><strong>Known limitation:</strong> Strongly anisotropic images (e.g., landscapes with strong horizon lines) produce weaker ring detection because their spectral structure isn't well-modeled by a radial polynomial. The payload (Layer 2) and ghost signal (Layer 3) compensate — overall detection still succeeds.</p>
+<p>Detection includes automatic geometric correction:
+1. First attempt: detect without correction
+2. If confidence is high (&gt;0.7), return immediately
+3. If ring confidence is decent (&gt;0.3) but payload is weak (&lt;0.5), try rotations
+4. Brute-force angles: [0, 90, 180, 270, 1, -1, 2, -2, 5, -5] degrees
+5. Pick the rotation that gives the best payload confidence</p>
+<h3 id="tampering-detection">Tampering Detection</h3>
+<p>The detector checks sentinel rings independently from key-derived rings. If sentinel rings are present (confidence &gt; 0.5) but key-derived rings are absent (confidence &lt; 0.2), <code>tampering_suspected</code> is set to <code>True</code>. This indicates that someone with access to the author's public key attempted targeted ring removal but didn't know about the sentinel ring positions (which are derived from a server secret).</p>
+<h2 id="ring-hardening">Ring Hardening</h2>
+<p>Layer 1 was hardened against a key-aware attacker who knows the author's public key and can derive the exact ring positions. Five changes were made:</p>
+<h3 id="1-multiplicative-embedding">1. Multiplicative Embedding</h3>
+<p><strong>Old:</strong> <code>magnitude += scaled_strength * ring_mask</code> (additive, constant boost regardless of content)
+<strong>New:</strong> <code>magnitude += alpha * ring_mask * capped_mag</code> (proportional to local spectrum energy)</p>
+<p>An attacker can't subtract a constant to remove the ring — they'd need to know the original magnitude at each frequency bin. The soft ceiling (2x median) prevents runaway distortion on high-energy peaks.</p>
+<h3 id="2-broader-ring-profiles">2. Broader Ring Profiles</h3>
+<p><strong>Old:</strong> Ring width sigma=0.015 (narrow, cheap to notch)
+<strong>New:</strong> Ring width sigma=0.04 (wide, attacker must destroy broader frequency bands)</p>
+<p>The quality cost of notch filtering increased from PSNR &gt; 35 dB to ~34.5 dB for the attacker. Natural content in the notched bands is also destroyed, making the attack visible.</p>
+<h3 id="3-phase-modulation">3. Phase Modulation</h3>
+<p>Key-derived phase offsets (limited to +/-0.3 radians to avoid destructive interference) are applied at ring frequencies. Phase modulation serves a security purpose — it makes the embedded ring signal key-dependent, so a generic ring template won't match. However, detection relies solely on magnitude-based NCC (not phase coherence). Empirical testing showed phase coherence at ring locations is ~0.01 even on watermarked images (essentially noise-floor), which was diluting magnitude confidence by ~30% when weighted in. JPEG compression further degrades phase, making it unreliable as a detection signal.</p>
+<h3 id="4-content-dependent-ring-positions">4. Content-Dependent Ring Positions</h3>
+<p>2 of the 8 rings derive their positions from a coarse hash (8x8 block means) of the image content combined with the author's key. An attacker can't predict these positions without access to the original image. The hash is quantized for robustness to minor pixel changes.</p>
+<h3 id="5-sentinel-rings">5. Sentinel Rings</h3>
+<p>2 rings at positions derived from a server secret. The attacker has no way to find or remove them. If key-derived rings are removed but sentinels remain, the system flags <code>tampering_suspected</code>.</p>
+<h2 id="adaptive-ring-strength">Adaptive Ring Strength</h2>
+<p>Without adaptation, multiplicative ring embedding produces dramatically different PSNR across image types: 42–50 dB on synthetic images but 24–35 dB on real photographs and artwork. This happens because <code>magnitude += alpha * ring_mask * capped_mag</code> adds energy proportional to existing spectral content — real photographs have rich spectra, so the multiplicative boost produces larger pixel-domain changes.</p>
+<h3 id="parsevals-theorem-approach">Parseval's Theorem Approach</h3>
+<p>Adaptive ring strength uses <strong>Parseval's theorem</strong> to predict the ring layer's pixel-domain MSE directly in the frequency domain, then scales alpha down if the predicted PSNR falls below a target:</p>
+<pre><code>MSE_pixel = (1 / h*w) * sum(|delta_F|^2)
+          = (alpha^2 / h*w) * sum_rings(|ring_mask * capped_mag|^2)
+</code></pre>
+<p>This gives an exact PSNR prediction without trial embedding — zero additional cost beyond one pass over ring frequencies (already computed).</p>
+<p>If the predicted PSNR &lt; <code>ring_target_psnr</code>, alpha is reduced:</p>
+<pre><code class="language-python">target_mse = 255^2 / 10^(target_psnr/10)
+max_alpha = sqrt(target_mse * h * w / sum_sq)
+alpha = max(max_alpha, base_alpha * min_alpha_fraction)
+</code></pre>
+<p>The floor (<code>min_alpha_fraction</code>) prevents alpha from dropping so low that ring detection becomes impossible.</p>
+<h3 id="configuration">Configuration</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>adaptive_ring_strength</code></td>
+<td><code>True</code></td>
+<td>Enable Parseval-based adaptive scaling</td>
+</tr>
+<tr>
+<td><code>ring_target_psnr</code></td>
+<td>36.0</td>
+<td>Target PSNR for the ring layer alone (dB). Overall PSNR is ~2-4 dB lower due to DWT + ghost layers.</td>
+</tr>
+<tr>
+<td><code>ring_min_alpha_fraction</code></td>
+<td>0.30</td>
+<td>Floor: alpha never drops below 30% of nominal. Ensures ring_confidence &gt;= ~0.16 on all tested images.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="impact-on-detection">Impact on Detection</h3>
+<p>With adaptation, ring_confidence drops from ~0.7 to 0.15–0.30 on spectrally rich images. The ring layer shifts from <strong>primary detection signal</strong> to <strong>supporting evidence and geometric compass</strong>. Detection now primarily relies on:</p>
+<ul>
+<li><code>author_id_match</code> (payload layer) — the strongest signal</li>
+<li><code>beacon_found</code> (payload layer) — blind detection</li>
+<li>Ring confidence still contributes to overall confidence blend (0.35 weight) and serves as geometric correction anchor</li>
+</ul>
+<p>The <code>detected</code> condition is unchanged: <code>payload_confidence &gt; 0.5 AND (beacon_found OR ring_confidence &gt; 0.5 OR author_id_match)</code>. On adapted images, <code>ring_confidence &gt; 0.5</code> rarely triggers — <code>author_id_match</code> or <code>beacon_found</code> drive detection instead.</p>
+<h3 id="tradeoffs">Tradeoffs</h3>
+<table>
+<thead>
+<tr>
+<th>Upside</th>
+<th>Downside</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>+10 dB avg PSNR on real photos (29.7 → 40.1 dB)</td>
+<td>Ring layer alone can no longer drive detection</td>
+</tr>
+<tr>
+<td>No visible artifacts on any tested image (min 34.9 dB)</td>
+<td>Reduced noise robustness under combined attacks (sigma=10 + key-alpha combos may produce <code>detected=False</code>)</td>
+</tr>
+<tr>
+<td>Mathematically exact, zero-cost prediction</td>
+<td>Spectrally rich images get weaker ring protection against notch filtering</td>
+</tr>
+<tr>
+<td>100% author_id_match on all clean images</td>
+<td>~14% of sigma=5-10 noise key/image combos retain signal but don't cross strict detection threshold</td>
+</tr>
+</tbody>
+</table>
+<h3 id="quality-results-with-adaptive-strength">Quality Results with Adaptive Strength</h3>
+<p>See "Measured Quality — Real Photographs &amp; Artwork" section below for full table.</p>
+<h2 id="cryptographic-identity">Cryptographic Identity</h2>
+<h3 id="ed25519-keypairs-keygenpy">Ed25519 Keypairs (<code>keygen.py</code>)</h3>
+<p>Each artist has one Ed25519 keypair:
+- <strong>Private key</strong>: 32 bytes, stored encrypted in the database, used only during embedding
+- <strong>Public key</strong>: 32 bytes, stored in the database, used for detection/verification</p>
+<p>Key generation: <code>generate_author_keys(seed=None)</code> — random by default, or deterministic from a seed via HKDF.</p>
+<h3 id="key-derivation">Key Derivation</h3>
+<p>All watermark parameters are deterministically derived from the public key using HKDF-SHA256:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Salt</th>
+<th>Info</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PN sequence</td>
+<td><code>signarture-sigil-v1-pn</code></td>
+<td><code>pn-sequence</code></td>
+<td>Spread-spectrum chips</td>
+</tr>
+<tr>
+<td>Ring radii</td>
+<td><code>signarture-sigil-v1-rings</code></td>
+<td><code>ring-radii</code></td>
+<td>DFT ring positions</td>
+</tr>
+<tr>
+<td>Ring phase offsets</td>
+<td><code>signarture-sigil-v1-rings</code></td>
+<td><code>ring-phase-offsets</code></td>
+<td>Phase modulation</td>
+</tr>
+<tr>
+<td>Content ring radii</td>
+<td><code>signarture-sigil-v1-content-rings</code></td>
+<td><code>content-ring-radii</code></td>
+<td>Content-dependent positions</td>
+</tr>
+<tr>
+<td>Sentinel ring radii</td>
+<td><code>signarture-sigil-v1-sentinel</code></td>
+<td><code>sentinel-ring-radii</code></td>
+<td>Tampering detection</td>
+</tr>
+<tr>
+<td>Author ID</td>
+<td>SHA-256 of <code>signarture-author-id-v1 + pubkey</code></td>
+<td>—</td>
+<td>48-bit identity</td>
+</tr>
+<tr>
+<td>Author index</td>
+<td>SHA-256 of <code>signarture-author-index-v1 + pubkey</code></td>
+<td>—</td>
+<td>20-bit blind index</td>
+</tr>
+</tbody>
+</table>
+<p>Universal (key-independent) parameters:
+| Parameter | Seed | Purpose |
+|-----------|------|---------|
+| Beacon PN | <code>signarture-universal-beacon-v1</code> | Blind payload extraction |
+| Index PN | <code>signarture-universal-pn-v1</code> | Author index extraction |</p>
+<h2 id="error-correction">Error Correction</h2>
+<h3 id="reed-solomon-fec-fecpy">Reed-Solomon FEC (<code>fec.py</code>)</h3>
+<p>The combined payload (76 bits) is RS-encoded before embedding:
+- Bits are packed into bytes (MSB-first)
+- <code>reedsolo.RSCodec(nsym=8)</code> adds 8 error-correction symbols
+- Result is unpacked back to bits (~144 encoded bits)
+- Can correct up to <code>nsym/2 = 4</code> symbol errors in the payload</p>
+<p>This provides resilience against bit errors from JPEG compression, noise, and partial tile corruption.</p>
+<h2 id="robustness-features">Robustness Features</h2>
+<h3 id="fractal-tiling-tilingpy">Fractal Tiling (<code>tiling.py</code>)</h3>
+<p>Each DWT subband is divided into tiles. Every tile independently embeds the full payload:</p>
+<pre><code>+--------+--------+--------+--------+
+| Tile 1 | Tile 2 | Tile 3 | Tile 4 |  Each tile = full payload
++--------+--------+--------+--------+
+| Tile 5 | Tile 6 | Tile 7 | Tile 8 |  Majority vote across tiles
++--------+--------+--------+--------+
+| Tile 9 | Tile10 | Tile11 | Tile12 |  Any 1 surviving tile
++--------+--------+--------+--------+  can recover the payload
+| Tile13 | Tile14 | Tile15 | Tile16 |
++--------+--------+--------+--------+
+</code></pre>
+<p>Tile size selection: <code>best_tile_size()</code> picks the largest tile from <code>(32, 64, 128, 256)</code> that fits in the subband while providing enough spreading capacity.</p>
+<p>Detection extracts bits from every tile, then majority-votes across all tiles for the final answer.</p>
+<h3 id="color-support-colorpy">Color Support (<code>color.py</code>)</h3>
+<ul>
+<li>RGB images are converted to YCbCr</li>
+<li>Watermark is embedded in the Y (luminance) channel only</li>
+<li>Y survives JPEG subsampling, color shifts, and print-scan best</li>
+<li>Cb/Cr channels are preserved and recombined after embedding</li>
+</ul>
+<h3 id="geometric-auto-correction-geometricpy">Geometric Auto-Correction (<code>geometric.py</code>)</h3>
+<p><strong>Fourier-Mellin Transform</strong> for rotation/scale estimation:
+1. Compute DFT magnitude of test and reference images
+2. Apply highpass filter to suppress DC
+3. Convert to log-polar coordinates (rotation -&gt; x-shift, scale -&gt; y-shift)
+4. Phase correlation gives (angle, scale) estimates
+5. Apply inverse transform to correct the image</p>
+<p><strong>Brute-force rotation</strong> (<code>try_rotations</code>):
+- When no reference image is available, tries common angles: [0, 90, 180, 270, 1, -1, 2, -2, 5, -5]
+- Picks the rotation that maximizes detection confidence
+- Integrated into <code>SigilDetector.detect()</code> automatically</p>
+<h3 id="perceptual-masking-perceptualpy">Perceptual Masking (<code>perceptual.py</code>)</h3>
+<p>Embedding strength adapts to local image complexity:
+- Gradient magnitude analysis detects edges and texture
+- Noise estimation via median filter identifies smooth vs. textured regions
+- JND (Just Noticeable Difference) threshold prevents visible artifacts
+- Result: stronger embedding in textured regions, weaker in flat regions</p>
+<h2 id="ghost-signal-vae-optimization">Ghost Signal — VAE Optimization</h2>
+<p>The ghost signal was empirically optimized for maximum survival through the Stable Diffusion VAE (<code>stabilityai/sd-vae-ft-mse</code>):</p>
+<h3 id="vae-passband-analysis">VAE Passband Analysis</h3>
+<p><code>scripts/vae_passband_analysis.py</code> measures per-frequency attenuation across 50 diverse images. The top VAE-transparent bands were identified:</p>
+<table>
+<thead>
+<tr>
+<th>Frequency (Nyquist)</th>
+<th>VAE Survival Ratio</th>
+<th>Selected?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.343</td>
+<td>55x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.425</td>
+<td>26x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.218</td>
+<td>24x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.163</td>
+<td>14x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.286</td>
+<td>9x</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>0.500 (old)</td>
+<td>5x</td>
+<td>No</td>
+</tr>
+<tr>
+<td>0.250 (old)</td>
+<td>~5x</td>
+<td>No</td>
+</tr>
+<tr>
+<td>0.125 (old)</td>
+<td>~9x</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<h3 id="perceptual-masking">Perceptual Masking</h3>
+<p>Ghost modulation depth is scaled by the perceptual mask's mean value — full strength in textured/detailed images, reduced in smooth images (sky, flat gradients). This prevents subtle banding artifacts on smooth regions that PSNR/SSIM wouldn't capture. The mask is the same local-variance JND mask used for Layer 2 embedding.</p>
+<h3 id="strength-vs-quality">Strength vs. Quality</h3>
+<p>The ghost signal is spectrally narrow enough that increasing strength has negligible quality impact:</p>
+<table>
+<thead>
+<tr>
+<th>Multiplier</th>
+<th>PSNR</th>
+<th>SSIM</th>
+<th>VAE Detection Rate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.5 (old)</td>
+<td>47.2</td>
+<td>0.995</td>
+<td>40%</td>
+</tr>
+<tr>
+<td>50</td>
+<td>47.1</td>
+<td>0.994</td>
+<td>80%</td>
+</tr>
+<tr>
+<td>100</td>
+<td>47.0</td>
+<td>0.994</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>200 (current)</td>
+<td>46.9</td>
+<td>0.994</td>
+<td>100%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="multi-channel-embedding-tested-rejected">Multi-Channel Embedding (tested, rejected)</h3>
+<p>RGB ghost embedding was tested — embedding independent PN sequences per channel. Through the VAE, per-channel coherence is destroyed because the SD VAE mixes channels in its learned latent space. Y-only embedding is definitively better.</p>
+<h3 id="ghost-hash-author-binning-after-vae">Ghost Hash — Author Binning After VAE</h3>
+<p>The ghost signal carries an 8-bit author fingerprint that survives the SD VAE encode/decode cycle, enabling blind author identification without knowing the candidate key.</p>
+<p><strong>How it works:</strong>
+1. Derive 8 hash bits from the author's public key via SHA-256
+2. Generate 8 universal (key-independent) PN sequences from fixed seeds
+3. Build a composite PN: <code>(1/sqrt(8)) * sum(sign_i * pn_i)</code> where <code>sign_i = +1 if bit_i=1, -1 if bit_i=0</code>
+4. Embed the composite into all ghost bands (same energy as single-PN approach)
+5. To extract: correlate with each universal PN, sign of correlation = hash bit</p>
+<p><strong>Performance after real SD VAE:</strong>
+- Per-bit error rate: ~1-2 bits out of 8 after VAE encode/decode
+- Fuzzy lookup (Hamming distance ≤ 2): finds correct author in 5/5 test images
+- 10K artist database → ~1,400 candidates (86% reduction, vs O(10K) brute force)
+- Postgres can scan 1,400 candidates in &lt;100ms with ghost composite correlation</p>
+<p><strong>Lookup flow:</strong>
+1. Extract ghost hash blindly (no key needed): <code>extract_ghost_hash(image, config)</code>
+2. Query database: <code>SELECT * FROM artists WHERE hamming_distance(ghost_hash, $query) &lt;= 2</code>
+3. For each candidate (~1,400), verify with full detection pipeline
+4. The ghost hash is stored as an indexed integer column for fast lookup</p>
+<p><strong>Why not more bits?</strong> Per-bit SNR drops by <code>1/sqrt(N)</code> since N composite PNs share the same ghost energy. With 8 bits, the weakest bits have confidence ~0.003, near the noise floor. More bits would cause too many extraction errors after VAE.</p>
+<h3 id="measured-quality-real-photographs-artwork">Measured Quality — Real Photographs &amp; Artwork</h3>
+<p>Tested on 8 public domain images (paintings + photographs) at various resolutions with <strong>adaptive ring strength</strong> enabled (<code>ring_target_psnr=36.0</code>, <code>ring_min_alpha_fraction=0.30</code>). These numbers represent what artists will actually experience:</p>
+<table>
+<thead>
+<tr>
+<th>Image</th>
+<th>Size</th>
+<th>PSNR</th>
+<th>Max Dev</th>
+<th>Ring Conf</th>
+<th>Detected</th>
+<th>Author Match</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Girl with Pearl Earring</td>
+<td>800x937</td>
+<td>44.7 dB</td>
+<td>26</td>
+<td>0.18</td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>Water Lilies (Monet)</td>
+<td>1280x1230</td>
+<td>41.2 dB</td>
+<td>33</td>
+<td>0.19</td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>Photo Architecture (Pyramids)</td>
+<td>1280x851</td>
+<td>40.5 dB</td>
+<td>40</td>
+<td>0.22</td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>Photo Landscape (Yosemite)</td>
+<td>1280x835</td>
+<td>39.8 dB</td>
+<td>30</td>
+<td>0.17</td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>Persistence of Memory (Dali)</td>
+<td>368x271</td>
+<td>39.2 dB</td>
+<td>28</td>
+<td>0.16</td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>Starry Night (Van Gogh)</td>
+<td>1280x1014</td>
+<td>38.4 dB</td>
+<td>34</td>
+<td>0.20</td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>Photo Urban (Times Square)</td>
+<td>1280x853</td>
+<td>38.1 dB</td>
+<td>42</td>
+<td>0.26</td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td>Great Wave (Hokusai)</td>
+<td>1280x860</td>
+<td><strong>34.9 dB</strong></td>
+<td><strong>48</strong></td>
+<td>0.18</td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><strong>Average</strong></td>
+<td></td>
+<td><strong>40.1 dB</strong></td>
+<td><strong>35</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Before adaptive strength (for comparison):</strong> avg 29.7 dB, min 24.4 dB (Great Wave had max_dev=124 — visually noticeable). Adaptive strength raised the floor by +10 dB average.</p>
+<p><strong>Why ring_confidence is lower:</strong> With adaptive strength, alpha is reduced on spectrally rich images. Ring confidence drops from ~0.7 to 0.15-0.30, but NCC-based ring detection is strength-agnostic (normalized). The ring signal is still present — just weaker. Detection relies on <code>author_id_match</code> rather than <code>ring_confidence &gt; 0.5</code>.</p>
+<p><strong>Key-dependent variation:</strong> PSNR varies by 1-3 dB across different author keys because each key places rings at different frequencies. Some frequency placements hit stronger spectral peaks in specific images.</p>
+<h3 id="jpeg-re-encoding-robustness">JPEG Re-Encoding Robustness</h3>
+<p>Systematic JPEG quality sweep (grayscale natural scene, embed_strength=3.0, ring_strength=20.0, adaptive ring strength enabled):</p>
+<p><strong>Note:</strong> With adaptive ring strength, ring confidence on synthetic images drops from ~0.7 to ~0.2-0.3 (alpha is scaled down based on spectral energy). Detection is driven by <code>author_id_match</code> from the payload layer.</p>
+<p><strong>Key findings:</strong>
+- Full detection (detected + author_id_match) survives down to <strong>JPEG Q60</strong>
+- Ring layer retains signal (confidence ~0.2) with adaptive strength
+- Author ID match fails below Q50 (RS-encoded payload accumulates too many bit errors)
+- Ghost signal remains detectable (&gt;0.25) down to Q20
+- Sequential re-encoding (3x Q75, Q99→Q85→Q75 chain) survives with full detection</p>
+<p>RGB JPEG follows the same pattern (tested Q50-Q99, full detection through Q60).</p>
+<h3 id="jpeg-before-vae-social-media-ai-training-pipeline">JPEG Before VAE (Social Media → AI Training Pipeline)</h3>
+<p>Tests the realistic scenario where an image is JPEG-compressed (social media upload) before being fed through the SD VAE encoder/decoder (AI training). This is tested in <code>test_real_vae_attack.py::TestJPEGBeforeVAE</code> (GPU required).</p>
+<p>Test matrix: JPEG Q50/Q75/Q90/Q99 → VAE, plus VAE→JPEG vs JPEG→VAE order comparison, and 3x JPEG Q85 → VAE worst case.</p>
+<h3 id="lora-propagation-tested-fundamental-limitation">LoRA Propagation (tested, fundamental limitation)</h3>
+<p>LoRA hyperparameter sweep (rank 8-64, steps 500-2000) with real test images proved the ghost propagation mechanism fundamentally doesn't scale:
+- More training steps overwrites the ghost signal
+- Higher LoRA rank doesn't help capture more signal
+- Ceiling holds at all configurations tested
+- The mechanism itself needs fundamental change (style-entangled approach needed) for reliable single-image detection of LoRA-generated images</p>
+<h2 id="configuration_1">Configuration</h2>
+<p>All parameters in <code>config.py: SigilConfig</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>num_rings</code></td>
+<td>4</td>
+<td>Key-derived DFT ring count</td>
+</tr>
+<tr>
+<td><code>num_content_rings</code></td>
+<td>2</td>
+<td>Content-dependent ring count</td>
+</tr>
+<tr>
+<td><code>num_sentinel_rings</code></td>
+<td>2</td>
+<td>Sentinel ring count</td>
+</tr>
+<tr>
+<td><code>ring_radius_min/max</code></td>
+<td>0.1 / 0.35</td>
+<td>Ring frequency range (fraction of Nyquist)</td>
+</tr>
+<tr>
+<td><code>ring_strength</code></td>
+<td>20.0</td>
+<td>Ring embedding strength (multiplicative alpha = strength/50)</td>
+</tr>
+<tr>
+<td><code>ring_width</code></td>
+<td>0.04</td>
+<td>Ring Gaussian sigma (fraction of Nyquist)</td>
+</tr>
+<tr>
+<td><code>tile_sizes</code></td>
+<td>(32, 64, 128, 256)</td>
+<td>Available tile sizes</td>
+</tr>
+<tr>
+<td><code>wavelet</code></td>
+<td>db4</td>
+<td>DWT wavelet family</td>
+</tr>
+<tr>
+<td><code>dwt_levels</code></td>
+<td>3</td>
+<td>DWT decomposition depth</td>
+</tr>
+<tr>
+<td><code>embed_subbands</code></td>
+<td>(LH, HL)</td>
+<td>Which detail subbands to embed in</td>
+</tr>
+<tr>
+<td><code>embed_strength</code></td>
+<td>3.0</td>
+<td>Base spread-spectrum strength</td>
+</tr>
+<tr>
+<td><code>spreading_factor</code></td>
+<td>256</td>
+<td>CDMA chips per payload bit</td>
+</tr>
+<tr>
+<td><code>ghost_bands</code></td>
+<td>(0.163, 0.218, 0.286, 0.343, 0.425)</td>
+<td>VAE-optimized ghost frequency positions</td>
+</tr>
+<tr>
+<td><code>ghost_bandwidth</code></td>
+<td>0.05</td>
+<td>Ghost band Gaussian width</td>
+</tr>
+<tr>
+<td><code>ghost_strength_multiplier</code></td>
+<td>200.0</td>
+<td>Ghost signal relative strength</td>
+</tr>
+<tr>
+<td><code>ghost_hash_bits</code></td>
+<td>8</td>
+<td>Ghost hash bits for author binning</td>
+</tr>
+<tr>
+<td><code>adaptive_ring_strength</code></td>
+<td>True</td>
+<td>Enable Parseval-based adaptive ring scaling</td>
+</tr>
+<tr>
+<td><code>ring_target_psnr</code></td>
+<td>36.0</td>
+<td>Target PSNR for ring layer alone (dB)</td>
+</tr>
+<tr>
+<td><code>ring_min_alpha_fraction</code></td>
+<td>0.30</td>
+<td>Floor: alpha never below 30% of nominal</td>
+</tr>
+<tr>
+<td><code>beacon_bits</code></td>
+<td>8</td>
+<td>Beacon payload size</td>
+</tr>
+<tr>
+<td><code>author_index_bits</code></td>
+<td>20</td>
+<td>Blind scan index size</td>
+</tr>
+<tr>
+<td><code>author_id_bits</code></td>
+<td>48</td>
+<td>Cryptographic identity size</td>
+</tr>
+<tr>
+<td><code>rs_nsym</code></td>
+<td>8</td>
+<td>Reed-Solomon error correction symbols</td>
+</tr>
+<tr>
+<td><code>target_psnr_db</code></td>
+<td>40.0</td>
+<td>Visual quality target (actual: 35-47 dB with adaptive ring strength)</td>
+</tr>
+<tr>
+<td><code>target_ssim</code></td>
+<td>0.98</td>
+<td>Structural similarity target</td>
+</tr>
+</tbody>
+</table>
+<h2 id="strength-tuning-and-backwards-compatibility">Strength Tuning and Backwards Compatibility</h2>
+<p>Embedding strength parameters (<code>ring_strength</code>, <code>embed_strength</code>) only affect the embedding pipeline.
+The detection pipeline is <strong>fully strength-agnostic</strong> — it uses normalized cross-correlation (rings)
+and sign-of-correlation bit decisions (payload), neither of which reference the embedding strength.</p>
+<p>This means:
+- <strong>Changing strength defaults only affects newly embedded images.</strong> Images embedded at prior
+  strength settings (e.g., <code>ring_strength=50</code>, <code>embed_strength=5</code>) will still be detected normally,
+  and will produce higher confidence scores due to their stronger signal.
+- <strong>No migration or re-embedding needed.</strong> Old and new images coexist seamlessly.
+- <strong>The structural config must match.</strong> Detection depends on <code>wavelet</code>, <code>dwt_levels</code>,
+  <code>embed_subbands</code>, <code>tile_sizes</code>, <code>spreading_factor</code>, <code>rs_nsym</code>, and payload bit sizes. These
+  define where to look and how to decode — changing any of these would break detection of old images.</p>
+<h3 id="strength-history">Strength history</h3>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th><code>ring_strength</code></th>
+<th><code>embed_strength</code></th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Initial</td>
+<td>50.0</td>
+<td>5.0</td>
+<td>Original defaults, additive rings, sigma=0.015</td>
+</tr>
+<tr>
+<td>2026-03-05</td>
+<td>20.0</td>
+<td>3.0</td>
+<td>Reduced for imperceptibility</td>
+</tr>
+<tr>
+<td>2026-03-07</td>
+<td>20.0</td>
+<td>3.0</td>
+<td>Multiplicative rings, sigma=0.04, phase modulation, content+sentinel rings</td>
+</tr>
+<tr>
+<td>2026-03-07</td>
+<td>20.0</td>
+<td>3.0</td>
+<td>Ring detection fix: spectral whitening (was 0% on all real photographs)</td>
+</tr>
+<tr>
+<td>2026-03-07</td>
+<td>20.0</td>
+<td>3.0</td>
+<td>Ghost hash (8-bit author binning), ghost strength 100→200×</td>
+</tr>
+<tr>
+<td>2026-03-08</td>
+<td>20.0</td>
+<td>3.0</td>
+<td>Adaptive ring strength via Parseval's theorem (avg PSNR 29.7→40.1 dB on real photos)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="comparison-with-adversarial-perturbation-approaches">Comparison with Adversarial Perturbation Approaches</h2>
+<h3 id="background-honig-et-al-iclr-2025">Background: Honig et al. (ICLR 2025)</h3>
+<p>"Adversarial Perturbations Cannot Reliably Protect Artists From Generative AI" (arxiv 2406.12027) evaluates tools like Glaze, Mist, and Anti-DreamBooth that add adversarial perturbations to artist images to prevent AI models from learning an artist's style. The paper finds that simple preprocessing bypasses all these protections:</p>
+<table>
+<thead>
+<tr>
+<th>Bypass Method</th>
+<th>How It Works</th>
+<th>Effectiveness</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gaussian Noising</td>
+<td>Add noise (sigma 0.05-0.25 on [0,1])</td>
+<td>Breaks most protections</td>
+</tr>
+<tr>
+<td>DiffPure</td>
+<td>Add noise -&gt; denoise via SDXL</td>
+<td>Strong bypass</td>
+</tr>
+<tr>
+<td>Noisy Upscaling</td>
+<td>Add noise -&gt; run through SD Upscaler</td>
+<td>Best bypass (&gt;40% median success)</td>
+</tr>
+<tr>
+<td>IMPRESS++</td>
+<td>White-box iterative optimization</td>
+<td>Strongest but requires model access</td>
+</tr>
+</tbody>
+</table>
+<p>Key finding: "protections are broken from day one" — the bypass methods existed before the protections were created. A best-of-4 strategy (try multiple bypasses, pick best result) defeats all evaluated protections.</p>
+<h3 id="why-sigil-takes-a-fundamentally-different-approach">Why Sigil Takes a Fundamentally Different Approach</h3>
+<p>The adversarial perturbation tools and Sigil watermarks solve <strong>different problems</strong>:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Adversarial Perturbations (Glaze etc.)</th>
+<th>Sigil Watermark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Goal</strong></td>
+<td>PREVENT model from learning artist's style</td>
+<td>SURVIVE training, propagate into generated images</td>
+</tr>
+<tr>
+<td><strong>Mechanism</strong></td>
+<td>Adversarial noise targeting model gradients</td>
+<td>Signal processing in frequency domain</td>
+</tr>
+<tr>
+<td><strong>Failure mode</strong></td>
+<td>Preprocessing strips the perturbation -&gt; model learns normally</td>
+<td>Processing degrades signal -&gt; detection confidence drops</td>
+</tr>
+<tr>
+<td><strong>Fundamental limit</strong></td>
+<td>Perturbation must be strong enough to mislead but weak enough to be invisible — a contradictory requirement</td>
+<td>Signal only needs to be detectable, not to mislead anything</td>
+</tr>
+</tbody>
+</table>
+<p>The paper's core insight — that adversarial perturbations are inherently brittle because any preprocessing that restores perceptual quality also strips the perturbation — <strong>does not apply to Sigil</strong>. Our watermark is embedded in the frequency domain structure of the image, not as an adversarial gradient-based signal. The watermark doesn't need to deceive any model; it just needs to survive as a detectable signal.</p>
+<h3 id="sigils-performance-against-papers-bypass-methods">Sigil's Performance Against Paper's Bypass Methods</h3>
+<p>We tested Sigil against simulations of all the paper's bypass methods (<code>test_purification_attacks.py</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Attack</th>
+<th>Sigil Survives?</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gaussian noise (sigma 0.05-0.15)</td>
+<td>Full detection</td>
+<td>Payload + ring both survive</td>
+</tr>
+<tr>
+<td>Gaussian noise (sigma 0.20-0.25)</td>
+<td>Partial detection</td>
+<td>Payload survives; ring degraded (adaptive alpha)</td>
+</tr>
+<tr>
+<td>DiffPure (bilateral denoise)</td>
+<td>Full detection</td>
+<td>Structure-preserving denoise doesn't remove frequency signal</td>
+</tr>
+<tr>
+<td>DiffPure x3 (repeated)</td>
+<td>Detection survives</td>
+<td>Multi-round purification still leaves signal</td>
+</tr>
+<tr>
+<td>Noisy Upscaling (2x)</td>
+<td>Partial detection</td>
+<td>Payload or ring layer survives</td>
+</tr>
+<tr>
+<td>Noisy Upscaling (4x)</td>
+<td>Partial detection</td>
+<td>Heavy downsampling destroys payload tiles; ring persistence depends on adaptive alpha</td>
+</tr>
+<tr>
+<td>VAE encode/decode (real SD 1.5)</td>
+<td>Ghost layer survives</td>
+<td>Rings fully destroyed (conf=0.002); ghost hash match + payload partial signal</td>
+</tr>
+<tr>
+<td>VAE encode/decode (simulated)</td>
+<td>Partial detection</td>
+<td>Simulated bottleneck is more generous than real VAE</td>
+</tr>
+<tr>
+<td>Training preprocessing</td>
+<td>Partial detection</td>
+<td>Resize + crop + noise + denoise</td>
+</tr>
+<tr>
+<td>Full pipeline (social -&gt; training)</td>
+<td>Partial detection</td>
+<td>JPEG -&gt; resize -&gt; noise -&gt; denoise chain</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Layer survival by attack class:</strong>
+- <strong>Pixel-space attacks</strong> (noise, JPEG, resize, denoise): Layers 1+2 survive. Ring and payload both contribute to detection.
+- <strong>Latent-space attacks</strong> (VAE encode/decode): Layer 3 (ghost) survives. Rings are fully destroyed. Ghost hash enables blind author binning.
+- <strong>Targeted key-aware attacks</strong>: Attacker can remove key-derived rings and payload, but sentinel rings and content-dependent rings survive (positions unknown to attacker).</p>
+<h3 id="implications-for-signartures-strategy">Implications for Signarture's Strategy</h3>
+<ol>
+<li>
+<p><strong>We don't need to prevent learning.</strong> Unlike Glaze/Mist, we WANT models to learn the artist's style. Our watermark rides along with the training data.</p>
+</li>
+<li>
+<p><strong>Our watermark is orthogonal to purification attacks.</strong> The paper's bypass methods target adversarial gradient signals. Our frequency-domain watermark occupies a different part of the signal space.</p>
+</li>
+<li>
+<p><strong>Multi-layer redundancy matters.</strong> Layers 1+2 survive pixel-space attacks; Layer 3 (ghost) survives latent-space attacks (VAE). No single layer needs to survive everything.</p>
+</li>
+<li>
+<p><strong>The training ghost signal (Layer 3) addresses the remaining gap.</strong> For the scenario where an image goes through full model training and generation, the ghost signal is designed to propagate spectral bias into the model's outputs, enabling batch-level detection even when individual-image detection fails.</p>
+</li>
+</ol>
+<h2 id="test-coverage">Test Coverage</h2>
+<p>~1,900 tests (+ GPU/slow tests excluded from default runs) covering:</p>
+<h3 id="test-matrix">Test Matrix</h3>
+<p>All core tests are parameterized across:
+- <strong>7 image types</strong>: gradient, texture, edges, highfreq, photo_like, dark, natural_scene
+- <strong>3 author keys</strong>: key-alpha, key-bravo, key-charlie (different seeds)</p>
+<p>This gives 21 (image × key) combinations per test, catching key-dependent and content-dependent failures that single-image/single-key tests miss.</p>
+<h3 id="image-categories">Image Categories</h3>
+<p>Tests distinguish between <strong>realistic</strong> and <strong>pathological</strong> images:
+- <strong>Realistic</strong> (texture, photo_like, natural_scene): Full detection expected — detected=True, author_id_match=True, confidence&gt;0.5
+- <strong>Pathological</strong> (gradient, edges, highfreq, dark): Relaxed thresholds — these extreme synthetic images lack spectral diversity or dynamic range for reliable full-pipeline watermarking but are included to document known limitations</p>
+<h3 id="coverage-areas">Coverage Areas</h3>
+<ul>
+<li>Roundtrip embedding/detection (grayscale + RGB, all image types × all keys)</li>
+<li>JPEG compression quality sweep (Q20-Q99, grayscale + RGB) across realistic image types</li>
+<li>Sequential re-encoding (2x, 3x, 5x at Q75/Q90; JPEG→PNG→JPEG; descending Q99→Q85→Q75)</li>
+<li>JPEG before VAE pipeline (Q50/Q75/Q90/Q99 → SD VAE, order comparison, multi-JPEG → VAE)</li>
+<li>Cropping (10%, 25%, 50%)</li>
+<li>Rotation (1, 2, 5, 90, 180, 270 degrees)</li>
+<li>Scaling (0.75x downscale/upscale)</li>
+<li>Gaussian noise (sigma 5-65) across realistic image types</li>
+<li>Brightness/contrast adjustments across realistic image types</li>
+<li>Perspective/affine transforms</li>
+<li>Print-scan simulation</li>
+<li>Median filter, histogram equalization, gamma correction</li>
+<li>Bit depth reduction</li>
+<li>Color attacks (hue rotation, desaturation, white balance, vignetting)</li>
+<li>Combined attack chains (3/4/5-step, repeated, ordering)</li>
+<li>18 diverse procedurally generated image types</li>
+<li>False positive verification (random keys, wrong keys, patterns, confidence distributions)</li>
+<li>Analytical false positive rate verification (&lt; 1e-30 with RS, &lt; 1e-6 fallback)</li>
+<li>Social media simulation (Instagram, Twitter, Facebook, WhatsApp, Pinterest, TikTok)</li>
+<li>Small/non-square/odd-dimension images (64x64 to 1024x1024)</li>
+<li>Configuration sensitivity (strength, wavelet, subbands, spreading factor)</li>
+<li>Ghost signal robustness (JPEG, noise, blur, brightness, contrast, gamma) across all image types × keys</li>
+<li>Ghost hash extraction with known error thresholds per image type</li>
+<li>Ghost key discrimination across all image types</li>
+<li>Tile destruction and partial corruption</li>
+<li>Purification attacks from Honig et al. (Gaussian noising, DiffPure, noisy upscaling)</li>
+<li>Training pipeline simulation (augmentation, VAE bottleneck, multi-epoch)</li>
+<li>Superresolution simulation</li>
+<li>Targeted removal attacks (ring notch filter, PN subtraction, ghost band removal, combined, quality-constrained)</li>
+<li>Natural image ring detection (1/f photos, portraits, dark images, high contrast, anisotropic landscapes)</li>
+<li>Spectral whitening discrimination (watermarked vs unwatermarked gap verification)</li>
+<li>Cross-key false positive verification (20 keys, no cross-detection) on realistic images</li>
+<li>Production JPEG/PNG roundtrip mirroring the exact encode pipeline</li>
+<li>Re-encoding robustness (test_reencoding.py): JPEG Q20-Q99 sweep, PNG, sequential, cross-codec chains</li>
+<li>Real photographs &amp; artwork (test_real_photos.py): 8 public domain images (paintings + photos), RGB, multi-key, PSNR/detection/JPEG/ghost, comprehensive quality report</li>
+<li>Quality metrics (PSNR &gt; 37 dB, max deviation &lt; 30) across all image types</li>
+</ul>
+<h3 id="test-infrastructure">Test Infrastructure</h3>
+<p><strong>Shared fixtures</strong> (<code>conftest.py</code>):
+- Vectorized image generators (numpy-only, no pixel-by-pixel loops)
+- <code>NATURAL_IMAGE_GENERATORS</code> dict registry for parameterization
+- <code>PATHOLOGICAL_IMAGES</code> set for known-limitation documentation
+- <code>realistic_image</code> fixture for tests requiring strong detection
+- <code>natural_image</code> fixture for broad coverage including edge cases
+- <code>multi_author_keys</code> fixture for multi-key testing (3 keys per test)
+- Shared JPEG/PNG roundtrip utilities</p>
+<p><strong>Parallel execution</strong> (<code>pytest-xdist</code>):
+- <code>uv run pytest -n auto</code> runs tests across all CPU cores
+- ~2.5x speedup with 4 workers (e.g., 2:23 vs ~5+ minutes sequential)
+- Tests are fully independent (no shared mutable state)</p>
+<p><strong>Running tests:</strong></p>
+<pre><code class="language-bash"># Default (excludes GPU/slow):
+uv run python -m pytest tests/
+
+# Parallel:
+uv run python -m pytest tests/ -n auto
+
+# Single file:
+uv run python -m pytest tests/test_pipeline.py -v
+
+# GPU tests (requires torch/diffusers):
+uv run python -m pytest -m gpu
+</code></pre>
+<p>GPU/slow tests (run with <code>uv run pytest -m gpu</code> or <code>uv run pytest -m slow</code>):
+- Real SD VAE roundtrip attack (<code>test_real_vae_attack.py</code>)
+- Ghost strength sweep across VAE (<code>test_ghost_strength_sweep.py</code>)
+- LoRA ghost propagation (<code>test_ghost_lora_propagation.py</code>)
+- LoRA hyperparameter sweep (<code>test_lora_hyperparameter_sweep.py</code>)</p>
+<h3 id="known-limitations-documented-by-tests">Known Limitations (documented by tests)</h3>
+<ul>
+<li><strong>Gradient images</strong>: Ghost hash extraction unreliable (3+ bit errors vs 2-error threshold). Ghost confidence low. Pathological: pure diagonal gradient lacks spectral diversity for ghost PN correlation.</li>
+<li><strong>Edge images</strong>: Binary content (240/15 values) causes ghost hash failure and beacon non-detection on some keys. Saturation clips reduce effective dynamic range.</li>
+<li><strong>High-frequency images</strong>: Dense noise interferes with ring detection and beacon. Author ID match fails on some key combinations.</li>
+<li><strong>Dark images</strong>: Very low dynamic range (30±15) makes watermark fragile under noise. Sigma=5 Gaussian noise can break detection.</li>
+<li><strong>JPEG Q50</strong>: Author ID match degrades across multiple image types. Detection survives but cryptographic verification weakens.</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<pre><code class="language-python">from sigil_watermark.keygen import generate_author_keys
+from sigil_watermark.embed import SigilEmbedder
+from sigil_watermark.detect import SigilDetector
+
+# Generate keys (once per artist)
+keys = generate_author_keys()
+
+# Embed
+embedder = SigilEmbedder()
+watermarked = embedder.embed(image, keys)  # image: np.ndarray (H,W) or (H,W,3)
+
+# Detect
+detector = SigilDetector()
+result = detector.detect(watermarked, keys.public_key)
+assert result.detected
+assert result.author_id_match
+
+# Tampering check
+if result.tampering_suspected:
+    print(&quot;WARNING: Targeted ring removal detected&quot;)
+</code></pre>
+<h2 id="references">References</h2>
+<p>The robustness testing and comparative analysis in this project was inspired by:</p>
+<blockquote>
+<p>Robert Honig, Javier Rando, Nicholas Carlini, and Florian Tramer. "Adversarial Perturbations Cannot Reliably Protect Artists From Generative AI." In <em>The Thirteenth International Conference on Learning Representations (ICLR)</em>, 2025. https://openreview.net/forum?id=yfW1x7uBS5</p>
+</blockquote>
+<p>Their finding that adversarial perturbations (Glaze, Mist, Anti-DreamBooth) are fundamentally brittle against simple preprocessing informed our decision to pursue frequency-domain watermarking rather than adversarial protection. See the "Comparison with Adversarial Perturbation Approaches" section and <code>tests/test_purification_attacks.py</code> for details.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.sections", "navigation.expand"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

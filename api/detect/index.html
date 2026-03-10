@@ -1,0 +1,2086 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Invisible, crypto-verified, AI-training-resilient image watermarks">
+      
+      
+      
+        <link rel="canonical" href="https://ai-escape.github.io/sigil-watermark/api/detect/">
+      
+      
+        <link rel="prev" href="../embed/">
+      
+      
+        <link rel="next" href="../keygen/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>Detection - Sigil Watermark</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#detection" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Sigil Watermark" class="md-header__button md-logo" aria-label="Sigil Watermark" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Sigil Watermark
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Detection
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/AI-Escape/sigil-watermark" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    AI-Escape/sigil-watermark
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Sigil Watermark" class="md-nav__button md-logo" aria-label="Sigil Watermark" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Sigil Watermark
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/AI-Escape/sigil-watermark" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    AI-Escape/sigil-watermark
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../technical-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Technical Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../embed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embedding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sigil_watermark.detect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;detect
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" detect">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.detect.DetectionResult" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;DetectionResult
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.detect.SigilDetector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;SigilDetector
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" SigilDetector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.detect.SigilDetector.detect_beacon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;detect_beacon
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.detect.SigilDetector.extract_author_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;extract_author_index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.detect.SigilDetector.detect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;detect
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../keygen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ghost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ghost Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sigil_watermark.detect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;detect
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" detect">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.detect.DetectionResult" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;DetectionResult
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.detect.SigilDetector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;SigilDetector
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" SigilDetector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.detect.SigilDetector.detect_beacon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;detect_beacon
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.detect.SigilDetector.extract_author_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;extract_author_index
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sigil_watermark.detect.SigilDetector.detect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;detect
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="detection">Detection</h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<h2 id="sigil_watermark.detect" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-module"></code>            <code>sigil_watermark.detect</code>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+        <p>Sigil watermark detection pipeline.</p>
+
+
+<details class="three-tier-detection" open>
+  <summary>Three-tier detection</summary>
+  <p>Tier 1: Universal beacon check (is this a Signarture watermark?)
+Tier 2: Author index extraction (whose watermark is it?)
+Tier 3: Author verification (cryptographic proof of authorship)</p>
+</details>        <p>All three tiers are extracted from a single combined payload that is
+RS-encoded and tiled across DWT subbands for crop robustness.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="sigil_watermark.detect.DetectionResult" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <code>DetectionResult</code>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Result of watermark detection.</p>
+<p>Contains per-layer confidence scores and the outputs of all three
+detection tiers: beacon presence, author index extraction, and
+cryptographic author verification.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="sigil_watermark.detect.DetectionResult.detected">detected</span></code></td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> if any watermark was found with sufficient confidence.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="sigil_watermark.detect.DetectionResult.confidence">confidence</span></code></td>
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Overall confidence score (0–1), a weighted blend of
+ring (35%), payload (45%), and ghost (20%) confidences.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="sigil_watermark.detect.DetectionResult.author_id_match">author_id_match</span></code></td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> if the extracted author ID matches the
+provided public key (Tier 3 verification).</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="sigil_watermark.detect.DetectionResult.beacon_found">beacon_found</span></code></td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> if the universal Signarture beacon was
+detected (Tier 1).</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="sigil_watermark.detect.DetectionResult.author_index">author_index</span></code></td>
+            <td>
+                  <code><span title="list">list</span>[<span title="int">int</span>] | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Extracted 20-bit author index as a list of ints,
+or <code>None</code> if RS decoding failed (Tier 2).</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="sigil_watermark.detect.DetectionResult.ring_confidence">ring_confidence</span></code></td>
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>DFT ring detection confidence (0–1).</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="sigil_watermark.detect.DetectionResult.payload_confidence">payload_confidence</span></code></td>
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Spread-spectrum payload correlation (0–1).</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="sigil_watermark.detect.DetectionResult.ghost_confidence">ghost_confidence</span></code></td>
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Ghost signal correlation strength (0–1).</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="sigil_watermark.detect.DetectionResult.ghost_hash">ghost_hash</span></code></td>
+            <td>
+                  <code><span title="list">list</span>[<span title="int">int</span>] | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Extracted ghost hash bits (blind, no key needed),
+or <code>None</code> if extraction failed.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="sigil_watermark.detect.DetectionResult.ghost_hash_match">ghost_hash_match</span></code></td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> if the ghost hash matches the candidate key.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="sigil_watermark.detect.DetectionResult.tampering_suspected">tampering_suspected</span></code></td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p><code>True</code> if sentinel rings are present but
+key-derived rings have been selectively removed.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/sigil_watermark/detect.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DetectionResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Result of watermark detection.</span>
+
+<span class="sd">    Contains per-layer confidence scores and the outputs of all three</span>
+<span class="sd">    detection tiers: beacon presence, author index extraction, and</span>
+<span class="sd">    cryptographic author verification.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        detected: ``True`` if any watermark was found with sufficient confidence.</span>
+<span class="sd">        confidence: Overall confidence score (0–1), a weighted blend of</span>
+<span class="sd">            ring (35%), payload (45%), and ghost (20%) confidences.</span>
+<span class="sd">        author_id_match: ``True`` if the extracted author ID matches the</span>
+<span class="sd">            provided public key (Tier 3 verification).</span>
+<span class="sd">        beacon_found: ``True`` if the universal Signarture beacon was</span>
+<span class="sd">            detected (Tier 1).</span>
+<span class="sd">        author_index: Extracted 20-bit author index as a list of ints,</span>
+<span class="sd">            or ``None`` if RS decoding failed (Tier 2).</span>
+<span class="sd">        ring_confidence: DFT ring detection confidence (0–1).</span>
+<span class="sd">        payload_confidence: Spread-spectrum payload correlation (0–1).</span>
+<span class="sd">        ghost_confidence: Ghost signal correlation strength (0–1).</span>
+<span class="sd">        ghost_hash: Extracted ghost hash bits (blind, no key needed),</span>
+<span class="sd">            or ``None`` if extraction failed.</span>
+<span class="sd">        ghost_hash_match: ``True`` if the ghost hash matches the candidate key.</span>
+<span class="sd">        tampering_suspected: ``True`` if sentinel rings are present but</span>
+<span class="sd">            key-derived rings have been selectively removed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">detected</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">confidence</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">author_id_match</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">beacon_found</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">author_index</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">ring_confidence</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">payload_confidence</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">ghost_confidence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">ghost_hash</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ghost_hash_match</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">tampering_suspected</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="sigil_watermark.detect.SigilDetector" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-class"></code>            <code>SigilDetector</code>
+
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Detects and verifies the three-layer Sigil watermark.</p>
+<p>Implements three detection tiers:</p>
+<ol>
+<li><strong>Beacon</strong> — universal marker shared by all Signarture watermarks.
+   Answers "is this image watermarked at all?"</li>
+<li><strong>Author Index</strong> — 20-bit index for O(1) database lookup.
+   Answers "whose watermark is this?" without the author's key.</li>
+<li><strong>Author Verification</strong> — cryptographic proof using the author's
+   Ed25519 public key. Answers "does this specific key match?"</li>
+</ol>
+<p>Includes automatic geometric correction: if initial detection is weak
+but rings are found, common rotation corrections are tried.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>config</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            SigilConfig
+
+
+  
+      dataclass
+   (sigil_watermark.config.SigilConfig)" href="../config/#sigil_watermark.config.SigilConfig">SigilConfig</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Watermark configuration. Defaults to :data:<code>DEFAULT_CONFIG</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            DEFAULT_CONFIG = SigilConfig()
+
+  
+      module-attribute
+   (sigil_watermark.config.DEFAULT_CONFIG)" href="../#sigil_watermark.DEFAULT_CONFIG">DEFAULT_CONFIG</a></code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>from sigil_watermark import SigilDetector
+detector = SigilDetector()
+result = detector.detect(image, public_key)
+if result.detected:
+...     print(f"Watermark found (confidence={result.confidence:.2f})")</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/sigil_watermark/detect.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SigilDetector</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Detects and verifies the three-layer Sigil watermark.</span>
+
+<span class="sd">    Implements three detection tiers:</span>
+
+<span class="sd">    1. **Beacon** — universal marker shared by all Signarture watermarks.</span>
+<span class="sd">       Answers &quot;is this image watermarked at all?&quot;</span>
+<span class="sd">    2. **Author Index** — 20-bit index for O(1) database lookup.</span>
+<span class="sd">       Answers &quot;whose watermark is this?&quot; without the author&#39;s key.</span>
+<span class="sd">    3. **Author Verification** — cryptographic proof using the author&#39;s</span>
+<span class="sd">       Ed25519 public key. Answers &quot;does this specific key match?&quot;</span>
+
+<span class="sd">    Includes automatic geometric correction: if initial detection is weak</span>
+<span class="sd">    but rings are found, common rotation corrections are tried.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config: Watermark configuration. Defaults to :data:`DEFAULT_CONFIG`.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from sigil_watermark import SigilDetector</span>
+<span class="sd">        &gt;&gt;&gt; detector = SigilDetector()</span>
+<span class="sd">        &gt;&gt;&gt; result = detector.detect(image, public_key)</span>
+<span class="sd">        &gt;&gt;&gt; if result.detected:</span>
+<span class="sd">        ...     print(f&quot;Watermark found (confidence={result.confidence:.2f})&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">SigilConfig</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_combined_payload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract the combined tiled payload from DWT subbands.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            image: Grayscale (H,W) or RGB (H,W,3) image.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (voted_encoded_bits, avg_confidence)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">extract_y_channel</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">dwt_decompose</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">wavelet</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">wavelet</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">dwt_levels</span><span class="p">)</span>
+
+        <span class="n">max_tile</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">tile_sizes</span><span class="p">)</span>
+        <span class="n">pn_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">max_tile</span> <span class="o">*</span> <span class="n">max_tile</span><span class="p">)</span>
+        <span class="n">payload_pn</span> <span class="o">=</span> <span class="n">get_universal_beacon_pn</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="n">pn_length</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">cfg</span><span class="p">)</span>
+        <span class="n">encoded_len</span> <span class="o">=</span> <span class="n">_encoded_payload_length</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+        <span class="n">all_bits</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">all_conf</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">level_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">coeffs</span><span class="p">)):</span>
+            <span class="n">detail_tuple</span> <span class="o">=</span> <span class="n">coeffs</span><span class="p">[</span><span class="n">level_idx</span><span class="p">]</span>
+            <span class="n">subband_names</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;LH&quot;</span><span class="p">,</span> <span class="s2">&quot;HL&quot;</span><span class="p">,</span> <span class="s2">&quot;HH&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">sb_idx</span><span class="p">,</span> <span class="n">sb_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">subband_names</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">sb_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">embed_subbands</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">subband</span> <span class="o">=</span> <span class="n">detail_tuple</span><span class="p">[</span><span class="n">sb_idx</span><span class="p">]</span>
+
+                <span class="n">ts</span> <span class="o">=</span> <span class="n">best_tile_size</span><span class="p">(</span><span class="n">subband</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">tile_sizes</span><span class="p">,</span> <span class="n">encoded_len</span><span class="p">)</span>
+
+                <span class="n">bits</span><span class="p">,</span> <span class="n">conf</span> <span class="o">=</span> <span class="n">tile_extract</span><span class="p">(</span>
+                    <span class="n">subband</span><span class="p">,</span>
+                    <span class="n">payload_pn</span><span class="p">,</span>
+                    <span class="n">num_bits</span><span class="o">=</span><span class="n">encoded_len</span><span class="p">,</span>
+                    <span class="n">tile_size</span><span class="o">=</span><span class="n">ts</span><span class="p">,</span>
+                    <span class="n">spreading_factor</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">spreading_factor</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">all_bits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bits</span><span class="p">)</span>
+                <span class="n">all_conf</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">all_bits</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">encoded_len</span><span class="p">,</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Majority vote across subbands/levels</span>
+        <span class="n">voted</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">bit_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">encoded_len</span><span class="p">):</span>
+            <span class="n">votes</span> <span class="o">=</span> <span class="p">[</span><span class="n">bits</span><span class="p">[</span><span class="n">bit_idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">bits</span> <span class="ow">in</span> <span class="n">all_bits</span> <span class="k">if</span> <span class="n">bit_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">bits</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">votes</span><span class="p">:</span>
+                <span class="n">voted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">votes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">votes</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">voted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">avg_conf</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">all_conf</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_conf</span><span class="p">)</span> <span class="k">if</span> <span class="n">all_conf</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="n">voted</span><span class="p">,</span> <span class="n">avg_conf</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_decode_combined_payload</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">encoded_bits</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;RS-decode and split the combined payload.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (beacon_bits, author_index, author_id, rs_success)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
+        <span class="n">raw_len</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">beacon_bits</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">author_index_bits</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">author_id_bits</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">decoded</span><span class="p">,</span> <span class="n">num_corrected</span> <span class="o">=</span> <span class="n">decode_payload</span><span class="p">(</span>
+                <span class="n">encoded_bits</span><span class="p">,</span> <span class="n">nsym</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">rs_nsym</span><span class="p">,</span> <span class="n">original_bit_count</span><span class="o">=</span><span class="n">raw_len</span>
+            <span class="p">)</span>
+            <span class="n">beacon</span> <span class="o">=</span> <span class="n">decoded</span><span class="p">[:</span> <span class="n">cfg</span><span class="o">.</span><span class="n">beacon_bits</span><span class="p">]</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">decoded</span><span class="p">[</span><span class="n">cfg</span><span class="o">.</span><span class="n">beacon_bits</span> <span class="p">:</span> <span class="n">cfg</span><span class="o">.</span><span class="n">beacon_bits</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">author_index_bits</span><span class="p">]</span>
+            <span class="n">author_id</span> <span class="o">=</span> <span class="n">decoded</span><span class="p">[</span><span class="n">cfg</span><span class="o">.</span><span class="n">beacon_bits</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">author_index_bits</span> <span class="p">:]</span>
+            <span class="k">return</span> <span class="n">beacon</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">author_id</span><span class="p">,</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="n">ReedSolomonError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect_beacon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tier 1: Check if the image contains a Signarture beacon.&quot;&quot;&quot;</span>
+        <span class="n">encoded_bits</span><span class="p">,</span> <span class="n">conf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_combined_payload</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="n">beacon</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">rs_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_combined_payload</span><span class="p">(</span><span class="n">encoded_bits</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">rs_ok</span> <span class="ow">and</span> <span class="n">beacon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">match_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">beacon</span> <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">match_count</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">beacon_bits</span> <span class="o">&gt;</span> <span class="mf">0.7</span>
+
+        <span class="c1"># RS failed — try raw check on first beacon_bits of the encoded data</span>
+        <span class="c1"># (won&#39;t be accurate but gives a rough signal)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_author_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tier 2: Extract the author index from the combined payload.&quot;&quot;&quot;</span>
+        <span class="n">encoded_bits</span><span class="p">,</span> <span class="n">conf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_combined_payload</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">rs_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_combined_payload</span><span class="p">(</span><span class="n">encoded_bits</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">index</span> <span class="k">if</span> <span class="n">rs_ok</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_detect_on_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">public_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DetectionResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Core detection logic on a single grayscale image.&quot;&quot;&quot;</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span>
+
+        <span class="c1"># --- Ring detection ---</span>
+        <span class="c1"># Stable rings: key-derived + sentinel (positions don&#39;t depend on image)</span>
+        <span class="n">key_radii</span> <span class="o">=</span> <span class="n">derive_ring_radii</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">cfg</span><span class="p">)</span>
+        <span class="n">sentinel_radii</span> <span class="o">=</span> <span class="n">derive_sentinel_ring_radii</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">cfg</span><span class="p">)</span>
+        <span class="n">stable_radii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">key_radii</span><span class="p">,</span> <span class="n">sentinel_radii</span><span class="p">]))</span>
+        <span class="n">stable_phase</span> <span class="o">=</span> <span class="n">derive_ring_phase_offsets</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">stable_radii</span><span class="p">),</span> <span class="n">config</span><span class="o">=</span><span class="n">cfg</span><span class="p">)</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">ring_confidence</span> <span class="o">=</span> <span class="n">detect_dft_rings</span><span class="p">(</span>
+            <span class="n">y</span><span class="p">,</span>
+            <span class="n">stable_radii</span><span class="p">,</span>
+            <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+            <span class="n">ring_width</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">ring_width</span><span class="p">,</span>
+            <span class="n">phase_offsets</span><span class="o">=</span><span class="n">stable_phase</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Tampering detection: sentinel rings present but key rings absent</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">sentinel_conf</span> <span class="o">=</span> <span class="n">detect_dft_rings</span><span class="p">(</span>
+            <span class="n">y</span><span class="p">,</span>
+            <span class="n">sentinel_radii</span><span class="p">,</span>
+            <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+            <span class="n">ring_width</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">ring_width</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">key_ring_conf</span> <span class="o">=</span> <span class="n">detect_dft_rings</span><span class="p">(</span>
+            <span class="n">y</span><span class="p">,</span>
+            <span class="n">key_radii</span><span class="p">,</span>
+            <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+            <span class="n">ring_width</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">ring_width</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">tampering_suspected</span> <span class="o">=</span> <span class="n">sentinel_conf</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="ow">and</span> <span class="n">key_ring_conf</span> <span class="o">&lt;</span> <span class="mf">0.2</span>
+
+        <span class="c1"># --- Extract combined tiled payload ---</span>
+        <span class="n">encoded_bits</span><span class="p">,</span> <span class="n">tile_conf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_combined_payload</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">beacon_bits</span><span class="p">,</span> <span class="n">author_index</span><span class="p">,</span> <span class="n">extracted_id</span><span class="p">,</span> <span class="n">rs_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_combined_payload</span><span class="p">(</span><span class="n">encoded_bits</span><span class="p">)</span>
+
+        <span class="c1"># --- Tier 1: Beacon ---</span>
+        <span class="k">if</span> <span class="n">rs_ok</span> <span class="ow">and</span> <span class="n">beacon_bits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">beacon_match</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">beacon_bits</span> <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">beacon_bits</span>
+            <span class="n">beacon_found</span> <span class="o">=</span> <span class="n">beacon_match</span> <span class="o">&gt;</span> <span class="mf">0.7</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">beacon_found</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># --- Tier 3: Author verification ---</span>
+        <span class="n">expected_author_id</span> <span class="o">=</span> <span class="n">derive_author_id</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">cfg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">rs_ok</span> <span class="ow">and</span> <span class="n">extracted_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">errors</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">expected_author_id</span><span class="p">,</span> <span class="n">extracted_id</span><span class="p">))</span>
+            <span class="n">ber</span> <span class="o">=</span> <span class="n">errors</span> <span class="o">/</span> <span class="n">cfg</span><span class="o">.</span><span class="n">author_id_bits</span>
+            <span class="n">author_id_match</span> <span class="o">=</span> <span class="n">ber</span> <span class="o">&lt;</span> <span class="mf">0.15</span>
+            <span class="n">payload_confidence</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">ber</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">raw_payload</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">cfg</span><span class="o">.</span><span class="n">beacon_bits</span>
+                <span class="o">+</span> <span class="n">derive_author_index</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">cfg</span><span class="p">)</span>
+                <span class="o">+</span> <span class="n">derive_author_id</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">cfg</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">expected_encoded</span> <span class="o">=</span> <span class="n">encode_payload</span><span class="p">(</span><span class="n">raw_payload</span><span class="p">,</span> <span class="n">nsym</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">rs_nsym</span><span class="p">)</span>
+            <span class="n">errors</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">!=</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">expected_encoded</span><span class="p">,</span> <span class="n">encoded_bits</span><span class="p">))</span>
+            <span class="n">ber</span> <span class="o">=</span> <span class="n">errors</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">expected_encoded</span><span class="p">)</span>
+            <span class="n">author_id_match</span> <span class="o">=</span> <span class="n">ber</span> <span class="o">&lt;</span> <span class="mf">0.25</span>
+            <span class="n">payload_confidence</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">ber</span><span class="p">)</span>
+
+        <span class="c1"># --- Ghost signal analysis ---</span>
+        <span class="n">ghost_result</span> <span class="o">=</span> <span class="n">analyze_ghost_signature</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">public_key</span><span class="p">,</span> <span class="n">cfg</span><span class="p">)</span>
+
+        <span class="c1"># Ghost hash: compare extracted bits with expected</span>
+        <span class="n">extracted_ghost_hash</span> <span class="o">=</span> <span class="n">ghost_result</span><span class="o">.</span><span class="n">ghost_hash</span>
+        <span class="n">expected_ghost_hash</span> <span class="o">=</span> <span class="n">derive_ghost_hash</span><span class="p">(</span><span class="n">public_key</span><span class="p">,</span> <span class="n">cfg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">extracted_ghost_hash</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ghost_hash_errors</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+                <span class="n">a</span> <span class="o">!=</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">extracted_ghost_hash</span><span class="p">,</span> <span class="n">expected_ghost_hash</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">ghost_hash_match</span> <span class="o">=</span> <span class="n">ghost_hash_errors</span> <span class="o">&lt;=</span> <span class="mi">2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ghost_hash_errors</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">ghost_hash_bits</span>
+            <span class="n">ghost_hash_match</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Ghost confidence combines correlation strength with hash match quality.</span>
+        <span class="c1"># The composite PN approach means a wrong key with a similar hash still</span>
+        <span class="c1"># shows partial correlation, so we scale by hash bit error rate to</span>
+        <span class="c1"># discriminate authors.</span>
+        <span class="n">raw_ghost_conf</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ghost_result</span><span class="o">.</span><span class="n">correlation</span> <span class="o">/</span> <span class="mf">0.015</span><span class="p">))</span>
+        <span class="n">hash_ber</span> <span class="o">=</span> <span class="n">ghost_hash_errors</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">ghost_hash_bits</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">ghost_confidence</span> <span class="o">=</span> <span class="n">raw_ghost_conf</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">hash_ber</span> <span class="o">*</span> <span class="mf">2.0</span><span class="p">)</span>
+
+        <span class="n">detected</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span>
+            <span class="n">payload_confidence</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="ow">and</span> <span class="p">(</span><span class="n">beacon_found</span> <span class="ow">or</span> <span class="n">ring_confidence</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="ow">or</span> <span class="n">author_id_match</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Overall confidence: weighted blend of all three layers</span>
+        <span class="n">overall_confidence</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+            <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.35</span> <span class="o">*</span> <span class="n">ring_confidence</span> <span class="o">+</span> <span class="mf">0.45</span> <span class="o">*</span> <span class="n">payload_confidence</span> <span class="o">+</span> <span class="mf">0.20</span> <span class="o">*</span> <span class="n">ghost_confidence</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">DetectionResult</span><span class="p">(</span>
+            <span class="n">detected</span><span class="o">=</span><span class="n">detected</span><span class="p">,</span>
+            <span class="n">confidence</span><span class="o">=</span><span class="n">overall_confidence</span><span class="p">,</span>
+            <span class="n">author_id_match</span><span class="o">=</span><span class="n">author_id_match</span><span class="p">,</span>
+            <span class="n">beacon_found</span><span class="o">=</span><span class="n">beacon_found</span><span class="p">,</span>
+            <span class="n">author_index</span><span class="o">=</span><span class="n">author_index</span><span class="p">,</span>
+            <span class="n">ring_confidence</span><span class="o">=</span><span class="n">ring_confidence</span><span class="p">,</span>
+            <span class="n">payload_confidence</span><span class="o">=</span><span class="n">payload_confidence</span><span class="p">,</span>
+            <span class="n">ghost_confidence</span><span class="o">=</span><span class="n">ghost_confidence</span><span class="p">,</span>
+            <span class="n">ghost_hash</span><span class="o">=</span><span class="n">extracted_ghost_hash</span><span class="p">,</span>
+            <span class="n">ghost_hash_match</span><span class="o">=</span><span class="n">ghost_hash_match</span><span class="p">,</span>
+            <span class="n">tampering_suspected</span><span class="o">=</span><span class="n">tampering_suspected</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">public_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DetectionResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Full three-tier detection with a known candidate public key.</span>
+
+<span class="sd">        Includes automatic geometric correction: if initial detection is weak,</span>
+<span class="sd">        tries common rotation corrections and uses the best result.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            image: Grayscale (H,W) or RGB (H,W,3) image to check.</span>
+<span class="sd">            public_key: Candidate author&#39;s public key</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DetectionResult with all detection details.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">extract_y_channel</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+        <span class="c1"># First attempt: detect without correction</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_on_image</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span>
+
+        <span class="c1"># If detection is confident, return immediately</span>
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">detected</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">payload_confidence</span> <span class="o">&gt;</span> <span class="mf">0.7</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="c1"># If ring confidence is high but payload is low, try geometric correction</span>
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">ring_confidence</span> <span class="o">&gt;</span> <span class="mf">0.3</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">payload_confidence</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">conf_fn</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_on_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">payload_confidence</span>
+
+            <span class="n">corrected</span><span class="p">,</span> <span class="n">best_angle</span><span class="p">,</span> <span class="n">best_conf</span> <span class="o">=</span> <span class="n">try_rotations</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">conf_fn</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">best_conf</span> <span class="o">&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">payload_confidence</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_on_image</span><span class="p">(</span><span class="n">corrected</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="sigil_watermark.detect.SigilDetector.detect_beacon" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">detect_beacon</span><span class="p">(</span><span class="n">image</span><span class="p">)</span></code>
+
+</h4>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Tier 1: Check if the image contains a Signarture beacon.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/detect.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">detect_beacon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tier 1: Check if the image contains a Signarture beacon.&quot;&quot;&quot;</span>
+    <span class="n">encoded_bits</span><span class="p">,</span> <span class="n">conf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_combined_payload</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">beacon</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">rs_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_combined_payload</span><span class="p">(</span><span class="n">encoded_bits</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">rs_ok</span> <span class="ow">and</span> <span class="n">beacon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">match_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">beacon</span> <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">match_count</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">beacon_bits</span> <span class="o">&gt;</span> <span class="mf">0.7</span>
+
+    <span class="c1"># RS failed — try raw check on first beacon_bits of the encoded data</span>
+    <span class="c1"># (won&#39;t be accurate but gives a rough signal)</span>
+    <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="sigil_watermark.detect.SigilDetector.extract_author_index" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">extract_author_index</span><span class="p">(</span><span class="n">image</span><span class="p">)</span></code>
+
+</h4>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Tier 2: Extract the author index from the combined payload.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/detect.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">extract_author_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tier 2: Extract the author index from the combined payload.&quot;&quot;&quot;</span>
+    <span class="n">encoded_bits</span><span class="p">,</span> <span class="n">conf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_combined_payload</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">rs_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_combined_payload</span><span class="p">(</span><span class="n">encoded_bits</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">index</span> <span class="k">if</span> <span class="n">rs_ok</span> <span class="k">else</span> <span class="kc">None</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="sigil_watermark.detect.SigilDetector.detect" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <code class="highlight language-python"><span class="n">detect</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span></code>
+
+</h4>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Full three-tier detection with a known candidate public key.</p>
+<p>Includes automatic geometric correction: if initial detection is weak,
+tries common rotation corrections and uses the best result.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>image</code>
+            </td>
+            <td>
+                  <code><span title="numpy.ndarray">ndarray</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Grayscale (H,W) or RGB (H,W,3) image to check.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>public_key</code>
+            </td>
+            <td>
+                  <code><span title="bytes">bytes</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Candidate author's public key</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="            DetectionResult
+
+
+  
+      dataclass
+   (sigil_watermark.detect.DetectionResult)" href="#sigil_watermark.detect.DetectionResult">DetectionResult</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>DetectionResult with all detection details.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/sigil_watermark/detect.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">public_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DetectionResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Full three-tier detection with a known candidate public key.</span>
+
+<span class="sd">    Includes automatic geometric correction: if initial detection is weak,</span>
+<span class="sd">    tries common rotation corrections and uses the best result.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image: Grayscale (H,W) or RGB (H,W,3) image to check.</span>
+<span class="sd">        public_key: Candidate author&#39;s public key</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        DetectionResult with all detection details.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">extract_y_channel</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+    <span class="c1"># First attempt: detect without correction</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_on_image</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span>
+
+    <span class="c1"># If detection is confident, return immediately</span>
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">detected</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">payload_confidence</span> <span class="o">&gt;</span> <span class="mf">0.7</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="c1"># If ring confidence is high but payload is low, try geometric correction</span>
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">ring_confidence</span> <span class="o">&gt;</span> <span class="mf">0.3</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">payload_confidence</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">conf_fn</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_on_image</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">payload_confidence</span>
+
+        <span class="n">corrected</span><span class="p">,</span> <span class="n">best_angle</span><span class="p">,</span> <span class="n">best_conf</span> <span class="o">=</span> <span class="n">try_rotations</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">conf_fn</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">best_conf</span> <span class="o">&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">payload_confidence</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_on_image</span><span class="p">(</span><span class="n">corrected</span><span class="p">,</span> <span class="n">public_key</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.sections", "navigation.expand"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
