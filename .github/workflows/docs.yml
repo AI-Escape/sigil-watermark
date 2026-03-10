@@ -13,5 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
+        with:
+          cache-dependency-glob: "pyproject.toml"
       - run: uv sync --extra docs
       - run: uv run mkdocs gh-deploy --force
