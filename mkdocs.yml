@@ -1,0 +1,41 @@
+site_name: Sigil Watermark
+site_url: https://ai-escape.github.io/sigil-watermark/
+site_description: Invisible, crypto-verified, AI-training-resilient image watermarks
+repo_url: https://github.com/AI-Escape/sigil-watermark
+repo_name: AI-Escape/sigil-watermark
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+  features:
+    - content.code.copy
+    - navigation.sections
+    - navigation.expand
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_root_heading: true
+            members_order: source
+            docstring_style: google
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Technical Design: technical-design.md
+  - API Reference:
+      - Overview: api/index.md
+      - Configuration: api/config.md
+      - Embedding: api/embed.md
+      - Detection: api/detect.md
+      - Key Generation: api/keygen.md
+      - Ghost Analysis: api/ghost.md

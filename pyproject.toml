@@ -1,0 +1,76 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sigil-watermark"
+version = "0.2.0"
+description = "Invisible, crypto-verified, AI-training-resilient image watermarks"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12"
+authors = [{ name = "AI Escape" }]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Security :: Cryptography",
+    "Typing :: Typed",
+]
+dependencies = [
+    "numpy>=1.26.0",
+    "scipy>=1.12.0",
+    "PyWavelets>=1.6.0",
+    "opencv-python-headless>=4.10.0",
+    "Pillow>=11.0.0",
+    "cryptography>=43.0.0",
+    "reedsolo>=1.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "pytest-xdist>=3.5.0",
+    "ruff>=0.11.0",
+]
+gpu = [
+    "torch>=2.0.0",
+    "diffusers>=0.25.0",
+    "transformers>=4.30.0",
+    "accelerate>=0.20.0",
+    "peft>=0.7.0",
+]
+docs = [
+    "mkdocs-material>=9.5.0",
+    "mkdocstrings[python]>=0.27.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/AI-Escape/sigil-watermark"
+Documentation = "https://ai-escape.github.io/sigil-watermark/"
+Repository = "https://github.com/AI-Escape/sigil-watermark"
+Issues = "https://github.com/AI-Escape/sigil-watermark/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sigil_watermark"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = [
+    "gpu: requires GPU and torch/diffusers",
+    "slow: long-running tests",
+]
+addopts = "-m 'not gpu and not slow'"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]

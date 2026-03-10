@@ -1,0 +1,34 @@
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+.coverage
+htmlcov/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Downloaded test images (real photos/artwork, not included in repo)
+tests/test_images/real/
+
+scripts/output/
+
+.env
+.env.local
+
+# mkdocs build output
+site/
+
+# Lock file excluded for libraries (consumers resolve their own deps)
+uv.lock
